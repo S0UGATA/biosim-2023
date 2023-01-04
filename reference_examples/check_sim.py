@@ -9,6 +9,8 @@ __author__ = "Hans Ekkehard Plesser, NMBU"
 __email__ = "hans.ekkehard.plesser@nmbu.no"
 
 import textwrap
+import matplotlib.pyplot as plt
+
 from biosim.simulation import BioSim
 
 if __name__ == '__main__':
@@ -56,3 +58,5 @@ if __name__ == '__main__':
     sim.simulate(num_years=100)
     sim.add_population(population=ini_carns)
     sim.simulate(num_years=100)
+
+    plt.savefig('check_sim.pdf')
