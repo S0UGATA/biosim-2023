@@ -2,28 +2,24 @@
 
 ## Model details
 ### Geography
-	- fodder
-	- param_geography
+	- fodder_max
+    - fodder_current
 	Highland
-	- param_geography 
-        - f_max = 300
+	- fodder_max = param_geography-f_max = 300
 	Lowland
-	- param_geography
-        - f_max= 800
+	- fodder_max = param_geography-f_max = 800
 	Water	
-	- param_geography 
-        - f_max = -1
+	- fodder_max = param_geography-f_max = -1
 	Desert
-	- param_geography 
-        - f_max = 0
+	- fodder_max = param_geography-f_max = 0
 	
 ### Fauna
 	- age
 	- weight
 	- fitness
-	- param_fauna
+	- animal_parameters
 	Herbivores
-	- param_fauna = 
+	- animal_parameters = 
 		- w_birth      8
 		- sigma_birth  1.5
 		- beta         0.9
@@ -40,7 +36,7 @@
 		- F            10
 		- DeltaPhiMax  N/A
 	Carnivores
-	- param_fauna = 
+	- animal_parameters = 
 		- w_birth      6
 		- sigma_birth  1
 		- beta         0.75
@@ -57,7 +53,7 @@
 		- F            50
 		- DeltaPhiMax  10
 
-### Rossumøya
+### World
 	- 2d array of cells
 	
 ### Cell
@@ -68,7 +64,7 @@
 	- list of carnivores
 	
 ### Parameters
-	param_fauna
+	animal_parameters
 		- w_birth
 		- sigma_birth
 		- beta
@@ -97,3 +93,5 @@ _(go through each cell inside each steps of the annual cycle.)_
 	- aging()
 	- loss_of_weight()
 	- death()
+
+TODO: Add credits: Sourcery: https://sourcery.ai/
