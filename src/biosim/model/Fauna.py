@@ -21,7 +21,8 @@ class Herbivore(Fauna):
                                                    0.25, 0.2, 3.5, 1.2, 0.4, 10, -1)
         if animal_parameters is not None:
             pass
-            # TODO: overwite values in self._animal_parameters from the passed dictionary  animal_parameters
+            # TODO: overwite values in self._animal_parameters
+            #  from the passed dictionary  animal_parameters
 
 
 class Carnivore(Fauna):
@@ -34,4 +35,5 @@ class Carnivore(Fauna):
 
         if animal_parameters is not None:
             pass
-            # TODO: overwite values in self._animal_parameters from the passed dictionary  animal_parameters
+            # TODO: overwite values in self._animal_parameters
+            #  from the passed dictionary  animal_parameters
