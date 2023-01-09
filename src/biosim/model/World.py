@@ -5,7 +5,7 @@ import UnitArea
 
 
 class World:
-    _cells: [[Cell]] = [[]]
+    _cells: [[UnitArea]] = [[]]
 
-    def __init__(self, cells: [[Cell]]):
+    def __init__(self, cells: [[UnitArea]]):
         self._cells = cells
