@@ -30,4 +30,5 @@ class Desert(Geography):
 class Water(Geography):
     def __init__(self, fodder_max=None):
         self._fodder_max = -1 if fodder_max is None else fodder_max
-        self._fodder_current = self._fodder_max  # TODO: think of what happens when user inputs a negative value.
+        self._fodder_current = self._fodder_max
+        # TODO: think of what happens when user inputs a negative value.
