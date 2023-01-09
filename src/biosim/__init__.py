@@ -1,1 +1,4 @@
-__version__ = "0.0"
+__version__ = "0.1"
+
+__author__ = "Tonje Martine Lorgen Kirkholt", "Sougata Bhattacharya"
+__email__ = "tonje.martine.lorgen.kirkholt@nmbu.no", "sougata.bhattacharya@nmbu.no"
