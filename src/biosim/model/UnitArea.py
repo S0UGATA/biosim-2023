@@ -5,7 +5,7 @@ import Fauna
 import Geography
 
 
-class Cell:
+class UnitArea:
     _loc: tuple[int, int]
     _geo: Geography
     _herbs: list[Fauna.Herbivore]

@@ -7,10 +7,16 @@ import Parameters
 class Fauna:
     _age: int
     _weight: float
-    _fitness: float
+    _fitness: float  # TODO this would be a calculated value by default.
     _animal_parameters: Parameters.Fauna
 
 
+# possible methods:
+# get older
+# lose weight at the end of the year
+# procreate
+# eats
+# dies
 class Herbivore(Fauna):
 
     def __init__(self, age, weight, fitness, animal_parameters=None):
