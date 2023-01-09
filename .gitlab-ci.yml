@@ -6,7 +6,6 @@ image: python:3.10
 # only cache local items.
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-  BIOLAB_DIR: "$CI_PROJECT_DIR/january_block/examples/biolab_a39"
 
 # Pip's cache doesn't store the python packages
 # https://pip.pypa.io/en/stable/reference/pip_install/#caching
@@ -25,36 +24,7 @@ before_script:
   - source venv/bin/activate
   - pip install flake8 tox
 
-
-# NOTE:
-# The "script" sections below are more complex because biolab_project is
-# a subdirectory of the git repo inf200-course-materials.
-# For the BioSim project, follow the single-line setup, e.g.
-#
-#    script:
-#       - flake8 src tests
-#
-# from the project template.
-#
-# The solution here is based on
-# https://stackoverflow.com/questions/70671097/run-gitlab-ci-for-sub-directory-in-same-project
-
 test-code-style:
   stage: test
   script:
-    - |
-      cd $BIOLAB_DIR
-      flake8 src tests
-
-test-tox:
-  stage: test
-  script:
-    - |
-      cd $BIOLAB_DIR
-      tox
-  artifacts:
-    when: always
-    paths:
-      - "$BIOLAB_DIR/pytest_results.xml"
-    reports:
-      junit: "$BIOLAB_DIR/pytest_results.xml"
+    - flake8 src tests
