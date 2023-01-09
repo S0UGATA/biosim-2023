@@ -5,13 +5,17 @@
 	- fodder
 	- param_geography
 	Highland
-	- param_geography = 300
+	- param_geography 
+        - f_max = 300
 	Lowland
-	- param_geography = 800
+	- param_geography
+        - f_max= 800
 	Water	
-	- param_geography = -1
+	- param_geography 
+        - f_max = -1
 	Desert
-	- param_geography = 0
+	- param_geography 
+        - f_max = 0
 	
 ### Fauna
 	- age
