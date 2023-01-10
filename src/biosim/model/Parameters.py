@@ -8,22 +8,6 @@ class Parameters:
 
 
 class Fauna(Parameters):
-    _w_birth: float
-    _sigma_birth: float
-    _beta: float
-    _eta: float
-    _a_half: float
-    _phi_age: float
-    _w_half: float
-    _phi_weight: float
-    _mu: float
-    _gamma: float
-    _zeta: float
-    _xi: float
-    _omega: float
-    _F: float
-    _DeltaPhiMax: float
-
     def __init__(self,
                  w_birth,
                  sigma_birth,
@@ -56,10 +40,24 @@ class Fauna(Parameters):
         self._F = F
         self._DeltaPhiMax = DeltaPhiMax
 
+    @property
+    def phi_age(self):
+        return self._phi_age
+
+    @property
+    def a_half(self):
+        return self._a_half
+
+    @property
+    def phi_weight(self):
+        return self._phi_weight
+
+    @property
+    def w_half(self):
+        return self._w_half
+
 
 class Geography(Parameters):
-    _f_max: int
-
     def __init__(self, f_max):
         self._f_max = f_max
 
