@@ -64,7 +64,7 @@ class Fauna:
 
     @property
     def fitness(self):
-        """Calculate fitness."""
+        """Calculate the fitness of the animal and assignes the value to the parameter _fitness."""
         if self._weight <= 0:
             return 0
         q_plus = 1 / (
