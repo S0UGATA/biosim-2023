@@ -3,10 +3,25 @@ Template for BioSim class.
 """
 import random
 
+from biosim.exception.BadInputException import BadInputException
+from biosim.model.Rossumoya import Rossumoya
+from biosim.model.UnitArea import UnitArea
+
 
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Hans Ekkehard Plesser / NMBU
+
+
+def _make_island(island_map) -> Rossumoya:
+    if island_map is None:
+        raise BadInputException("No Island")
+    island_cells = []
+    island_cells.extend(
+        [UnitArea((r + 1, c + 1), value) for c, value in enumerate(rows)]
+        for r, rows in enumerate(island_map.splitlines())
+    )
+    return Rossumoya(island_cells)
 
 
 class BioSim:
@@ -87,6 +102,7 @@ class BioSim:
         - `img_dir` and `img_base` must either be both None or both strings.
         """
         random.seed(seed)
+        self.rossumoya = _make_island(island_map)
 
     def set_animal_parameters(self, species, params):
         """
