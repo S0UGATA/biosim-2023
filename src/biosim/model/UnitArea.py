@@ -23,8 +23,6 @@ class UnitArea:
 
     def find_geo(self, geo):
         match geo:
-            case None:
-                raise ValueError("Geography cannot be empty")
             case "H":
                 self._geo = Geography.Highland()
             case "L":
@@ -33,6 +31,8 @@ class UnitArea:
                 self._geo = Geography.Water()
             case "D":
                 self._geo = Geography.Desert()
+            case None:
+                raise ValueError("Geography cannot be empty")
             case _:
                 raise ValueError(f"Geography {geo} is not a valid value.")
 

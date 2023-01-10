@@ -5,30 +5,29 @@ import Parameters
 
 
 class Geography:
-    _fodder_max: Parameters.Geography.f_max
-    _fodder_current: int
+    _f_max: Parameters.Geography.f_max
+    _f_current: int
 
 
 class Highland(Geography):
     def __init__(self, fodder_max=None):
-        self._fodder_max = 300 if fodder_max is None else fodder_max
-        self._fodder_current = self._fodder_max
+        self._f_max = 300 if fodder_max is None else fodder_max
+        self._f_current = self._f_max
 
 
 class Lowland(Geography):
     def __init__(self, fodder_max=None):
-        self._fodder_max = 800 if fodder_max is None else fodder_max
-        self._fodder_current = self._fodder_max
+        self._f_max = 800 if fodder_max is None else fodder_max
+        self._f_current = self._f_max
 
 
 class Desert(Geography):
-    def __init__(self, fodder_max=None):
-        self._fodder_max = 0 if fodder_max is None else fodder_max
-        self._fodder_current = self._fodder_max
+    def __init__(self):
+        self._f_max = 0
+        self._f_current = 0
 
 
 class Water(Geography):
-    def __init__(self, fodder_max=None):
-        self._fodder_max = -1 if fodder_max is None else fodder_max
-        self._fodder_current = self._fodder_max
-        # TODO: think of what happens when user inputs a negative value.
+    def __init__(self):
+        self._f_max = 0
+        self._f_current = 0

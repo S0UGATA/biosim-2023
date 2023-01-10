@@ -1,9 +1,9 @@
 # Exam for INF200 January Block 2023
 
-## Model details
+## Data model
 ### Geography
-	- fodder_max
-    - fodder_current
+	- f_max
+    - f_current
 	Highland
 	- fodder_max = param_geography-f_max = 300
 	Lowland
@@ -53,10 +53,10 @@
 		- F            50
 		- DeltaPhiMax  10
 
-### World
-	- 2d array of cells
+### Rossumoya
+	- 2d array of UnitArea
 	
-### Cell
+### UnitArea
 	- loc = (row, col)
 	- pop {dictionary of fauna}
 	- geography
@@ -94,4 +94,5 @@ _(go through each cell inside each steps of the annual cycle.)_
 	- loss_of_weight()
 	- death()
 
-TODO: Add credits: Sourcery: https://sourcery.ai/
+## Credits:
+ - Code optimization done with Sourcery: https://sourcery.ai/

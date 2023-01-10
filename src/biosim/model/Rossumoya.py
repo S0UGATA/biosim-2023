@@ -4,7 +4,7 @@
 import UnitArea
 
 
-class World:
+class Rossumoya:
     _cells: [[UnitArea]] = [[]]
 
     def __init__(self, cells: [[UnitArea]]):
