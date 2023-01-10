@@ -18,8 +18,8 @@ class UnitArea:
                  carns: list[Fauna.Carnivore] = None):
         self._loc = loc
         self._geo = self.find_geo(geo)
-        self._herbs = herbs
-        self._carns = carns
+        self._herbs = herbs if herbs is not None else []
+        self._carns = carns if carns is not None else []
 
     def find_geo(self, geo):
         match geo:

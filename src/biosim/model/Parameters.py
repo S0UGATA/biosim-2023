@@ -8,21 +8,21 @@ class Parameters:
 
 
 class Fauna(Parameters):
-    _w_birth: float = -1
-    _sigma_birth: float = -1
-    _beta: float = -1
-    _eta: float = -1
-    _a_half: float = -1
-    _phi_age: float = -1
-    _w_half: float = -1
-    _phi_weight: float = -1
-    _mu: float = -1
-    _gamma: float = -1
-    _zeta: float = -1
-    _xi: float = -1
-    _omega: float = -1
-    _F: float = -1
-    _DeltaPhiMax: float = -1
+    _w_birth: float
+    _sigma_birth: float
+    _beta: float
+    _eta: float
+    _a_half: float
+    _phi_age: float
+    _w_half: float
+    _phi_weight: float
+    _mu: float
+    _gamma: float
+    _zeta: float
+    _xi: float
+    _omega: float
+    _F: float
+    _DeltaPhiMax: float
 
     def __init__(self,
                  w_birth,

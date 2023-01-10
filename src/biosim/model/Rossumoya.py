@@ -7,5 +7,5 @@ import UnitArea
 class Rossumoya:
     _cells: [[UnitArea]] = [[]]
 
-    def __init__(self, cells: [[UnitArea]]):
-        self._cells = cells
+    def __init__(self, cells: [[UnitArea]] = None):
+        self._cells = cells if cells is not None else [[]]
