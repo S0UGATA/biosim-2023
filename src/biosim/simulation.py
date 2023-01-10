@@ -1,6 +1,7 @@
 """
 Template for BioSim class.
 """
+import random
 
 
 # The material in this file is licensed under the BSD 3-clause license
@@ -13,9 +14,18 @@ class BioSim:
     Top-level interface to BioSim package.
     """
 
-    def __init__(self, island_map, ini_pop, seed,
-                 vis_years=1, ymax_animals=None, cmax_animals=None, hist_specs=None,
-                 img_years=None, img_dir=None, img_base=None, img_fmt='png',
+    def __init__(self,
+                 island_map,
+                 ini_pop,
+                 seed,
+                 vis_years=1,
+                 ymax_animals=None,
+                 cmax_animals=None,
+                 hist_specs=None,
+                 img_years=None,
+                 img_dir=None,
+                 img_base=None,
+                 img_fmt='png',
                  log_file=None):
         """
         Parameters
@@ -76,6 +86,7 @@ class BioSim:
 
         - `img_dir` and `img_base` must either be both None or both strings.
         """
+        random.seed(seed)
 
     def set_animal_parameters(self, species, params):
         """
