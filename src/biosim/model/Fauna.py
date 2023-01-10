@@ -1,9 +1,12 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
+
 import math
+import random
 
 import Parameters
+from biosim.exception import NotToBeUsedException
 
 
 class Fauna:
@@ -57,14 +60,18 @@ class Fauna:
             except Exception:
                 print(f"[{key}:{value}] is invalid, ignoring it.")
 
+    @staticmethod
+    def weight_of_baby(mean, sd):
+        return random.lognormvariate(mean, sd)
+
     def __init__(self, age=0, weight=0):
         self._age = age
         self._weight = weight
-        self._fitness = self.fitness()
+        self._fitness = self.calculate_fitness()
 
     @property
-    def fitness(self):
-        """Calculate the fitness of the animal and assignes the value to the parameter _fitness."""
+    def calculate_fitness(self):
+        """Calculate fitness."""
         if self._weight <= 0:
             return 0
         q_plus = 1 / (
@@ -73,17 +80,46 @@ class Fauna:
                 1 + (math.e ** -(self._params.phi_weight * (self._weight - self._params.w_half))))
         return q_plus * q_minus
 
+    # possible methods:
 
-# possible methods:
-def procreate(self):
-    pass
+    def new_animal(self, param, w_baby):
+        raise NotToBeUsedException
+
+    def _change_weight(self, by_amount):
+        self._weight = max(self._weight + by_amount, 0)
+
+    # 1
+    def procreate(self, N: int):
+        # a:
+        if self._weight < self._params.zeta * (self._params.w_birth + self._params.sigma_birth):
+            return None
+        # b,c:
+        prob = min(1, self._params.gamma * self._fitness * N)
+        # weight of baby:
+        w_baby = Fauna.weight_of_baby(self._params.w_birth, self._params.sigma_birth)
+        # d:
+        xi_w_baby = self._params.xi * w_baby
+        if self._weight < xi_w_baby:
+            return None
+        self._change_weight(-xi_w_baby)
+        return self.new_animal(0, w_baby) if random.random() < prob else None
+
+    # 4.
+    def get_older(self):
+        self._age += 1
+
+    # 5.
+    def lose_weight(self):
+        self._change_weight(-self._params.eta * self._params.omega)
+
+    # 6.
+    def maybe_die(self) -> bool:
+        if self._weight <= 0:
+            return True
+        else:
+            return random.random() < self._weight * (1 - self._fitness)
 
 
-# get older
-# lose weight at the end of the year
-# procreate
-# eats
-# dies
 class Herbivore(Fauna):
     """
     A class used to represent a Herbivore as a type under the superclass Fauna.
@@ -123,6 +159,23 @@ class Herbivore(Fauna):
         """
         super().__init__(age, weight)
 
+    def new_animal(self, age, weight):
+        return Herbivore(age, weight)
+
+    # 2.
+    def feed(self, start_fodder):
+        """
+        Return the amount of remaining fodder.
+        """
+        if self._params.F <= start_fodder:
+            eat_fodder = self._params.F
+            remaining_fodder = start_fodder - eat_fodder
+        else:
+            eat_fodder = start_fodder
+            remaining_fodder = 0
+        self._change_weight(self._params.beta * eat_fodder)
+        return remaining_fodder
+
 
 class Carnivore(Fauna):
     _params = Parameters.Fauna(w_birth=6,
@@ -143,3 +196,8 @@ class Carnivore(Fauna):
 
     def __init__(self, age: int = 0, weight: int = 0):
         super().__init__(age, weight)
+
+    def new_animal(self, age, weight):
+        return Carnivore(age, weight)
+
+    # TODO feed() on herbivores.
