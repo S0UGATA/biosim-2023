@@ -7,6 +7,43 @@ import Parameters
 
 
 class Fauna:
+    """
+    A super class used to represent each species on Rossumøya: herbivores and carnivores
+    ...
+
+    Attributes
+    -----------
+    _params: Parameters.Fauna
+    A parameter which contains all the specified parameters for Fauna, imported from the module
+    Parameters.py, where the type is Fauna.
+
+    Methods
+    -----------
+    set_animal_parameters(cls, params: {})
+    A class method that changes the default values for the aninmal parameters. The user can change
+    any of the values, and as many as preferred, before the simulation is started.
+
+    fitness(self):
+    Method that changes the fitness for each animal, which describes the overall condition of
+    the animal. The value changes each annual cycle, calculated based on age and weight using
+    the formula (3) and equation values are given by formula (4).
+    # TODO Add the formula in the description, or refer to it in another way
+
+    procreate()
+
+    feed()
+
+    migrate()
+
+    aging()
+
+    weightloss()
+
+    death()
+
+    """
+
+
     _params: Parameters.Fauna
 
     @classmethod
@@ -48,6 +85,16 @@ def procreate(self):
 # eats
 # dies
 class Herbivore(Fauna):
+    """
+    A class used to represent a Herbivore as a type under the superclass Fauna.
+    ...
+
+    Attributes
+    ----------
+    _params = Parameteres.Fauna()
+    The default parameters that defines a Herbivore.
+
+    """
     _params = Parameters.Fauna(w_birth=8,
                                sigma_birth=1.5,
                                beta=0.9,
@@ -65,6 +112,15 @@ class Herbivore(Fauna):
                                DeltaPhiMax=None)
 
     def __init__(self, age: int = 0, weight: int = 0):
+        """
+
+        Parameters
+        ----------
+        age: int
+
+
+        weight: int
+        """
         super().__init__(age, weight)
 
 
