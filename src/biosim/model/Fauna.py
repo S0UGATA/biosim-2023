@@ -9,6 +9,17 @@ import Parameters
 class Fauna:
     _params: Parameters.Fauna
 
+    @classmethod
+    def set_animal_parameters(cls, params: {}):
+        for key, value in params.items():
+            try:
+                if cls._params.key is not None:
+                    cls._params.key = value
+                else:
+                    print(f"[{key}:{value}] is invalid, ignoring it.")
+            except Exception:
+                print(f"[{key}:{value}] is invalid, ignoring it.")
+
     def __init__(self, age=0, weight=0):
         self._age = age
         self._weight = weight
@@ -25,16 +36,10 @@ class Fauna:
                 1 + (math.e ** -(self._params.phi_weight * (self._weight - self._params.w_half))))
         return q_plus * q_minus
 
-    @classmethod
-    def override_params(cls, params: {}):
-        for key, value in params.items():
-            try:
-                cls._params.key = value
-            except Exception:
-                print(f"[{key}:{value}] is invalid, ignoring it.")
-
 
 # possible methods:
+def procreate(self):
+    pass
 
 
 # get older
@@ -59,8 +64,7 @@ class Herbivore(Fauna):
                                F=10,
                                DeltaPhiMax=None)
 
-    def __init__(self, age: int = 0, weight: int = 0, params: {} = None):
-        self.override_params(params)
+    def __init__(self, age: int = 0, weight: int = 0):
         super().__init__(age, weight)
 
 
@@ -81,6 +85,5 @@ class Carnivore(Fauna):
                                F=50,
                                DeltaPhiMax=10)
 
-    def __init__(self, age: int = 0, weight: int = 0, params: {} = None):
-        self.override_params(params)
+    def __init__(self, age: int = 0, weight: int = 0):
         super().__init__(age, weight)
