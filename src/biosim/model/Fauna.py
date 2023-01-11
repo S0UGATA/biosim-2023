@@ -24,7 +24,7 @@ class Fauna:
     Methods
     -----------
     set_animal_parameters(cls, params: {})
-    A class method that changes the default values for the aninmal parameters. The user can change
+    A class method that changes the default values for the animal parameters. The user can change
     any of the values, and as many as preferred, before the simulation is started.
 
     weight_of_baby(mean, sd)
@@ -41,7 +41,7 @@ class Fauna:
     Method that is used to create a new animal of type Herbivore or Carnivore.
 
     _change_weight(self, by_amount)
-    Private method that calculates the new weight of an animal. The current weight either decreseas
+    Private method that calculates the new weight of an animal. The current weight either decreases
     or increases, but if a decrease results in a negative value the weight is set to 0.
 
     procreate(self, N: int)
@@ -52,7 +52,7 @@ class Fauna:
      at the start of the breeding season. The gamma value is set before the simulation, either
      by user or by default, and the fitness is calculated by the method calculate_fitness(self).
      c) Each animal can give birth to at most one offspring per year.
-     d) At birth, the parent loses xi times the actual birthweight of the baby.
+     d) At birth, the parent loses xi times the actual birth-weight of the baby.
      e) If the parent would lose more than their own weight, no baby is born and the weight of the
      parent remains unchanged.
 
@@ -218,7 +218,7 @@ class Herbivore(Fauna):
 
     Attributes
     ----------
-    _params = Parameteres.Fauna()
+    _params = FaunaParam
     The default parameters that defines a Herbivore.
 
     """

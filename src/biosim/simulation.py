@@ -138,7 +138,7 @@ class BioSim:
         num_years : int
             Number of years to simulate
         """
-        print("Year\tCount")
+        print("Year\tHerbivore Count")
         for year in range(num_years):
             print(f"{year}\t{Herbivore.count()}")
             for row in self._island.cells:

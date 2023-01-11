@@ -2,7 +2,7 @@
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
 from biosim.model.Fauna import Herbivore, Carnivore
-from biosim.model.Geography import Highland, Lowland, Water, Desert
+from biosim.model.Geography import Highland, Lowland, Water, Desert, Geography
 
 
 class UnitArea:
@@ -12,24 +12,25 @@ class UnitArea:
                  geo: str,
                  herbs: list[Herbivore] = None,
                  carns: list[Carnivore] = None):
+        self._geo = UnitArea._find_geo(geo)
         self._loc = loc
-        self.find_geo(geo)
         self._herbs = herbs if herbs is not None else []
         self._carns = carns if carns is not None else []
 
     def __str__(self):
         return f"{str(self._geo)}-H{len(self._herbs)}-C{len(self._carns)}"
 
-    def find_geo(self, geo):
+    @staticmethod
+    def _find_geo(geo) -> Geography:
         match geo:
             case "H":
-                self._geo = Highland()
+                return Highland()
             case "L":
-                self._geo = Lowland()
+                return Lowland()
             case "W":
-                self._geo = Water()
+                return Water()
             case "D":
-                self._geo = Desert()
+                return Desert()
             case _:
                 raise ValueError(f"Geography {geo} is not a valid value.")
 
