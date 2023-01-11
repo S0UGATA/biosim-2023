@@ -3,7 +3,7 @@ Template for BioSim class.
 """
 import random
 
-from biosim.exception.BadInputException import BadInputException
+from biosim.model.Fauna import Herbivore, Carnivore
 from biosim.model.Rossumoya import Rossumoya
 from biosim.model.UnitArea import UnitArea
 
@@ -11,17 +11,6 @@ from biosim.model.UnitArea import UnitArea
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Hans Ekkehard Plesser / NMBU
-
-
-def _make_island(island_map) -> Rossumoya:
-    if island_map is None:
-        raise BadInputException("No Island")
-    island_cells = []
-    island_cells.extend(
-        [UnitArea((r + 1, c + 1), value) for c, value in enumerate(rows)]
-        for r, rows in enumerate(island_map.splitlines())
-    )
-    return Rossumoya(island_cells)
 
 
 class BioSim:
@@ -102,7 +91,9 @@ class BioSim:
         - `img_dir` and `img_base` must either be both None or both strings.
         """
         random.seed(seed)
-        self.rossumoya = _make_island(island_map)
+        self._make_island(island_map)
+        self._populate_island(ini_pop)
+        print(self._island)
 
     def set_animal_parameters(self, species, params):
         """
@@ -147,6 +138,37 @@ class BioSim:
         num_years : int
             Number of years to simulate
         """
+        print("Year\tCount")
+        for year in range(num_years):
+            print(f"{year}\t{Herbivore.count()}")
+            for row in self._island.cells:
+                for cell in row:
+                    # Procreate:
+                    no_herbs = len(cell.herbs)
+                    babies = []
+                    for herb in cell.herbs:
+                        # Recalculate fitness???
+                        herb._fitness = herb.calculate_fitness()
+                        baby = herb.procreate(no_herbs)
+                        if baby is not None:
+                            babies.append(baby)
+                    if babies:
+                        cell.add_herbs(babies)
+                    # Feed:
+                    remaining_fodder = cell.geo.params.f_max
+                    herb_indices = [*range(len(cell.herbs))]
+                    random.shuffle(herb_indices)
+                    for index in herb_indices:
+                        if remaining_fodder <= 0:
+                            break
+                        remaining_fodder = cell.herbs[index].feed_and_gain_weight(remaining_fodder)
+                    # TODO Migrate
+                    # Aging
+                    [herb.get_older() for herb in cell.herbs]
+                    # Lose weight
+                    [herb.lose_weight() for herb in cell.herbs]
+                    # Die maybe
+                    cell._herbs = [herb for herb in cell.herbs if not herb.maybe_die()]
 
     def add_population(self, population):
         """
@@ -172,3 +194,32 @@ class BioSim:
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
+
+    def _make_island(self, island_map):
+        if island_map is None:
+            raise ValueError("No Island")
+        island_cells = []
+        island_cells.extend(
+            [UnitArea((r + 1, c + 1), value) for c, value in enumerate(rows)]
+            for r, rows in enumerate(island_map.splitlines())
+        )
+        self._island = Rossumoya(island_cells)
+
+    def _populate_island(self, population: [{}]):
+        if population is None:
+            raise ValueError("No Input population.")
+
+        Herbivore().reset_count()
+        Carnivore().reset_count()
+
+        for cell_info in population:
+            row, col = cell_info.get("loc")
+            unit_area: UnitArea = self._island.cells[row - 1][col - 1]
+            for pop in cell_info.get("pop"):
+                match pop.get("species"):
+                    case "Herbivore":
+                        unit_area.add_herb(Herbivore(pop.get("age"), pop.get("weight")))
+                    case "Carnivore":
+                        unit_area.add_carn(Carnivore(pop.get("age"), pop.get("weight")))
+                    case _:
+                        raise ValueError("Unknown species.")

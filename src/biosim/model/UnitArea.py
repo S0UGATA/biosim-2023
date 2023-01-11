@@ -2,14 +2,10 @@
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
 from biosim.model.Fauna import Herbivore, Carnivore
-from biosim.model.Geography import Geography, Highland, Lowland, Water, Desert
+from biosim.model.Geography import Highland, Lowland, Water, Desert
 
 
 class UnitArea:
-    _loc: tuple[int, int]
-    _geo: Geography
-    _herbs: list[Herbivore]
-    _carns: list[Carnivore]
 
     def __init__(self,
                  loc: tuple,
@@ -21,6 +17,9 @@ class UnitArea:
         self._herbs = herbs if herbs is not None else []
         self._carns = carns if carns is not None else []
 
+    def __str__(self):
+        return f"{str(self._geo)}-H{len(self._herbs)}-C{len(self._carns)}"
+
     def find_geo(self, geo):
         match geo:
             case "H":
@@ -31,10 +30,28 @@ class UnitArea:
                 self._geo = Water()
             case "D":
                 self._geo = Desert()
-            case None:
-                raise ValueError("Geography cannot be empty")
             case _:
                 raise ValueError(f"Geography {geo} is not a valid value.")
 
     def total_pop(self):
         return len(self._herbs) + len(self._carns)
+
+    def add_herb(self, herbivore: Herbivore):
+        self._herbs.append(herbivore)
+
+    def add_herbs(self, herbivores: [Herbivore]):
+        self._herbs.extend(herbivores)
+
+    def add_carn(self, carnivore):
+        self._carns.append(carnivore)
+
+    def add_carns(self, carnivores: [Carnivore]):
+        self._carns.extend(carnivores)
+
+    @property
+    def herbs(self):
+        return self._herbs
+
+    @property
+    def geo(self):
+        return self._geo
