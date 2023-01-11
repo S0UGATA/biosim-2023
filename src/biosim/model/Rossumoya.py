@@ -5,7 +5,13 @@ from biosim.model.UnitArea import UnitArea
 
 
 class Rossumoya:
-    _cells: [[UnitArea]] = [[]]
 
     def __init__(self, cells: [[UnitArea]] = None):
         self._cells = cells if cells is not None else [[UnitArea]]
+
+    def __str__(self):
+        return '\n'.join(['\t|\t'.join([str(col) for col in row]) for row in self._cells])
+
+    @property
+    def cells(self):
+        return self._cells

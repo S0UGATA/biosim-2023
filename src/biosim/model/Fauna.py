@@ -5,12 +5,12 @@
 import math
 import random
 
-from biosim.exception import NotToBeUsedException
 from biosim.model.Parameters import FaunaParam
 
 
 class Fauna:
     _params: FaunaParam
+    _count: int
 
     @classmethod
     def set_animal_parameters(cls, params: {}):
@@ -20,19 +20,24 @@ class Fauna:
                     cls._params.key = value
                 else:
                     print(f"[{key}:{value}] is invalid, ignoring it.")
-            except Exception:
+            except ValueError:
                 print(f"[{key}:{value}] is invalid, ignoring it.")
 
     @staticmethod
-    def weight_of_baby(mean, sd):
+    def weight_of_baby(mean_birth, sd_birth):
+        mu2 = mean_birth ** 2
+        sd2 = sd_birth ** 2
+        mean = math.log(mu2 / math.sqrt(mu2 + sd2))
+        sd = math.sqrt(math.log(1 + (mu2 / sd2)))
         return random.lognormvariate(mean, sd)
 
     def __init__(self, age=0, weight=0):
         self._age = age
         self._weight = weight
-        self._fitness = self._calculate_fitness()
+        self._fitness = self.calculate_fitness()
+        self.increase_count()
 
-    def _calculate_fitness(self):
+    def calculate_fitness(self):
         """Calculate fitness."""
         if self._weight <= 0:
             return 0
@@ -45,7 +50,7 @@ class Fauna:
     # possible methods:
 
     def new_animal(self, age, weight):
-        raise NotToBeUsedException
+        return type(self)(age, weight)
 
     def _change_weight(self, by_amount):
         self._weight = max(self._weight + by_amount, 0)
@@ -64,7 +69,7 @@ class Fauna:
         if self._weight < xi_w_baby:
             return None
         self._change_weight(-xi_w_baby)
-        return self.new_animal(0, w_baby) if random.random() < prob else None
+        return self.new_animal(0, w_baby) if random.random() <= prob else None
 
     # 4.
     def get_older(self):
@@ -72,14 +77,34 @@ class Fauna:
 
     # 5.
     def lose_weight(self):
-        self._change_weight(-self._params.eta * self._params.omega)
+        self._change_weight(-self._weight * self._params.eta * self._params.omega)
 
     # 6.
     def maybe_die(self) -> bool:
+        die: bool
         if self._weight <= 0:
-            return True
+            die = True
         else:
-            return random.random() < self._weight * (1 - self._fitness)
+            die = random.random() <= self._params.omega * (1 - self._fitness)
+        if die:
+            self.decrease_count()
+        return die
+
+    @classmethod
+    def decrease_count(cls):
+        cls._count -= 1
+
+    @classmethod
+    def increase_count(cls):
+        cls._count += 1
+
+    @classmethod
+    def count(cls):
+        return cls._count
+
+    @classmethod
+    def reset_count(cls):
+        cls._count = 0
 
 
 class Herbivore(Fauna):
@@ -98,15 +123,13 @@ class Herbivore(Fauna):
                          omega=0.4,
                          F=10,
                          DeltaPhiMax=None)
+    _count: int = 0
 
     def __init__(self, age: int = 0, weight: int = 0):
         super().__init__(age, weight)
 
-    def new_animal(self, age, weight):
-        return Herbivore(age, weight)
-
     # 2.
-    def feed(self, start_fodder):
+    def feed_and_gain_weight(self, start_fodder) -> int:
         """
         Return the amount of remaining fodder.
         """
@@ -136,11 +159,9 @@ class Carnivore(Fauna):
                          omega=0.8,
                          F=50,
                          DeltaPhiMax=10)
+    _count = 0
 
     def __init__(self, age: int = 0, weight: int = 0):
         super().__init__(age, weight)
-
-    def new_animal(self, age, weight):
-        return Carnivore(age, weight)
 
     # TODO feed() on herbivores.

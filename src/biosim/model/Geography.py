@@ -14,10 +14,13 @@ class Geography:
     def __init__(self, fodder=None):
         if fodder is not None:
             self.initialize_fodder_max(fodder)
-        self.f_current = self._params.f_max
 
-    def reset_f_current(self):
-        self.f_current = self._params.f_max
+    def __str__(self):
+        return self.__class__.__name__[0]
+
+    @property
+    def params(self):
+        return self._params
 
 
 class Highland(Geography):
