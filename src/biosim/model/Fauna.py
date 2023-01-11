@@ -168,7 +168,7 @@ class Fauna:
     # 4.
     def get_older(self):
         """
-        Adds one year to an animals age
+        Adds one year to an animal's age
         """
         self._age += 1
 
@@ -176,7 +176,6 @@ class Fauna:
     def lose_weight(self):
         """
         Decreases the weight of an animal
-
         """
         self._change_weight(-self._params.eta * self._params.omega)
 
