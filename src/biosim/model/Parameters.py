@@ -7,7 +7,7 @@ class Parameters:
     pass
 
 
-class Fauna(Parameters):
+class FaunaParam(Parameters):
     def __init__(self,
                  w_birth,
                  sigma_birth,
@@ -41,6 +41,6 @@ class Fauna(Parameters):
         self.DeltaPhiMax = DeltaPhiMax
 
 
-class Geography(Parameters):
+class GeoParam(Parameters):
     def __init__(self, f_max):
         self.f_max = f_max

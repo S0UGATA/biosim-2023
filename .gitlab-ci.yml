@@ -27,4 +27,4 @@ before_script:
 test-code-style:
   stage: test
   script:
-    - flake8 src tests
+    - flake8 src tests examples

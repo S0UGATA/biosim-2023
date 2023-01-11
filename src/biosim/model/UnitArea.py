@@ -1,36 +1,36 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
-import Fauna
-import Geography
+from biosim.model.Fauna import Herbivore, Carnivore
+from biosim.model.Geography import Geography, Highland, Lowland, Water, Desert
 
 
 class UnitArea:
     _loc: tuple[int, int]
     _geo: Geography
-    _herbs: list[Fauna.Herbivore]
-    _carns: list[Fauna.Carnivore]
+    _herbs: list[Herbivore]
+    _carns: list[Carnivore]
 
     def __init__(self,
                  loc: tuple,
                  geo: str,
-                 herbs: list[Fauna.Herbivore] = None,
-                 carns: list[Fauna.Carnivore] = None):
+                 herbs: list[Herbivore] = None,
+                 carns: list[Carnivore] = None):
         self._loc = loc
-        self._geo = self.find_geo(geo)
+        self.find_geo(geo)
         self._herbs = herbs if herbs is not None else []
         self._carns = carns if carns is not None else []
 
     def find_geo(self, geo):
         match geo:
             case "H":
-                self._geo = Geography.Highland()
+                self._geo = Highland()
             case "L":
-                self._geo = Geography.Lowland()
+                self._geo = Lowland()
             case "W":
-                self._geo = Geography.Water()
+                self._geo = Water()
             case "D":
-                self._geo = Geography.Desert()
+                self._geo = Desert()
             case None:
                 raise ValueError("Geography cannot be empty")
             case _:

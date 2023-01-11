@@ -5,8 +5,8 @@
 import math
 import random
 
-import Parameters
 from biosim.exception import NotToBeUsedException
+from biosim.model.Parameters import FaunaParam
 
 
 class Fauna:
@@ -68,9 +68,8 @@ class Fauna:
      weight is equal to zero, death definitely follows. Then there is a probability condition, set
      by the following equation: omega(1 - fitness).
     """
+    _params: FaunaParam
 
-
-    _params: Parameters.Fauna
 
     @classmethod
     def set_animal_parameters(cls, params: {}):
@@ -104,10 +103,9 @@ class Fauna:
     def __init__(self, age=0, weight=0):
         self._age = age
         self._weight = weight
-        self._fitness = self.calculate_fitness()
+        self._fitness = self._calculate_fitness()
 
-    @property
-    def calculate_fitness(self):
+    def _calculate_fitness(self):
         """
         Calculate and return the fitness of an animal
         """
@@ -121,7 +119,7 @@ class Fauna:
 
     # possible methods:
 
-    def new_animal(self, param, w_baby):
+    def new_animal(self, age, weight):
         """
         Create a new animal
 
@@ -204,21 +202,21 @@ class Herbivore(Fauna):
     The default parameters that defines a Herbivore.
 
     """
-    _params = Parameters.Fauna(w_birth=8,
-                               sigma_birth=1.5,
-                               beta=0.9,
-                               eta=0.05,
-                               a_half=40,
-                               phi_age=0.6,
-                               w_half=10,
-                               phi_weight=0.1,
-                               mu=0.25,
-                               gamma=0.2,
-                               zeta=3.5,
-                               xi=1.2,
-                               omega=0.4,
-                               F=10,
-                               DeltaPhiMax=None)
+    _params = FaunaParam(w_birth=8,
+                         sigma_birth=1.5,
+                         beta=0.9,
+                         eta=0.05,
+                         a_half=40,
+                         phi_age=0.6,
+                         w_half=10,
+                         phi_weight=0.1,
+                         mu=0.25,
+                         gamma=0.2,
+                         zeta=3.5,
+                         xi=1.2,
+                         omega=0.4,
+                         F=10,
+                         DeltaPhiMax=None)
 
     def __init__(self, age: int = 0, weight: int = 0):
         """
@@ -251,21 +249,21 @@ class Herbivore(Fauna):
 
 
 class Carnivore(Fauna):
-    _params = Parameters.Fauna(w_birth=6,
-                               sigma_birth=1,
-                               beta=0.75,
-                               eta=0.125,
-                               a_half=40,
-                               phi_age=0.3,
-                               w_half=4,
-                               phi_weight=0.4,
-                               mu=0.4,
-                               gamma=0.8,
-                               zeta=3.5,
-                               xi=1.1,
-                               omega=0.8,
-                               F=50,
-                               DeltaPhiMax=10)
+    _params = FaunaParam(w_birth=6,
+                         sigma_birth=1,
+                         beta=0.75,
+                         eta=0.125,
+                         a_half=40,
+                         phi_age=0.3,
+                         w_half=4,
+                         phi_weight=0.4,
+                         mu=0.4,
+                         gamma=0.8,
+                         zeta=3.5,
+                         xi=1.1,
+                         omega=0.8,
+                         F=50,
+                         DeltaPhiMax=10)
 
     def __init__(self, age: int = 0, weight: int = 0):
         super().__init__(age, weight)
