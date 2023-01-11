@@ -94,8 +94,8 @@ class Fauna:
 
         Parameters
         ----------
-        mean: int
-        sd: int
+        mean_birth: float
+        sd_birth: float
         """
         mu2 = mean_birth ** 2
         sd2 = sd_birth ** 2
@@ -103,7 +103,7 @@ class Fauna:
         sd = math.sqrt(math.log(1 + (mu2 / sd2)))
         return random.lognormvariate(mean, sd)
 
-    def __init__(self, age=0, weight=0):
+    def __init__(self, age=0, weight=0.):
         self._age = age
         self._weight = weight
         self._fitness = self.calculate_fitness()
@@ -130,7 +130,7 @@ class Fauna:
         Parameters
         ----------
         age: int
-        weight: int
+        weight: float
 
         """
         return type(self)(age, weight)
@@ -141,25 +141,25 @@ class Fauna:
 
         Parameters
         ----------
-        by_amount: int
+        by_amount: float
         """
         self._weight = max(self._weight + by_amount, 0)
 
-    # 1
-    def procreate(self, N: int):
+    def procreate(self, number_of_animals: int):
         """
         Procreation of new animals. An offspring is produced based on five different conditions.
 
         Parameters
         ----------
-        N: int
-
+        number_of_animals: int
         """
+        # Re calculate fitness before procreation:
+        self._fitness = self.calculate_fitness()
         # a:
         if self._weight < self._params.zeta * (self._params.w_birth + self._params.sigma_birth):
             return None
         # b,c:
-        prob = min(1, self._params.gamma * self._fitness * N)
+        prob = min(1, self._params.gamma * self._fitness * number_of_animals)
         # weight of baby:
         w_baby = Fauna.weight_of_baby(self._params.w_birth, self._params.sigma_birth)
         # d:
@@ -169,22 +169,18 @@ class Fauna:
         self._change_weight(-xi_w_baby)
         return self.new_animal(0, w_baby) if random.random() <= prob else None
 
-    # 4.
     def get_older(self):
         """
         Adds one year to an animals age
         """
         self._age += 1
 
-    # 5.
     def lose_weight(self):
         """
         Decreases the weight of an animal
-
         """
         self._change_weight(-self._weight * self._params.eta * self._params.omega)
 
-    # 6.
     def maybe_die(self) -> bool:
         """
         Check if an animal is likely to die or not, returning either true or false
