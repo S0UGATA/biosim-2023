@@ -91,8 +91,8 @@ class BioSim:
         - `img_dir` and `img_base` must either be both None or both strings.
         """
         random.seed(seed)
-        self._make_island(island_map)
-        self._populate_island(ini_pop)
+        self._island = Rossumoya(island_map)
+        self._island.populate_island(ini_pop)
         print(self._island)
 
     def set_animal_parameters(self, species, params):
@@ -145,7 +145,7 @@ class BioSim:
                 for cell in row:
                     cell.make_babies()
                     cell.eat()
-                    cell.wander_away( self._island.cells)
+                    cell.wander_away(self._island.cells)
                     cell.grow_old()
                     cell.get_thin()
                     cell.maybe_die()
@@ -174,32 +174,3 @@ class BioSim:
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
-
-    def _make_island(self, island_map):
-        if island_map is None:
-            raise ValueError("No Island")
-        island_cells = []
-        island_cells.extend(
-            [UnitArea((r + 1, c + 1), value) for c, value in enumerate(rows)]
-            for r, rows in enumerate(island_map.splitlines())
-        )
-        self._island = Rossumoya(island_cells)
-
-    def _populate_island(self, population: [{}]):
-        if population is None:
-            raise ValueError("No Input population.")
-
-        Herbivore().reset_count()
-        Carnivore().reset_count()
-
-        for cell_info in population:
-            row, col = cell_info.get("loc")
-            unit_area: UnitArea = self._island.cells[row - 1][col - 1]
-            for pop in cell_info.get("pop"):
-                match pop.get("species"):
-                    case "Herbivore":
-                        unit_area.add_herb(Herbivore(pop.get("age"), pop.get("weight")))
-                    case "Carnivore":
-                        unit_area.add_carn(Carnivore(pop.get("age"), pop.get("weight")))
-                    case _:
-                        raise ValueError("Unknown species.")
