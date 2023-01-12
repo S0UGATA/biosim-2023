@@ -28,8 +28,8 @@ class Rossumoya:
         if population is None:
             raise ValueError("No Input population.")
 
-        Herbivore().reset_count()
-        Carnivore().reset_count()
+        Herbivore.reset_count()
+        Carnivore.reset_count()
 
         for cell_info in population:
             row, col = cell_info.get("loc")

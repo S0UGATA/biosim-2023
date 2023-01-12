@@ -9,6 +9,7 @@ import sys
 import textwrap
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
@@ -26,7 +27,7 @@ ini_herbs = [{'loc': (2, 2),
                        'weight': 20}
                       for _ in range(50)]}]
 
-for seed in range(100, 150):
+for seed in range(100, 111):
     sim = BioSim(geogr, ini_herbs, seed=seed,
                  log_file=f'reference_examples/data/mono_ho_{seed:05d}',
                  img_dir='results',
@@ -36,6 +37,7 @@ for seed in range(100, 150):
 
 # Analyze logs:
 data = []
+plt.rcParams['figure.figsize'] = (12, 6)
 for logfile in Path(f"{sys.path[1]}/reference_examples/data").glob('mono_ho_*.csv'):
     d = pd.read_csv(logfile, skiprows=1, usecols=[0, 1], index_col=0,
                     names=['Year', 'Herbivores'])
@@ -44,4 +46,14 @@ for logfile in Path(f"{sys.path[1]}/reference_examples/data").glob('mono_ho_*.cs
 hd = pd.concat(data).pivot(columns='Seed')
 print(hd.head())
 hd.Herbivores.plot(legend=False, alpha=0.8)
+plt.show()
+
+hd_eq = hd.loc[hd.index >= 100, :]
+print(f"Mean list: {hd_eq.mean()}")
+print(f"Std list: {hd_eq.std()}")
+print(f"Mean: {hd_eq.unstack().mean()}")
+print(f"Std: {hd_eq.unstack().std()}")
+
+bins = np.arange(180, 350, 2)
+plt.hist(hd_eq.Herbivores.unstack(), bins=bins, fc='b', histtype='stepfilled', alpha=0.4);
 plt.show()

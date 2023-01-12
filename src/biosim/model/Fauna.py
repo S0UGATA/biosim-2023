@@ -123,7 +123,9 @@ class Fauna:
                 1 + (math.e ** (self._params.phi_age * (self._age - self._params.a_half))))
         q_minus = 1 / (
                 1 + (math.e ** -(self._params.phi_weight * (self._weight - self._params.w_half))))
-        return q_plus * q_minus
+        fitness = q_plus * q_minus
+        assert 0 <= fitness <= 1
+        return fitness
 
     # possible methods:
 
@@ -158,7 +160,7 @@ class Fauna:
         number_of_animals: int
         """
         # Re calculate fitness before procreation:
-        self._fitness = self.calculate_fitness()
+        # self._fitness = self.calculate_fitness()
         # a:
         if self._weight < self._params.zeta * (self._params.w_birth + self._params.sigma_birth):
             return None
@@ -171,7 +173,7 @@ class Fauna:
         if self._weight < xi_w_baby:
             return None
         self._change_weight(-xi_w_baby)
-        return self.new_animal(0, w_baby) if random.random() <= prob else None
+        return self.new_animal(0, w_baby) if random.random() < prob else None
 
     def get_older(self):
         """
@@ -189,11 +191,13 @@ class Fauna:
         """
         Check if an animal is likely to die or not, returning either true or false
         """
+        # Re calculate fitness before dying:
+        self._fitness = self.calculate_fitness()
         die: bool
         if self._weight <= 0:
             die = True
         else:
-            die = random.random() <= self._params.omega * (1 - self._fitness)
+            die = random.random() < self._params.omega * (1 - self._fitness)
         if die:
             self.decrease_count()
         return die
@@ -245,13 +249,11 @@ class Herbivore(Fauna):
     _params = _default_params
     _count: int = 0
 
-    def __init__(self, age: int = 0, weight: int = 0):
+    def __init__(self, age: int = 0, weight: int = 0.):
         """
-
         Parameters
         ----------
         age: int
-
 
         weight: int
         """
