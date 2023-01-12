@@ -1,7 +1,9 @@
 """
 Template for BioSim class.
 """
+import csv
 import random
+import sys
 
 from biosim.model.Fauna import Herbivore
 from biosim.model.Rossumoya import Rossumoya
@@ -89,10 +91,18 @@ class BioSim:
 
         - `img_dir` and `img_base` must either be both None or both strings.
         """
-        random.seed(seed)
         self._island = Rossumoya(island_map)
         self._island.populate_island(ini_pop)
-        print(self._island)
+        random.seed(seed)
+        self._vis_years = vis_years
+        self._ymax_animals = ymax_animals
+        self._cmax_animals = cmax_animals
+        self._hist_specs = hist_specs
+        self._img_years = img_years
+        self._img_dir = img_dir
+        self._img_base = img_base
+        self._img_fmt = img_fmt
+        self._log_file = log_file
 
     def set_animal_parameters(self, species, params):
         """
@@ -137,9 +147,16 @@ class BioSim:
         num_years : int
             Number of years to simulate
         """
-        print("Year\tHerbivore Count")
+        csvfile = None
+        writer = None
+        if self._log_file is not None:
+            csvfile = open(f"{sys.path[1]}/{self._log_file}.csv", 'w', newline="")
+            writer = csv.writer(csvfile, delimiter=',')
+            writer.writerow(["Year", "Herbivore Count"])
+
         for year in range(num_years):
-            print(f"{year}\t{Herbivore.count()}")
+            if self._log_file is not None:
+                writer.writerow([year, Herbivore.count()])
             for row in self._island.cells:
                 for cell in row:
                     cell.make_babies()
@@ -148,6 +165,11 @@ class BioSim:
                     cell.grow_old()
                     cell.get_thin()
                     cell.maybe_die()
+
+        if self._log_file is not None:
+            csvfile.flush()
+            csvfile.close()
+
 
     def add_population(self, population):
         """

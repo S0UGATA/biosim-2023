@@ -615,3 +615,4 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/python,jupyternotebooks,pycharm,latex,macos,windows,linux
 
 pytest_results.xml
+/reference_examples/data/
