@@ -3,9 +3,8 @@ Template for BioSim class.
 """
 import random
 
-from biosim.model.Fauna import Herbivore, Carnivore
+from biosim.model.Fauna import Herbivore
 from biosim.model.Rossumoya import Rossumoya
-from biosim.model.UnitArea import UnitArea
 
 
 # The material in this file is licensed under the BSD 3-clause license

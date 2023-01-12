@@ -28,3 +28,14 @@ test-code-style:
   stage: test
   script:
     - flake8 src tests examples
+
+test-tox:
+  stage: test
+  script:
+    - tox
+  artifacts:
+    when: always
+    paths:
+      - "$CI_PROJECT_DIR/tests/pytest_results.xml"
+    reports:
+      junit: "$CI_PROJECT_DIR/tests/pytest_results.xml"

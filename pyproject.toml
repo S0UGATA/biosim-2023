@@ -1,0 +1,9 @@
+# Tell Python build system about required tools.
+# Leave unchanged.
+
+[build-system]
+requires = [
+    "setuptools",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
