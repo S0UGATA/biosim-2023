@@ -143,50 +143,12 @@ class BioSim:
             print(f"{year}\t{Herbivore.count()}")
             for row in self._island.cells:
                 for cell in row:
-                    BioSim._make_babies(cell)
-                    BioSim._eat(cell)
-                    BioSim._wander_away(cell, self._island.cells)
-                    BioSim._grow_old(cell)
-                    BioSim._get_thin(cell)
-                    BioSim._meet_your_maker(cell)
-
-    @staticmethod
-    def _make_babies(cell):
-        no_herbs = len(cell.herbs)
-        babies = []
-        for herb in cell.herbs:
-            baby = herb.procreate(no_herbs)
-            if baby is not None:
-                babies.append(baby)
-        if babies:
-            cell.add_herbs(babies)
-
-    @staticmethod
-    def _eat(cell):
-        remaining_fodder = cell.geo.params.f_max
-        herb_indices = [*range(len(cell.herbs))]
-        random.shuffle(herb_indices)
-        for index in herb_indices:
-            if remaining_fodder <= 0:
-                break
-            remaining_fodder = cell.herbs[index].feed_and_gain_weight(remaining_fodder)
-
-    @staticmethod
-    def _grow_old(cell):
-        [herb.get_older() for herb in cell.herbs]
-
-    @staticmethod
-    def _get_thin(cell):
-        [herb.lose_weight() for herb in cell.herbs]
-
-    @staticmethod
-    def _meet_your_maker(cell):
-        cell._herbs = [herb for herb in cell.herbs if not herb.maybe_die()]
-
-    @staticmethod
-    def _wander_away(cell, cells):
-        # TODO migration
-        pass
+                    cell.make_babies()
+                    cell.eat()
+                    cell.wander_away( self._island.cells)
+                    cell.grow_old()
+                    cell.get_thin()
+                    cell.maybe_die()
 
     def add_population(self, population):
         """

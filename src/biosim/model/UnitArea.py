@@ -1,6 +1,8 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
+import random
+
 from biosim.model.Fauna import Herbivore, Carnivore
 from biosim.model.Geography import Highland, Lowland, Water, Desert, Geography
 
@@ -56,3 +58,35 @@ class UnitArea:
     @property
     def geo(self):
         return self._geo
+
+    def make_babies(self):
+        no_herbs = len(self.herbs)
+        babies = []
+        for herb in self.herbs:
+            baby = herb.procreate(no_herbs)
+            if baby is not None:
+                babies.append(baby)
+        if babies:
+            self.add_herbs(babies)
+
+    def eat(self):
+        remaining_fodder = self.geo.params.f_max
+        herb_indices = [*range(len(self.herbs))]
+        random.shuffle(herb_indices)
+        for index in herb_indices:
+            if remaining_fodder <= 0:
+                break
+            remaining_fodder = self.herbs[index].feed_and_gain_weight(remaining_fodder)
+
+    def grow_old(self):
+        [herb.get_older() for herb in self.herbs]
+
+    def get_thin(self):
+        [herb.lose_weight() for herb in self.herbs]
+
+    def maybe_die(self):
+        self._herbs = [herb for herb in self.herbs if not herb.maybe_die()]
+
+    def wander_away(self, cells):
+        # TODO migration
+        pass
