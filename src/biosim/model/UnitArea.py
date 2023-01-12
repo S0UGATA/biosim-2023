@@ -8,6 +8,9 @@ from biosim.model.Geography import Highland, Lowland, Water, Desert, Geography
 
 
 class UnitArea:
+    """
+    Class that defines the map/grid of the island.
+    """
 
     def __init__(self,
                  loc: tuple,

@@ -74,6 +74,7 @@ class Fauna:
     def set_animal_parameters(cls, params: {}):
         """
         Set the parameters of an animal, either by default or by the input of a user
+
         Parameters
         ----------
         params: {}
@@ -90,7 +91,7 @@ class Fauna:
     @staticmethod
     def weight_of_baby(mean_birth, sd_birth):
         """
-        Calculate the weight of a newborn animal
+        Calculate the weight of a newborn animal by using the mean and standard deviation
 
         Parameters
         ----------
@@ -111,7 +112,10 @@ class Fauna:
 
     def calculate_fitness(self):
         """
-        Calculate and return the fitness of an animal
+        Calculate and return the fitness of an animal defined by two factors; q_plus and
+        q_minus, defined and used in the following equations:
+        Phi (fitness)  = q(-1, a, a_half, phi_age) * q(1, w, w_half, phi_weight)
+        where a = age, and w = weight.
         """
         if self._weight <= 0:
             return 0
@@ -125,7 +129,7 @@ class Fauna:
 
     def new_animal(self, age, weight):
         """
-        Create a new animal
+        Create a new animal with unput of specified age and weight
 
         Parameters
         ----------
@@ -171,7 +175,7 @@ class Fauna:
 
     def get_older(self):
         """
-        Adds one year to an animals age
+        Adds one year to an animal's age
         """
         self._age += 1
 

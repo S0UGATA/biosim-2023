@@ -4,10 +4,17 @@
 
 
 class Parameters:
+    """
+    Super class containing parameters for the initialization of Fauna and Geography.
+    """
+
     pass
 
 
 class FaunaParam(Parameters):
+    """
+    Child class of Parameters, defining the parameters for Fauna
+    """
     def __init__(self,
                  w_birth,
                  sigma_birth,
@@ -42,5 +49,8 @@ class FaunaParam(Parameters):
 
 
 class GeoParam(Parameters):
+    """
+    Child class of Parameters, defining the parameter(s) for Geography.
+    """
     def __init__(self, f_max):
         self.f_max = f_max
