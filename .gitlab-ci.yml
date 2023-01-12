@@ -36,6 +36,6 @@ test-tox:
   artifacts:
     when: always
     paths:
-      - "$CI_PROJECT_DIR/tests/pytest_results.xml"
+      - "$CI_PROJECT_DIR/pytest_results.xml"
     reports:
-      junit: "$CI_PROJECT_DIR/tests/pytest_results.xml"
+      junit: "$CI_PROJECT_DIR/pytest_results.xml"
