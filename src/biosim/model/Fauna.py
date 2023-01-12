@@ -31,7 +31,7 @@ class Fauna:
     Method that calculates the weight of the newborn from an animal of type Herbivore or Carnivore.
     Parameters are defined beforehand, and changes depending on the Fauna (Herbivore or Carnivore).
 
-    calculate_fitness(self):
+    fitness(self):
     Method that changes the fitness for each animal, which describes the overall condition of
     the animal. The value changes each annual cycle, calculated based on age and weight using
     the formula (3) and equation values are given by formula (4).
@@ -107,10 +107,9 @@ class Fauna:
     def __init__(self, age=0, weight=0.):
         self._age = age
         self._weight = weight
-        self._fitness = self.calculate_fitness()
         self.increase_count()
 
-    def calculate_fitness(self):
+    def fitness(self):
         """
         Calculate and return the fitness of an animal defined by two factors; q_plus and
         q_minus, defined and used in the following equations:
@@ -159,13 +158,11 @@ class Fauna:
         ----------
         number_of_animals: int
         """
-        # Re calculate fitness before procreation:
-        # self._fitness = self.calculate_fitness()
         # a:
         if self._weight < self._params.zeta * (self._params.w_birth + self._params.sigma_birth):
             return None
         # b,c:
-        prob = min(1, self._params.gamma * self._fitness * number_of_animals)
+        prob = min(1, self._params.gamma * self.fitness() * number_of_animals)
         # weight of baby:
         w_baby = Fauna.weight_of_baby(self._params.w_birth, self._params.sigma_birth)
         # d:
@@ -191,13 +188,11 @@ class Fauna:
         """
         Check if an animal is likely to die or not, returning either true or false
         """
-        # Re calculate fitness before dying:
-        self._fitness = self.calculate_fitness()
         die: bool
         if self._weight <= 0:
             die = True
         else:
-            die = random.random() < self._params.omega * (1 - self._fitness)
+            die = random.random() < self._params.omega * (1 - self.fitness())
         if die:
             self.decrease_count()
         return die
