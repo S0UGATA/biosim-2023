@@ -185,7 +185,7 @@ class Fauna:
         """
         Decreases the weight of an animal
         """
-        self._change_weight(-self._weight * self._params.eta * self._params.omega)
+        self._change_weight(-self._weight * self._params.eta)
 
     def maybe_die(self) -> bool:
         """
