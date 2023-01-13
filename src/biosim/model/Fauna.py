@@ -221,8 +221,11 @@ class Herbivore(Fauna):
 
     Attributes
     ----------
-    _params = FaunaParam
+    _default_params = FaunaParam
     The default parameters that defines a Herbivore.
+
+    _count: int = 0
+    Initial count of Herbivores is set to zero.
 
     """
     _default_params = FaunaParam(w_birth=8,
@@ -270,6 +273,18 @@ class Herbivore(Fauna):
 
 
 class Carnivore(Fauna):
+    """
+    A class used to represent a Carnivore as a type under the superclass Fauna.
+    ...
+
+    Attributes
+    ----------
+    _default_params = FaunaParam
+    The default parameters with set values which defines a Carnivore.
+
+    _count = 0
+    Initial count of Carnivores is set to zero.
+    """
     _default_params = FaunaParam(w_birth=6,
                                  sigma_birth=1,
                                  beta=0.75,
