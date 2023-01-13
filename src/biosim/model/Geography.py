@@ -37,6 +37,7 @@ class Geography:
 
     @property
     def params(self):
+        """ Defines the property of the parameters for instances of the Geography class."""
         return self._params
 
 

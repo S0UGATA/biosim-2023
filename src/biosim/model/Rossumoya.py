@@ -6,7 +6,9 @@ from biosim.model.UnitArea import UnitArea
 
 
 class Rossumoya:
-
+    """
+    Class that defines the island, Rossumøya, where the simulation takes place.
+    """
     def __init__(self, island_map):
         if island_map is None:
             raise ValueError("No Island")
@@ -22,9 +24,15 @@ class Rossumoya:
 
     @property
     def cells(self):
+        """ Returns the property of a cell (UnitArea) in the grid of the island. """
         return self._cells
 
     def populate_island(self, population: [{}]):
+        """ Populate the island with the pre-defined amount of animals. The number of animals is
+        defined in mono_ho.py. Loops through all the cells of the island, and populates the cell
+        that is initiated as location in mono_ho.py. Error is raised if an undefined specie
+        is being added.
+         """
         if population is None:
             raise ValueError("No Input population.")
 
