@@ -13,7 +13,7 @@ from biosim.model.Rossumoya import Rossumoya
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Hans Ekkehard Plesser / NMBU
 
-logging.basicConfig(filename=f'{sys.path[1]}/logs/biosim.log',
+logging.basicConfig(filename=f'{sys.path[0]}/biosim.log',
                     format='%(message)s',
                     level=logging.DEBUG)
 

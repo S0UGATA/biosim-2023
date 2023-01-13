@@ -82,7 +82,7 @@ class UnitArea:
         logging.debug("\tEat:")
         remaining_fodder = self.geo.params.f_max
         logging.debug(f"\tStart Fodder:{remaining_fodder}")
-        herb_indices = [*range(len(self.herbs))]
+        herb_indices = list(range(len(self.herbs)))
         random.shuffle(herb_indices)
         for index in herb_indices:
             if remaining_fodder <= 0:
