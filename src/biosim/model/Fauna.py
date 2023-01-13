@@ -90,6 +90,7 @@ class Fauna:
 
     @staticmethod
     def weight_of_baby(mean_birth, sd_birth):
+        print("\t\tweight_of_baby")
         """
         Calculate the weight of a newborn animal by using the mean and standard deviation
 
@@ -98,16 +99,27 @@ class Fauna:
         mean_birth: float
         sd_birth: float
         """
+        print(f"\t\t\tmean_birth:{mean_birth}")
+        print(f"\t\t\tsd_birth:{sd_birth}")
         mu2 = mean_birth ** 2
+        print(f"\t\t\tmu2:{mu2}")
         sd2 = sd_birth ** 2
+        print(f"\t\t\tsd2:{sd2}")
         mean = math.log(mu2 / math.sqrt(mu2 + sd2))
+        print(f"\t\t\tmean:{mean}")
         sd = math.sqrt(math.log(1 + (mu2 / sd2)))
-        return random.lognormvariate(mean, sd)
+        print(f"\t\t\tsd:{sd}")
+        baby_weight = random.lognormvariate(mean, sd)
+        print(f"\t\t\tbaby_weight:{baby_weight}")
+        return baby_weight
 
     def __init__(self, age=0, weight=0.):
         self._age = age
         self._weight = weight
         self.increase_count()
+
+    def __str__(self):
+        return f"A{self._age}-W{self._weight}-F{self.fitness()}"
 
     def fitness(self):
         """
@@ -151,6 +163,7 @@ class Fauna:
         self._weight = max(self._weight + by_amount, 0)
 
     def procreate(self, number_of_animals: int):
+        print("\t\tProcreate")
         """
         Procreation of new animals. An offspring is produced based on five different conditions.
 
@@ -163,14 +176,23 @@ class Fauna:
             return None
         # b,c:
         prob = min(1, self._params.gamma * self.fitness() * number_of_animals)
+        print(f"\t\t\tprob:{prob}")
+        rand = random.random()
+        print(f"\t\t\trand:{rand}")
         # weight of baby:
         w_baby = Fauna.weight_of_baby(self._params.w_birth, self._params.sigma_birth)
+        print(f"\t\t\tw_baby:{w_baby}")
         # d:
         xi_w_baby = self._params.xi * w_baby
+        print(f"\t\t\txi_w_baby:{xi_w_baby}")
+        print(f"\t\t\tself._weight:{self._weight}")
         if self._weight < xi_w_baby:
             return None
         self._change_weight(-xi_w_baby)
-        return self.new_animal(0, w_baby) if random.random() < prob else None
+        print(f"\t\t\tself._weight:{self._weight}")
+        baby = self.new_animal(0, w_baby) if rand < prob else None
+        print(f"\t\t\tBaby:{baby}")
+        return baby
 
     def get_older(self):
         """
@@ -182,9 +204,13 @@ class Fauna:
         """
         Decreases the weight of an animal
         """
-        self._change_weight(-self._weight * self._params.eta * self._params.omega)
+        print("\t\tlose_weight")
+        by = -self._weight * self._params.eta * self._params.omega
+        print(f"\t\t\tBy:{by}")
+        self._change_weight(by)
 
     def maybe_die(self) -> bool:
+        print("\t\tdie")
         """
         Check if an animal is likely to die or not, returning either true or false
         """
@@ -192,9 +218,16 @@ class Fauna:
         if self._weight <= 0:
             die = True
         else:
-            die = random.random() < self._params.omega * (1 - self.fitness())
+            rand = random.random()
+            fitness = self.fitness()
+            prob = self._params.omega * (1 - fitness)
+            print(f"\t\t\trand:{rand}")
+            print(f"\t\t\tfitness:{fitness}")
+            print(f"\t\t\tprob:{prob}")
+            die = rand < prob
         if die:
             self.decrease_count()
+        print(f"\t\t\tdie:{die}")
         return die
 
     @classmethod
@@ -212,6 +245,14 @@ class Fauna:
     @classmethod
     def reset_count(cls):
         cls._count = 0
+
+    @property
+    def age(self):
+        return self._age
+
+    @property
+    def weight(self):
+        return self._weight
 
 
 class Herbivore(Fauna):
@@ -259,13 +300,17 @@ class Herbivore(Fauna):
         """
         Return the amount of remaining fodder.
         """
+        print("\t\tfeed_and_gain_weight")
         if self._params.F <= start_fodder:
             eat_fodder = self._params.F
             remaining_fodder = start_fodder - eat_fodder
         else:
             eat_fodder = start_fodder
             remaining_fodder = 0
+        print(f"\t\t\tWeight before:{self._weight}")
         self._change_weight(self._params.beta * eat_fodder)
+        print(f"\t\t\tWeight after:{self._weight}")
+        print(f"\t\t\tremaining_fodder:{remaining_fodder}")
         return remaining_fodder
 
 

@@ -24,7 +24,7 @@ class Rossumoya:
     def cells(self):
         return self._cells
 
-    def populate_island(self, population: [{}]):
+    def initial_populate_island(self, population: [{}]):
         if population is None:
             raise ValueError("No Input population.")
 

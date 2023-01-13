@@ -27,13 +27,13 @@ ini_herbs = [{'loc': (2, 2),
                        'weight': 20}
                       for _ in range(50)]}]
 
-for seed in range(100, 150):
+for seed in range(100, 103):
     sim = BioSim(geogr, ini_herbs, seed=seed,
                  log_file=f'reference_examples/data/mono_ho_{seed:05d}',
                  img_dir='results',
                  img_base=f'mono_ho_{seed:05d}',
                  img_years=300)
-    sim.simulate(301)
+    sim.simulate(100)
 
 # Analyze logs:
 data = []

@@ -92,7 +92,7 @@ class BioSim:
         - `img_dir` and `img_base` must either be both None or both strings.
         """
         self._island = Rossumoya(island_map)
-        self._island.populate_island(ini_pop)
+        self._island.initial_populate_island(ini_pop)
         random.seed(seed)
         self._vis_years = vis_years
         self._ymax_animals = ymax_animals
@@ -154,22 +154,26 @@ class BioSim:
             writer = csv.writer(csvfile, delimiter=',')
             writer.writerow(["Year", "Herbivore Count"])
 
-        for year in range(num_years):
+        for year in range(1, num_years):
             if self._log_file is not None:
                 writer.writerow([year, Herbivore.count()])
+            print(f"Year:{year}")
             for row in self._island.cells:
                 for cell in row:
+                    if cell.geo.__class__.__name__[0] == "W":
+                        continue
+                    print(f"  Cell:{cell}")
                     cell.make_babies()
                     cell.eat()
                     cell.wander_away(self._island.cells)
                     cell.grow_old()
                     cell.get_thin()
                     cell.maybe_die()
+                    print("-------------")
 
         if self._log_file is not None:
             csvfile.flush()
             csvfile.close()
-
 
     def add_population(self, population):
         """
