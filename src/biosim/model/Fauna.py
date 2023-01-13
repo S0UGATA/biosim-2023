@@ -177,7 +177,7 @@ class Fauna:
 
     def get_older(self):
         """
-        Adds one year to an animal's age
+        Adds one year to the age of an animal
         """
         self._age += 1
 
@@ -192,11 +192,8 @@ class Fauna:
         Check if an animal is likely to die or not, returning either true or false
         """
         die: bool
-        if self._weight <= 0:
-            die = True
-        else:
-            die = random.random() < self._params.omega * (1 - self.fitness())
-        if die:
+        die = random.random() < self._params.omega * (1 - self.fitness())
+        if die or self._weight <= 0:
             self.decrease_count()
         return die
 

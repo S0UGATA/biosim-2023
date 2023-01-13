@@ -170,7 +170,6 @@ class BioSim:
             csvfile.flush()
             csvfile.close()
 
-
     def add_population(self, population):
         """
         Add a population to the island
