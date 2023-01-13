@@ -54,6 +54,6 @@ print(f"Std list: {hd_eq.std()}")
 print(f"Mean: {hd_eq.unstack().mean()}")
 print(f"Std: {hd_eq.unstack().std()}")
 
-bins = np.arange(180, 350, 2)
+bins = np.arange(160, 240, 2)
 plt.hist(hd_eq.Herbivores.unstack(), bins=bins, fc='b', histtype='stepfilled', alpha=0.4);
 plt.show()

@@ -200,7 +200,7 @@ class Fauna:
     @classmethod
     def decrease_count(cls):
         """ Decrease the total amount of animals. Method is used when an animal dies (see method
-        maybe_die(self)).
+        maybe_die(self) above).
         """
         cls._count -= 1
 
@@ -211,8 +211,8 @@ class Fauna:
 
     @classmethod
     def count(cls):
-        """ Counts the number of animnals (only Herbivors at this moment) """
-        # TODO: Change the documentation here when Carnivors has been added.
+        """ Counts the number of animnals (only Herbivores at this moment) """
+        # TODO: Change the documentation here when Carnivores has been added.
         return cls._count
 
     @classmethod
