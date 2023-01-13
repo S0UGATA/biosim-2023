@@ -5,6 +5,8 @@
 import math
 import random
 
+import numpy.random
+
 from biosim.model.Parameters import FaunaParam
 
 
@@ -101,7 +103,7 @@ class Fauna:
         mu2 = mean_birth ** 2
         sd2 = sd_birth ** 2
         mean = math.log(mu2 / math.sqrt(mu2 + sd2))
-        sd = math.sqrt(math.log(1 + (mu2 / sd2)))
+        sd = math.sqrt(math.log(1 + (sd2 / mu2)))
         return random.lognormvariate(mean, sd)
 
     def __init__(self, age=0, weight=0.):
