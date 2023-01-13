@@ -1,6 +1,7 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
+import logging
 import random
 
 from biosim.model.Fauna import Herbivore, Carnivore
@@ -63,49 +64,50 @@ class UnitArea:
         return self._geo
 
     def make_babies(self):
-        print("\tBabies:")
+        logging.debug("\tBabies:")
         no_herbs = len(self.herbs)
         babies = []
-        print(f"\tno_herbs_start:{no_herbs}")
-        print(f"\tno_babies_start:{len(babies)}")
+        logging.debug(f"\tno_herbs_start:{no_herbs}")
+        logging.debug(f"\tno_babies_start:{len(babies)}")
         for herb in self.herbs:
             baby = herb.procreate(no_herbs)
             if baby is not None:
                 babies.append(baby)
         if babies:
             self.add_herbs(babies)
-        print(f"\tno_babies_after:{len(babies)}")
-        print(f"\tno_herbs_after:{len(self.herbs)}")
+        logging.debug(f"\tno_babies_after:{len(babies)}")
+        logging.debug(f"\tno_herbs_after:{len(self.herbs)}")
 
     def eat(self):
-        print("\tEat:")
+        logging.debug("\tEat:")
         remaining_fodder = self.geo.params.f_max
-        print(f"\tStart Fodder:{remaining_fodder}")
+        logging.debug(f"\tStart Fodder:{remaining_fodder}")
         herb_indices = [*range(len(self.herbs))]
         random.shuffle(herb_indices)
         for index in herb_indices:
             if remaining_fodder <= 0:
                 break
+            logging.debug(f"\tAnimal:{index}")
             remaining_fodder = self.herbs[index].feed_and_gain_weight(remaining_fodder)
-            print(f"\tRemaining Fodder:{remaining_fodder}")
+            logging.debug(f"\tRemaining Fodder:{remaining_fodder}")
 
     def grow_old(self):
-        print("\tGet Old:")
-        [print(f"\therb.a_before:{herb.age}") for herb in self.herbs]
+        logging.debug("\tGet Old:")
+        [logging.debug(f"\therb.a_before:{herb.age}") for herb in self.herbs]
         [herb.get_older() for herb in self.herbs]
-        [print(f"\therb.a_after:{herb.age}") for herb in self.herbs]
+        [logging.debug(f"\therb.a_after:{herb.age}") for herb in self.herbs]
 
     def get_thin(self):
-        print("\tGet thin:")
-        [print(f"\therb.w_before:{herb.weight}") for herb in self.herbs]
+        logging.debug("\tGet thin:")
+        [logging.debug(f"\therb.w_before:{herb.weight}") for herb in self.herbs]
         [herb.lose_weight() for herb in self.herbs]
-        [print(f"\therb.w_after:{herb.weight}") for herb in self.herbs]
+        [logging.debug(f"\therb.w_after:{herb.weight}") for herb in self.herbs]
 
     def maybe_die(self):
-        print("\tDie:")
-        print(f"\tcount herbs_before: {len(self._herbs)}")
+        logging.debug("\tDie:")
+        logging.debug(f"\tcount herbs_before: {len(self._herbs)}")
         self._herbs = [herb for herb in self.herbs if not herb.maybe_die()]
-        print(f"\tcount herbs_after: {len(self._herbs)}")
+        logging.debug(f"\tcount herbs_after: {len(self._herbs)}")
 
     def wander_away(self, cells):
         # TODO migration

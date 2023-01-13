@@ -2,16 +2,20 @@
 Template for BioSim class.
 """
 import csv
+import logging
 import random
 import sys
 
 from biosim.model.Fauna import Herbivore
 from biosim.model.Rossumoya import Rossumoya
 
-
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Hans Ekkehard Plesser / NMBU
+
+logging.basicConfig(filename=f'{sys.path[1]}/logs/biosim.log',
+                    format='%(message)s',
+                    level=logging.DEBUG)
 
 
 class BioSim:
@@ -157,19 +161,19 @@ class BioSim:
         for year in range(1, num_years):
             if self._log_file is not None:
                 writer.writerow([year, Herbivore.count()])
-            print(f"Year:{year}")
+            logging.debug(f"Year:{year}")
             for row in self._island.cells:
                 for cell in row:
                     if cell.geo.__class__.__name__[0] == "W":
                         continue
-                    print(f"  Cell:{cell}")
+                    logging.debug(f"  Cell:{cell}")
                     cell.make_babies()
                     cell.eat()
                     cell.wander_away(self._island.cells)
                     cell.grow_old()
                     cell.get_thin()
                     cell.maybe_die()
-                    print("-------------")
+                    logging.debug("-------------")
 
         if self._log_file is not None:
             csvfile.flush()
