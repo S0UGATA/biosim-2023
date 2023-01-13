@@ -199,18 +199,27 @@ class Fauna:
 
     @classmethod
     def decrease_count(cls):
+        """ Decrease the total amount of animals. Method is used when an animal dies (see method
+        maybe_die(self)).
+        """
         cls._count -= 1
 
     @classmethod
     def increase_count(cls):
+        """ Increase the total number of animals. Method is used when offspring is produced. """
         cls._count += 1
 
     @classmethod
     def count(cls):
+        """ Counts the number of animnals (only Herbivors at this moment) """
+        # TODO: Change the documentation here when Carnivors has been added.
         return cls._count
 
     @classmethod
     def reset_count(cls):
+        """ Resets the count of animals. Method is used in
+        populate_island(self, population: [{}]) in Rossumoya.py, and resets the count on the island
+        for each new seed and new simulation. """
         cls._count = 0
 
 
@@ -260,7 +269,9 @@ class Herbivore(Fauna):
     # 2.
     def feed_and_gain_weight(self, start_fodder) -> int:
         """
-        Return the amount of remaining fodder.
+        Changes the weight of the animal that eats, and then updates the value of the remaining
+        fodder. The total amount of remaining fodder is returned after all animals that can eat
+        have eaten.
         """
         if self._params.F <= start_fodder:
             eat_fodder = self._params.F
