@@ -103,7 +103,8 @@ class Fauna:
         mu2 = mean_birth ** 2
         sd2 = sd_birth ** 2
         mean = math.log(mu2 / math.sqrt(mu2 + sd2))
-        sd = math.sqrt(math.log(1 + (sd2 / mu2)))
+        var = math.log(1 + (sd2 / mu2))
+        sd = math.sqrt(var)
         return random.lognormvariate(mean, sd)
 
     def __init__(self, age=0, weight=0.):
