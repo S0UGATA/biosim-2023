@@ -106,10 +106,12 @@ class UnitArea:
 
     @property
     def herbs(self):
+        """ Returns the property attribute for the list of herbs."""
         return self._herbs
 
     @property
     def geo(self):
+        """ Returns the property attribute for the geo type."""
         return self._geo
 
     def make_babies(self):
@@ -149,7 +151,6 @@ class UnitArea:
     def wander_away(self, cells):
         """
         Migration of animals to neighbouring UnitAreas as step 3 in the annual cycle of the island.
-
         """
         # TODO migration
         pass
