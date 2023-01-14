@@ -10,23 +10,11 @@ class Geography:
 
     Attributes
     ----------
-     _params: GeoParam
-    Contains all the specified parameters for Geograpny, imported from the module
-    Parameters.py, where the type is GeoParam.
-    """
     _params: GeoParam
+    Contains all the specified parameters for Geograpny
+    """
 
-    @classmethod
-    def initialize_fodder_max(cls, f_max):
-        """
-        Initialize the maximum amount of fodder, and define parameter f_max.
-
-        Parameters
-        ----------
-        f_max: int
-
-        """
-        cls._params.f_max = f_max
+    _params: GeoParam
 
     def __init__(self, fodder=None):
         if fodder is not None:
@@ -39,6 +27,18 @@ class Geography:
     def params(self):
         return self._params
 
+    @classmethod
+    def initialize_fodder_max(cls, f_max):
+        """
+        Initialize the maximum amount of fodder per type of Geography.
+
+        Parameters
+        ----------
+        f_max: int
+
+        """
+        cls._params.f_max = f_max
+
 
 class Highland(Geography):
     """
@@ -49,7 +49,8 @@ class Highland(Geography):
     _params = GeoParam(300)
     Set parameter for the default amount of fodder in Highland: amount = 300
     """
-    _params = GeoParam(300)
+    _default_params = GeoParam(300)
+    _params = _default_params
 
     def __init__(self, fodder=None):
         super().__init__(fodder)
@@ -64,7 +65,8 @@ class Lowland(Geography):
     _params = GeoParam(800)
     Set parameter for the default amount of fodder in Lowland: amount = 800
     """
-    _params = GeoParam(800)
+    _default_params = GeoParam(800)
+    _params = _default_params
 
     def __init__(self, fodder=None):
         super().__init__(fodder)

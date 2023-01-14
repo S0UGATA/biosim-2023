@@ -13,9 +13,9 @@ from biosim.model.Rossumoya import Rossumoya
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Hans Ekkehard Plesser / NMBU
 
-logging.basicConfig(filename=f'{sys.path[0]}/biosim.log',
+logging.basicConfig(filename=f'{sys.path[1]}/biosim.log',
                     format='%(message)s',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 
 
 class BioSim:
@@ -164,8 +164,6 @@ class BioSim:
             logging.debug(f"Year:{year}")
             for row in self._island.cells:
                 for cell in row:
-                    if cell.geo.__class__.__name__[0] == "W":
-                        continue
                     logging.debug(f"  Cell:{cell}")
                     cell.make_babies()
                     cell.eat()

@@ -6,13 +6,25 @@ from biosim.model.UnitArea import UnitArea
 
 
 class Rossumoya:
+    """
+    Class that defines the island, Rossumøya, where the simulation takes place.
+    It encapsulates a 2d array of cells of type UnitArea.
+    """
 
     def __init__(self, island_map):
+        """
+        Initializes an island as per the input parameters.
+
+        Parameters
+        ----------
+        island_map
+        """
+
         if island_map is None:
             raise ValueError("No Island")
         island_cells = []
         island_cells.extend(
-            [UnitArea((r + 1, c + 1), value) for c, value in enumerate(rows)]
+            [UnitArea((r + 1, c + 1), geo) for c, geo in enumerate(rows)]
             for r, rows in enumerate(island_map.splitlines())
         )
         self._cells = island_cells
@@ -22,9 +34,17 @@ class Rossumoya:
 
     @property
     def cells(self):
+        """ Returns the underlying 2d array of UnitAreas. """
         return self._cells
 
     def initial_populate_island(self, population: [{}]):
+        """
+        Resets the population count for each species.
+        Populates the island with the amount of animals in the parameters.
+        Loops through all the cells of the island, and populates them accordingly.
+        Error is raised if an undefined species is being sent in.
+        """
+
         if population is None:
             raise ValueError("No Input population.")
 

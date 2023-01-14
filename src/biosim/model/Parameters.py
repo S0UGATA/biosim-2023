@@ -7,7 +7,6 @@ class Parameters:
     """
     Super class containing parameters for the initialization of Fauna and Geography.
     """
-
     pass
 
 
@@ -15,42 +14,29 @@ class FaunaParam(Parameters):
     """
     Child class of Parameters, defining the parameters for Fauna
     """
-    def __init__(self,
-                 w_birth,
-                 sigma_birth,
-                 beta,
-                 eta,
-                 a_half,
-                 phi_age,
-                 w_half,
-                 phi_weight,
-                 mu,
-                 gamma,
-                 zeta,
-                 xi,
-                 omega,
-                 F,
-                 DeltaPhiMax):
-        self.w_birth = w_birth
-        self.sigma_birth = sigma_birth
-        self.beta = beta
-        self.eta = eta
-        self.a_half = a_half
-        self.phi_age = phi_age
-        self.w_half = w_half
-        self.phi_weight = phi_weight
-        self.mu = mu
-        self.gamma = gamma
-        self.zeta = zeta
-        self.xi = xi
-        self.omega = omega
-        self.F = F
-        self.DeltaPhiMax = DeltaPhiMax
+
+    def __init__(self, params: {}):
+        self.w_birth = params["w_birth"]
+        self.sigma_birth = params["sigma_birth"]
+        self.beta = params["beta"]
+        self.eta = params["eta"]
+        self.a_half = params["a_half"]
+        self.phi_age = params["phi_age"]
+        self.w_half = params["w_half"]
+        self.phi_weight = params["phi_weight"]
+        self.mu = params["mu"]
+        self.gamma = params["gamma"]
+        self.zeta = params["zeta"]
+        self.xi = params["xi"]
+        self.omega = params["omega"]
+        self.F = params["F"]
+        self.DeltaPhiMax = params["DeltaPhiMax"]
 
 
 class GeoParam(Parameters):
     """
     Child class of Parameters, defining the parameter(s) for Geography.
     """
+
     def __init__(self, f_max):
         self.f_max = f_max
