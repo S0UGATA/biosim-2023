@@ -393,13 +393,14 @@ class Carnivore(Fauna):
             c_fitness = self.fitness
             h_fitness = herb.fitness
             if c_fitness <= h_fitness:
-                prob = 0
-                # TODO: Can we return from here?
+                return
             elif 0 < (c_fitness - h_fitness) < self._params.DeltaPhiMax:
                 prob = ((c_fitness - h_fitness) / self._params.DeltaPhiMax)
             else:
                 prob = 1
-            will_kill = random.random() < prob
+            rand = random.random()
+            logging.debug(f"\t\t\trand:{rand}")
+            will_kill = rand < prob
             logging.debug(f"\t\t\tcfit:{c_fitness}, hfit:{h_fitness}")
             logging.debug(f"\t\t\tprob:{prob}")
             logging.debug(f"\t\t\twill_kill:{will_kill}")
@@ -410,5 +411,6 @@ class Carnivore(Fauna):
                 logging.debug(f"\t\t\tamount_to_eat:{amount_to_eat}")
                 logging.debug(f"\t\t\therb len before: {len(eat_herbs)}")
                 eat_herbs.remove(herb)
+                Herbivore.decrease_count()
                 logging.debug(f"\t\t\therb len after: {len(eat_herbs)}")
-                self._change_weight(self._params.beta * herb.weight)
+                self._change_weight(self._params.beta * amount_to_eat)

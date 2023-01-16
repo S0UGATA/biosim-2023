@@ -10,7 +10,6 @@ import sys
 import textwrap
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
@@ -33,9 +32,9 @@ ini_carns = [{'loc': (2, 2),
                        'weight': 20}
                       for _ in range(20)]}]
 
-for seed in range(100, 103):
+for seed in range(100, 150):
     sim = BioSim(geogr, ini_herbs, seed=seed,
-                 log_file=f'data/mono_ho_{seed:05d}',
+                 log_file=f'data/simulation_hc_{seed:05d}',
                  img_dir='results', img_base=f'mono_hc_{seed:05d}', img_years=300)
     sim.simulate(50)
     sim.add_population(ini_carns)
@@ -43,29 +42,17 @@ for seed in range(100, 103):
 
 # Analyze logs:
 data = []
-plt.rcParams['figure.figsize'] = (12, 6)
-for logfile in Path(f"{sys.path[0]}/data").glob('mono_ho_*.csv'):
-    d = pd.read_csv(logfile,
-                    usecols=[0, 1, 2],
-                    index_col=0,
-                    names=['Year', 'Herbivores', 'Carnivores'],
-                    header=None)
-    d['Seed'] = int(re.match(r'.*_(\d+)\.csv', str(logfile))[1])
+for logfile in Path(f"{sys.path[0]}/data").glob('simulation_hc_*.csv'):
+    d = pd.read_csv(logfile, index_col=0,
+                    names=['Year', 'Herbivores', 'Carnivores'])
+    d['Seed'] = int(re.match(r'.*_(\d+)\.csv', str(logfile)).group(1))
     data.append(d)
-hd = pd.concat(data).pivot(columns='Seed')
-print(hd.head())
-hd.Herbivores.plot(legend=False, alpha=0.8)
-hd.Carnivores.plot(legend=False, alpha=0.8)
+hc = pd.concat(data).pivot(columns='Seed')
+print(hc.tail())
+
+plt.plot(hc.Herbivores, 'b', alpha=0.4)
+plt.plot(hc.Carnivores, 'r', alpha=0.4)
 plt.show()
 
-hd_eq = hd.loc[hd.index >= 100, :]
-print(f"Mean list: {hd_eq.mean()}")
-print(f"Std list: {hd_eq.std()}")
-print(f"Mean: {hd_eq.unstack().mean()}")
-print(f"Std: {hd_eq.unstack().std()}")
-
-bins = np.arange(160, 240, 2)
-plt.hist(hd_eq.Herbivores.unstack(), bins=bins, fc='b', histtype='stepfilled', alpha=0.4)
-plt.show()
-plt.hist(hd_eq.Carnivores.unstack(), bins=bins, fc='b', histtype='stepfilled', alpha=0.4)
-plt.show()
+print(sum(hc.loc[300, 'Carnivores'] == 0))
+print(sum(hc.loc[300, 'Herbivores'] == 0))
