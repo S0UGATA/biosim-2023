@@ -217,6 +217,28 @@ class Fauna:
         logging.debug(f"\t\t\tdie:{die}")
         return die
 
+    def _new_animal(self, age, weight):
+        """
+        Create a new animal with input of specified age and weight.
+        What species is created depends on the instance type of the caller.
+
+        Parameters
+        ----------
+        age: int
+        weight: float
+        """
+        return type(self)(age, weight)
+
+    def _change_weight(self, by_amount):
+        """
+        Change the weight of an animal by the passed amount.
+
+        Parameters
+        ----------
+        by_amount: float
+        """
+        self._weight = max(self._weight + by_amount, 0)
+
     @staticmethod
     def _baby_weight(mean_birth, sd_birth):
         """
@@ -242,28 +264,6 @@ class Fauna:
         baby_weight = random.lognormvariate(mean, sd)
         logging.debug(f"\t\t\t\tbaby_weight:{baby_weight}")
         return baby_weight
-
-    def _new_animal(self, age, weight):
-        """
-        Create a new animal with input of specified age and weight.
-        What species is created depends on the instance type of the caller.
-
-        Parameters
-        ----------
-        age: int
-        weight: float
-        """
-        return type(self)(age, weight)
-
-    def _change_weight(self, by_amount):
-        """
-        Change the weight of an animal by the passed amount.
-
-        Parameters
-        ----------
-        by_amount: float
-        """
-        self._weight = max(self._weight + by_amount, 0)
 
 
 class Herbivore(Fauna):
