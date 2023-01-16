@@ -4,8 +4,8 @@
 import logging
 import random
 
-from biosim.model.Fauna import Herbivore, Carnivore
-from biosim.model.Geography import Highland, Lowland, Water, Desert, Geography
+from biosim.model.fauna import Herbivore, Carnivore
+from biosim.model.geography import Highland, Lowland, Water, Desert, Geography
 
 
 class UnitArea:
@@ -152,7 +152,7 @@ class UnitArea:
     def grow_old(self):
         """
         Adds one year to the age of an animal as step 4 in the annual cycle of the island.
-        Uses method get_older(self) in Fauna.py.
+        Uses method get_older(self) in fauna.py.
         """
         logging.debug("\tGet Old:")
         [logging.debug(f"\therb.a_before:{herb.age}") for herb in self.herbs]
@@ -162,7 +162,7 @@ class UnitArea:
     def get_thin(self):
         """
         Decreases the weight of an animal as step 5 in the annual cycle of the island.
-        Uses the method lose_weight(self) in Fauna.py.
+        Uses the method lose_weight(self) in fauna.py.
         """
         logging.debug("\tGet thin:")
         [logging.debug(f"\therb.w_before:{herb.weight}") for herb in self.herbs]
@@ -172,7 +172,7 @@ class UnitArea:
     def maybe_die(self):
         """
         Checks if an animal is likely to die or not as step 6 in the annual cycle of the island.
-        Uses the method maybe_die(self) in Fauna.py
+        Uses the method maybe_die(self) in fauna.py
         """
         logging.debug("\tDie:")
         logging.debug(f"\tcount herbs_before: {len(self._herbs)}")

@@ -5,7 +5,7 @@ import logging
 import math
 import random
 
-from biosim.model.Parameters import FaunaParam
+from biosim.model.parameters import FaunaParam
 
 
 class Fauna:

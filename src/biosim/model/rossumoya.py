@@ -1,8 +1,8 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
-from biosim.model.Fauna import Herbivore, Carnivore
-from biosim.model.UnitArea import UnitArea
+from biosim.model.fauna import Herbivore, Carnivore
+from biosim.model.unit_area import UnitArea
 
 
 class Rossumoya:

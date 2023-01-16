@@ -6,8 +6,8 @@ import logging
 import random
 import sys
 
-from biosim.model.Fauna import Herbivore
-from biosim.model.Rossumoya import Rossumoya
+from biosim.model.fauna import Herbivore
+from biosim.model.rossumoya import Rossumoya
 
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
