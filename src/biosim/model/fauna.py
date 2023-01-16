@@ -381,4 +381,32 @@ class Carnivore(Fauna):
     def __init__(self, age: int = 0, weight: int = 0):
         super().__init__(age, weight)
 
+    def feed_on_herbivores_and_gain_weight(self, eat_herbs: [Herbivore], herb: Herbivore):
+        """ Changes the number of Herbivores as the Carnivores feed on them. The weight of the
+        Carnivores are updated in addition to the fitness. """
+
+        # Carnivore continues to kill until it has eaten an amount F, eaten herbivores with a
+        # total weight >= F
+        eat_herbs = [Herbivore]
+        weight_herbivore = herb.weight
+        fitness_herbivore = herb.fitness
+        rand = random.random()
+
+        if 0 < self.fitness - fitness_herbivore < self._params.DeltaPhiMax:
+            prob = ((self.fitness - fitness_herbivore) / self._params.DeltaPhiMax)
+        prob = 0 if self.fitness <= fitness_herbivore else 1
+
+        if self._params.F < self.weight:
+            for herb in eat_herbs:
+                h
+
+        # Has tried to kill each herbivore in one cell
+
+
+
+
+        # The carnivores weight increases by beta * weight_herbivore, where
+
+    # prob kill herbivore
+
     # TODO feed() on herbivores.
