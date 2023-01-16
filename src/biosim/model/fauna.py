@@ -381,29 +381,29 @@ class Carnivore(Fauna):
     def __init__(self, age: int = 0, weight: int = 0):
         super().__init__(age, weight)
 
-    def feed_on_herbivores_and_gain_weight(self, eat_herbs: [Herbivore], herb: Herbivore):
+    def feed_on_herbivores_and_gain_weight(self, eat_herbs: [Herbivore]):
         """ Changes the number of Herbivores as the Carnivores feed on them. The weight of the
         Carnivores are updated in addition to the fitness. """
 
-        # Carnivore continues to kill until it has eaten an amount F, eaten herbivores with a
-        # total weight >= F
-        eat_herbs = [Herbivore]
-        weight_herbivore = herb.weight
-        fitness_herbivore = herb.fitness
-        rand = random.random()
+        remaining_meat = self._params.F
 
-        if 0 < self.fitness - fitness_herbivore < self._params.DeltaPhiMax:
-            prob = ((self.fitness - fitness_herbivore) / self._params.DeltaPhiMax)
-        prob = 0 if self.fitness <= fitness_herbivore else 1
+        for herb in eat_herbs:
+            if self.fitness <= herb.fitness:
+                prob = 0
+                # TODO: Can we return from here?
+            elif 0 < (self.fitness - herb.fitness) < self._params.DeltaPhiMax:
+                prob = ((self.fitness - herb.fitness) / self._params.DeltaPhiMax)
+            else:
+                prob = 1
+            will_kill = random.random() < prob
 
-        if self._params.F < self.weight:
-            for herb in eat_herbs:
-                h
+            if remaining_meat > 0 and will_kill:
+                amount_to_eat = min(remaining_meat, herb.weight)
+                remaining_meat -= amount_to_eat
+                eat_herbs.remove(herb)
+                self._change_weight(self._params.beta * herb.weight)
 
         # Has tried to kill each herbivore in one cell
-
-
-
 
         # The carnivores weight increases by beta * weight_herbivore, where
 
