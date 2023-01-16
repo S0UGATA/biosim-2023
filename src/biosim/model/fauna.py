@@ -4,6 +4,7 @@
 import logging
 import math
 import random
+from typing import Tuple
 
 from biosim.model.parameters import FaunaParam
 
@@ -73,6 +74,7 @@ class Fauna:
     def __init__(self, age=0, weight=0.):
         self._age = age
         self._weight = weight
+        self._has_moved = False
         self.increase_count()
 
     def __str__(self):
@@ -85,6 +87,14 @@ class Fauna:
     @property
     def weight(self):
         return self._weight
+
+    @property
+    def has_moved(self):
+        return self._has_moved
+
+    @has_moved.setter
+    def has_moved(self, has_moved: bool):
+        self._has_moved = has_moved
 
     @property
     def fitness(self):
@@ -217,6 +227,10 @@ class Fauna:
         logging.debug(f"\t\t\tdie:{die}")
         return die
 
+    def will_you_move(self) -> float:
+        """ Returns the probability of an animal moving, depending on fitness and mu """
+        return (not self.has_moved) and random.random() < self.fitness * self._params.mu
+
     def _new_animal(self, age, weight):
         """
         Create a new animal with input of specified age and weight.
@@ -238,6 +252,31 @@ class Fauna:
         by_amount: float
         """
         self._weight = max(self._weight + by_amount, 0)
+
+    @staticmethod
+    def where_will_you_move() -> Tuple:
+        """
+        Decides where an animal may move.
+
+        A random numer is generated, and checked against quartile ranges from 0 to 1:  
+            * 1st quartile -> Up
+            * 2nd quartile -> Right
+            * 3rd quartile -> Down
+            * 4th quartile -> Left
+
+        Returns
+        -------
+        A tuple with relative (row,col) values to where the animal is supposed to move.
+        """
+        where = random.random()
+        if 0 <= where < 0.25:
+            return -1, 0
+        elif 0.25 <= where < 0.5:
+            return 0, 1
+        elif 0.5 <= where < 0.75:
+            return 1, 0
+        elif 0.75 <= where < 1:
+            return 0, -1
 
     @staticmethod
     def _baby_weight(mean_birth, sd_birth):

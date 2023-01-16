@@ -16,9 +16,14 @@ class Geography:
 
     _params: GeoParam
 
-    def __init__(self, fodder=None):
+    def __init__(self,
+                 fodder: int = None,
+                 can_move_here: bool = True,
+                 can_be_border: bool = False):
         if fodder is not None:
             self.initialize_fodder_max(fodder)
+        self._can_move_here = can_move_here
+        self._can_be_border = can_be_border
 
     def __str__(self):
         return self.__class__.__name__[0]
@@ -26,6 +31,10 @@ class Geography:
     @property
     def params(self):
         return self._params
+
+    @property
+    def can_move_here(self):
+        return self._can_move_here
 
     @classmethod
     def initialize_fodder_max(cls, f_max):
@@ -98,4 +107,6 @@ class Water(Geography):
     _params = GeoParam(0)
 
     def __init__(self):
-        super().__init__(0)
+        super().__init__(fodder=0,
+                         can_move_here=False,
+                         can_be_border=True)

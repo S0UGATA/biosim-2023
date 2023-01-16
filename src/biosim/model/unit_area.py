@@ -3,8 +3,9 @@
 # (C) Copyright 2023 Tonje, Sougata / NMBU
 import logging
 import random
+from typing import Tuple
 
-from biosim.model.fauna import Herbivore, Carnivore
+from biosim.model.fauna import Herbivore, Carnivore, Fauna
 from biosim.model.geography import Highland, Lowland, Water, Desert, Geography
 
 
@@ -33,21 +34,13 @@ class UnitArea:
             List of Carnivores in the cell.
         """
         self._is_animals_allowed = True
-        self._geo = self._find_geo(geo)
+        self._geo: Geography = self._find_geo(geo)
         self._loc = loc
         self._herbs = herbs if herbs is not None else []
         self._carns = carns if carns is not None else []
 
     def __str__(self):
         return f"{str(self._geo)}-H{len(self._herbs)}-C{len(self._carns)}"
-
-    @property
-    def herbs(self):
-        return self._herbs
-
-    @property
-    def geo(self):
-        return self._geo
 
     def add_herb(self, herbivore: Herbivore):
         """
@@ -109,18 +102,18 @@ class UnitArea:
         then added back to the list of animals of that species at the end.
         """
         logging.debug("\tBabies:")
-        no_herbs = len(self.herbs)
+        no_herbs = len(self._herbs)
         babies = []
         logging.debug(f"\tno_herbs_start:{no_herbs}")
         logging.debug(f"\tno_babies_start:{len(babies)}")
-        for herb in self.herbs:
+        for herb in self._herbs:
             baby = herb.procreate(no_herbs)
             if baby is not None:
                 babies.append(baby)
         if babies:
             self.add_herbs(babies)
         logging.debug(f"\tno_babies_after:{len(babies)}")
-        logging.debug(f"\tno_herbs_after:{len(self.herbs)}")
+        logging.debug(f"\tno_herbs_after:{len(self._herbs)}")
 
     def eat(self):
         """
@@ -131,23 +124,36 @@ class UnitArea:
         equal to 0, cycle breaks and no more animals get to eat.
         """
         logging.debug("\tEat:")
-        remaining_fodder = self.geo.params.f_max
+        remaining_fodder = self._geo.params.f_max
         logging.debug(f"\tStart Fodder:{remaining_fodder}")
-        herb_indices = list(range(len(self.herbs)))
+        herb_indices = list(range(len(self._herbs)))
         random.shuffle(herb_indices)
         for index in herb_indices:
             if remaining_fodder <= 0:
                 break
             logging.debug(f"\tAnimal:{index}")
-            remaining_fodder = self.herbs[index].feed_and_gain_weight(remaining_fodder)
+            remaining_fodder = self._herbs[index].feed_and_gain_weight(remaining_fodder)
             logging.debug(f"\tRemaining Fodder:{remaining_fodder}")
 
-    def wander_away(self, cells):
+    def wander_away(self, row, col, cells):
         """
         Migration of animals to neighbouring UnitAreas as step 3 in the annual cycle of the island.
         """
-        # TODO migration
-        pass
+        for herb in self._herbs:
+            move_to =  self._migrate(herb, row, col, cells)
+
+        for carn in self._carns:
+            self._migrate(carn, row, col, cells)
+
+    def _migrate(self, animal: Fauna, row, col, cells) -> Tuple:
+        will_move = animal.will_you_move()
+        if not will_move:
+            return None
+        relative_position: Tuple = animal.where_will_you_move()
+        move_to: UnitArea = cells[row + relative_position[0]][col + relative_position[1]]
+        if not move_to._geo.can_move_here:
+            return None
+        return move_to
 
     def grow_old(self):
         """
@@ -155,9 +161,9 @@ class UnitArea:
         Uses method get_older(self) in fauna.py.
         """
         logging.debug("\tGet Old:")
-        [logging.debug(f"\therb.a_before:{herb.age}") for herb in self.herbs]
-        [herb.get_older() for herb in self.herbs]
-        [logging.debug(f"\therb.a_after:{herb.age}") for herb in self.herbs]
+        [logging.debug(f"\therb.a_before:{herb.age}") for herb in self._herbs]
+        [herb.get_older() for herb in self._herbs]
+        [logging.debug(f"\therb.a_after:{herb.age}") for herb in self._herbs]
 
     def get_thin(self):
         """
@@ -165,9 +171,9 @@ class UnitArea:
         Uses the method lose_weight(self) in fauna.py.
         """
         logging.debug("\tGet thin:")
-        [logging.debug(f"\therb.w_before:{herb.weight}") for herb in self.herbs]
-        [herb.lose_weight() for herb in self.herbs]
-        [logging.debug(f"\therb.w_after:{herb.weight}") for herb in self.herbs]
+        [logging.debug(f"\therb.w_before:{herb.weight}") for herb in self._herbs]
+        [herb.lose_weight() for herb in self._herbs]
+        [logging.debug(f"\therb.w_after:{herb.weight}") for herb in self._herbs]
 
     def maybe_die(self):
         """
@@ -176,7 +182,7 @@ class UnitArea:
         """
         logging.debug("\tDie:")
         logging.debug(f"\tcount herbs_before: {len(self._herbs)}")
-        self._herbs = [herb for herb in self.herbs if not herb.maybe_die()]
+        self._herbs = [herb for herb in self._herbs if not herb.maybe_die()]
         logging.debug(f"\tcount herbs_after: {len(self._herbs)}")
 
     def _find_geo(self, geo) -> Geography:

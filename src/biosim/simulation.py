@@ -162,12 +162,12 @@ class BioSim:
             if self._log_file is not None:
                 writer.writerow([year, Herbivore.count()])
             logging.debug(f"Year:{year}")
-            for row in self._island.cells:
-                for cell in row:
+            for r, row in enumerate(self._island.cells):
+                for c, cell in enumerate(row):
                     logging.debug(f"  Cell:{cell}")
                     cell.make_babies()
                     cell.eat()
-                    cell.wander_away(self._island.cells)
+                    cell.wander_away(r, c, self._island.cells)
                     cell.grow_old()
                     cell.get_thin()
                     cell.maybe_die()
