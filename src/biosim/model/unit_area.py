@@ -142,6 +142,11 @@ class UnitArea:
             remaining_fodder = self.herbs[index].feed_and_gain_weight(remaining_fodder)
             logging.debug(f"\tRemaining Fodder:{remaining_fodder}")
 
+        self._carns.sort(key=lambda carn: -carn.fitness)
+        self._herbs.sort(key=lambda herb: herb.fitness)
+        for carn in self._carns:
+            carn.feed_on_herbivores_and_gain_weight(self._herbs)
+
     def wander_away(self, cells):
         """
         Migration of animals to neighbouring UnitAreas as step 3 in the annual cycle of the island.
