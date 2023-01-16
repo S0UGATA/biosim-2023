@@ -402,11 +402,3 @@ class Carnivore(Fauna):
                 remaining_meat -= amount_to_eat
                 eat_herbs.remove(herb)
                 self._change_weight(self._params.beta * herb.weight)
-
-        # Has tried to kill each herbivore in one cell
-
-        # The carnivores weight increases by beta * weight_herbivore, where
-
-    # prob kill herbivore
-
-    # TODO feed() on herbivores.
