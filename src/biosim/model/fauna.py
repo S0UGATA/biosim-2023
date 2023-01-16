@@ -385,20 +385,30 @@ class Carnivore(Fauna):
         """ Changes the number of Herbivores as the Carnivores feed on them. The weight of the
         Carnivores are updated in addition to the fitness. """
 
-        remaining_meat = self._params.F
+        logging.debug(f"\t\tfeed_on_herbivores_and_gain_weight:")
 
+        remaining_meat = self._params.F
+        logging.debug(f"\t\t\tRemaining meat:{remaining_meat}")
+        c_fitness = self.fitness
         for herb in eat_herbs:
-            if self.fitness <= herb.fitness:
+            h_fitness = herb.fitness
+            if c_fitness <= h_fitness:
                 prob = 0
                 # TODO: Can we return from here?
-            elif 0 < (self.fitness - herb.fitness) < self._params.DeltaPhiMax:
-                prob = ((self.fitness - herb.fitness) / self._params.DeltaPhiMax)
+            elif 0 < (c_fitness - h_fitness) < self._params.DeltaPhiMax:
+                prob = ((c_fitness - h_fitness) / self._params.DeltaPhiMax)
             else:
                 prob = 1
             will_kill = random.random() < prob
-
+            logging.debug(f"\t\t\tcfit:{c_fitness}, hfit:{h_fitness}")
+            logging.debug(f"\t\t\tprob:{prob}")
+            logging.debug(f"\t\t\twill_kill:{will_kill}")
             if remaining_meat > 0 and will_kill:
+                logging.debug(f"\t\t\tRemaining meat:{remaining_meat}")
                 amount_to_eat = min(remaining_meat, herb.weight)
                 remaining_meat -= amount_to_eat
+                logging.debug(f"\t\t\tamount_to_eat:{amount_to_eat}")
+                logging.debug(f"\t\t\therb len before: {len(eat_herbs)}")
                 eat_herbs.remove(herb)
+                logging.debug(f"\t\t\therb len after: {len(eat_herbs)}")
                 self._change_weight(self._params.beta * herb.weight)

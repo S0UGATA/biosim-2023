@@ -7,13 +7,14 @@ import random
 import sys
 
 from biosim.model.fauna import Herbivore, Carnivore
+from biosim.model.geography import Water
 from biosim.model.rossumoya import Rossumoya
 
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Hans Ekkehard Plesser / NMBU
 
-logging.basicConfig(filename=f'{sys.path[1]}/biosim.log',
+logging.basicConfig(filename=f'{sys.path[0]}/biosim.log',
                     format='%(message)s',
                     level=logging.INFO)
 
@@ -107,6 +108,7 @@ class BioSim:
         self._img_base = img_base
         self._img_fmt = img_fmt
         self._log_file = log_file
+        self._simulated_until_years = 0
 
     def set_animal_parameters(self, species, params):
         """
@@ -154,16 +156,19 @@ class BioSim:
         csvfile = None
         writer = None
         if self._log_file is not None:
-            csvfile = open(f"{sys.path[0]}/{self._log_file}.csv", 'w', newline="")
+            csvfile = open(f"{sys.path[0]}/{self._log_file}.csv", 'a', newline="")
             writer = csv.writer(csvfile, delimiter=',')
-            writer.writerow(["Year", "Herbivore Count", "Carnivore Count"])
+            # writer.writerow(["Year", "Herbivore Count", "Carnivore Count"])
 
-        for year in range(1, num_years):
+        for year in range(0, num_years):
+            self._simulated_until_years += 1
             if self._log_file is not None:
-                writer.writerow([year, Herbivore.count(), Carnivore.count()])
-            logging.debug(f"Year:{year}")
+                writer.writerow([self._simulated_until_years, Herbivore.count(), Carnivore.count()])
+            logging.debug(f"Year:{self._simulated_until_years}")
             for row in self._island.cells:
                 for cell in row:
+                    if isinstance(cell.geo, Water):
+                        continue
                     logging.debug(f"  Cell:{cell}")
                     cell.make_babies()
                     cell.eat()

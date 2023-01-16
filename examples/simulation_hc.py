@@ -45,8 +45,11 @@ for seed in range(100, 103):
 data = []
 plt.rcParams['figure.figsize'] = (12, 6)
 for logfile in Path(f"{sys.path[0]}/data").glob('mono_ho_*.csv'):
-    d = pd.read_csv(logfile, skiprows=1, usecols=[0, 1, 2], index_col=0,
-                    names=['Year', 'Herbivores', 'Carnivores'])
+    d = pd.read_csv(logfile,
+                    usecols=[0, 1, 2],
+                    index_col=0,
+                    names=['Year', 'Herbivores', 'Carnivores'],
+                    header=None)
     d['Seed'] = int(re.match(r'.*_(\d+)\.csv', str(logfile))[1])
     data.append(d)
 hd = pd.concat(data).pivot(columns='Seed')

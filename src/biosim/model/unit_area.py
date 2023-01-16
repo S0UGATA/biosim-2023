@@ -124,12 +124,16 @@ class UnitArea:
 
         babies = []
         no_carns = len(self._carns)
+        logging.debug(f"\tno_carns_start:{no_carns}")
+        logging.debug(f"\tno_babies_start:{len(babies)}")
         for carn in self._carns:
             baby = carn.procreate(no_carns)
             if baby is not None:
                 babies.append(baby)
         if babies:
             self.add_carns(babies)
+        logging.debug(f"\tno_carns_after:{no_carns}")
+        logging.debug(f"\tno_babies_after:{len(babies)}")
 
     def eat(self):
         """
@@ -141,20 +145,22 @@ class UnitArea:
         """
         logging.debug("\tEat:")
         remaining_fodder = self.geo.params.f_max
-        logging.debug(f"\tStart Fodder:{remaining_fodder}")
+        logging.debug(f"\t Start Fodder:{remaining_fodder}")
         herb_indices = list(range(len(self.herbs)))
         random.shuffle(herb_indices)
         for index in herb_indices:
             if remaining_fodder <= 0:
                 break
-            logging.debug(f"\tAnimal:{index}")
+            logging.debug(f"\t Herb:{index}")
             remaining_fodder = self.herbs[index].feed_and_gain_weight(remaining_fodder)
-            logging.debug(f"\tRemaining Fodder:{remaining_fodder}")
+            logging.debug(f"\t Remaining Fodder:{remaining_fodder}")
 
         self._carns.sort(key=lambda carn: -carn.fitness)
         self._herbs.sort(key=lambda herb: herb.fitness)
         for carn in self._carns:
+            logging.debug(f"\t {carn}")
             carn.feed_on_herbivores_and_gain_weight(self._herbs)
+            logging.debug(f"\t {carn}")
 
     def wander_away(self, cells):
         """
@@ -172,8 +178,9 @@ class UnitArea:
         [logging.debug(f"\therb.a_before:{herb.age}") for herb in self.herbs]
         [herb.get_older() for herb in self.herbs]
         [logging.debug(f"\therb.a_after:{herb.age}") for herb in self.herbs]
-
+        [logging.debug(f"\tcarn.a_before:{carn.age}") for carn in self._carns]
         [carn.get_older() for carn in self._carns]
+        [logging.debug(f"\tcarn.a_after:{carn.age}") for carn in self._carns]
 
     def get_thin(self):
         """
@@ -185,7 +192,9 @@ class UnitArea:
         [herb.lose_weight() for herb in self.herbs]
         [logging.debug(f"\therb.w_after:{herb.weight}") for herb in self.herbs]
 
+        [logging.debug(f"\tcarn.w_before:{carn.weight}") for carn in self._carns]
         [carn.lose_weight() for carn in self._carns]
+        [logging.debug(f"\tcarn.w_after:{carn.weight}") for carn in self._carns]
 
     def maybe_die(self):
         """
@@ -197,7 +206,9 @@ class UnitArea:
         self._herbs = [herb for herb in self.herbs if not herb.maybe_die()]
         logging.debug(f"\tcount herbs_after: {len(self._herbs)}")
 
+        logging.debug(f"\tcount carns_before: {len(self._carns)}")
         self._carns = [carn for carn in self._carns if not carn.maybe_die()]
+        logging.debug(f"\tcount carns_after: {len(self._carns)}")
 
     def _find_geo(self, geo) -> Geography:
         """
