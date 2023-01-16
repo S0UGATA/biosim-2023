@@ -42,6 +42,14 @@ class UnitArea:
     def __str__(self):
         return f"{str(self._geo)}-H{len(self._herbs)}-C{len(self._carns)}"
 
+    @property
+    def herbs(self):
+        return self._herbs
+
+    @property
+    def carns(self):
+        return self._carns
+
     def add_herb(self, herbivore: Herbivore):
         """
         Adding a Herbivore to the list of Herbivores.
@@ -51,6 +59,8 @@ class UnitArea:
         herbivore
             A single herbivore
         """
+        if herbivore is None:
+            return
         if not self._is_animals_allowed:
             raise ValueError(f"No animals allowed in {self._geo}")
         self._herbs.append(herbivore)
@@ -63,6 +73,8 @@ class UnitArea:
         ----------
         herbivores
         """
+        if herbivores is None:
+            return
         if not self._is_animals_allowed:
             raise ValueError(f"No animals allowed in {self._geo}")
         self._herbs.extend(herbivores)
@@ -76,6 +88,8 @@ class UnitArea:
         carnivore
             A single carnivore
         """
+        if carnivore is None:
+            return
         if not self._is_animals_allowed:
             raise ValueError(f"No animals allowed in {self._geo}")
         self._carns.append(carnivore)
@@ -89,6 +103,8 @@ class UnitArea:
         carnivores
             List of Carnivores
         """
+        if carnivores is None:
+            return
         if not self._is_animals_allowed:
             raise ValueError(f"No animals allowed in {self._geo}")
         self._carns.extend(carnivores)
@@ -101,19 +117,11 @@ class UnitArea:
         The offspring is added to a list containing the newborns from the current cycle, which is
         then added back to the list of animals of that species at the end.
         """
-        logging.debug("\tBabies:")
-        no_herbs = len(self._herbs)
-        babies = []
-        logging.debug(f"\tno_herbs_start:{no_herbs}")
-        logging.debug(f"\tno_babies_start:{len(babies)}")
-        for herb in self._herbs:
-            baby = herb.procreate(no_herbs)
-            if baby is not None:
-                babies.append(baby)
-        if babies:
-            self.add_herbs(babies)
-        logging.debug(f"\tno_babies_after:{len(babies)}")
-        logging.debug(f"\tno_herbs_after:{len(self._herbs)}")
+        logging.debug("\tHerb-babies:")
+        self.add_herbs(self._make_babies_of(self._herbs))
+
+        logging.debug("\tCarn-babies:")
+        self.add_carns(self._make_babies_of(self._carns))
 
     def eat(self):
         """
@@ -124,36 +132,28 @@ class UnitArea:
         equal to 0, cycle breaks and no more animals get to eat.
         """
         logging.debug("\tEat:")
-        remaining_fodder = self._geo.params.f_max
-        logging.debug(f"\tStart Fodder:{remaining_fodder}")
-        herb_indices = list(range(len(self._herbs)))
-        random.shuffle(herb_indices)
-        for index in herb_indices:
-            if remaining_fodder <= 0:
-                break
-            logging.debug(f"\tAnimal:{index}")
-            remaining_fodder = self._herbs[index].feed_and_gain_weight(remaining_fodder)
-            logging.debug(f"\tRemaining Fodder:{remaining_fodder}")
+        self._herbivores_eat()
+        self._carnivores_eat()
 
     def wander_away(self, row, col, cells):
         """
         Migration of animals to neighbouring UnitAreas as step 3 in the annual cycle of the island.
         """
         for herb in self._herbs:
-            move_to =  self._migrate(herb, row, col, cells)
+            move_to = self._migrate_to(herb, row, col, cells)
+            if move_to is None:
+                continue
+            move_to.add_herb(herb)
+            self._herbs.remove(herb)
+            herb.has_moved = True
 
         for carn in self._carns:
-            self._migrate(carn, row, col, cells)
-
-    def _migrate(self, animal: Fauna, row, col, cells) -> Tuple:
-        will_move = animal.will_you_move()
-        if not will_move:
-            return None
-        relative_position: Tuple = animal.where_will_you_move()
-        move_to: UnitArea = cells[row + relative_position[0]][col + relative_position[1]]
-        if not move_to._geo.can_move_here:
-            return None
-        return move_to
+            move_to = self._migrate_to(carn, row, col, cells)
+            if move_to is None:
+                continue
+            move_to.add_carn(carn)
+            self._carns.remove(carn)
+            carn.has_moved = True
 
     def grow_old(self):
         """
@@ -165,6 +165,10 @@ class UnitArea:
         [herb.get_older() for herb in self._herbs]
         [logging.debug(f"\therb.a_after:{herb.age}") for herb in self._herbs]
 
+        [logging.debug(f"\tcarn.a_before:{carn.age}") for carn in self._carns]
+        [carn.get_older() for carn in self._carns]
+        [logging.debug(f"\tcarn.a_after:{carn.age}") for carn in self._carns]
+
     def get_thin(self):
         """
         Decreases the weight of an animal as step 5 in the annual cycle of the island.
@@ -175,6 +179,10 @@ class UnitArea:
         [herb.lose_weight() for herb in self._herbs]
         [logging.debug(f"\therb.w_after:{herb.weight}") for herb in self._herbs]
 
+        [logging.debug(f"\tcarn.w_before:{carn.weight}") for carn in self._carns]
+        [carn.lose_weight() for carn in self._carns]
+        [logging.debug(f"\tcarn.w_after:{carn.weight}") for carn in self._carns]
+
     def maybe_die(self):
         """
         Checks if an animal is likely to die or not as step 6 in the annual cycle of the island.
@@ -184,6 +192,22 @@ class UnitArea:
         logging.debug(f"\tcount herbs_before: {len(self._herbs)}")
         self._herbs = [herb for herb in self._herbs if not herb.maybe_die()]
         logging.debug(f"\tcount herbs_after: {len(self._herbs)}")
+
+        logging.debug(f"\tcount carns_before: {len(self._carns)}")
+        self._carns = [carn for carn in self._carns if not carn.maybe_die()]
+        logging.debug(f"\tcount carns_after: {len(self._carns)}")
+
+    def can_animals_move_here(self):
+        return self._geo.can_animals_move_here
+
+    def can_be_border(self):
+        return self._geo.can_be_border
+
+    def reset_animal_move_flag(self):
+        for herb in self.herbs:
+            herb.has_moved = False
+        for carn in self.carns:
+            carn.has_moved = False
 
     def _find_geo(self, geo) -> Geography:
         """
@@ -208,3 +232,47 @@ class UnitArea:
                 return Desert()
             case _:
                 raise ValueError(f"Geography {geo} is not a valid value.")
+
+    def _make_babies_of(self, animals):
+        no_animals = len(animals)
+        babies = []
+        logging.debug(f"\t no_animal_start:{no_animals}")
+        logging.debug(f"\t no_babies_start:{len(babies)}")
+        for animal in animals:
+            baby = animal.procreate(no_animals)
+            if baby is not None:
+                babies.append(baby)
+        logging.debug(f"\t no_babies_after:{len(babies)}")
+        logging.debug(f"\t no_animals_after:{len(self._herbs)}")
+        return babies
+
+    def _herbivores_eat(self):
+        logging.debug(f"\tHerbs:")
+        remaining_fodder = self._geo.params.f_max
+        logging.debug(f"\t Start Fodder:{remaining_fodder}")
+        herb_indices = list(range(len(self._herbs)))
+        random.shuffle(herb_indices)
+        for index in herb_indices:
+            if remaining_fodder <= 0:
+                break
+            logging.debug(f"\t Herb:{index}")
+            remaining_fodder = self._herbs[index].feed_and_gain_weight(remaining_fodder)
+            logging.debug(f"\t Remaining Fodder:{remaining_fodder}")
+
+    def _carnivores_eat(self):
+        logging.debug(f"\tCarns:")
+        self._carns.sort(key=lambda carn: -carn.fitness)
+        self._herbs.sort(key=lambda herb: herb.fitness)
+        for carn in self._carns:
+            logging.debug(f"\t {carn}")
+            carn.feed_on_herbivores_and_gain_weight(self._herbs)
+            logging.debug(f"\t {carn}")
+
+    @staticmethod
+    def _migrate_to(animal: Fauna, row, col, cells):
+        will_move = animal.will_you_move()
+        if not will_move:
+            return None
+        relative_position: Tuple = animal.where_will_you_move()
+        move_to: UnitArea = cells[row + relative_position[0]][col + relative_position[1]]
+        return move_to if move_to.can_animals_move_here() else None

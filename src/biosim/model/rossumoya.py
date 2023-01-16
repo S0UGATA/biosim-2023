@@ -37,7 +37,7 @@ class Rossumoya:
         """ Returns the underlying 2d array of UnitAreas. """
         return self._cells
 
-    def initial_populate_island(self, population: [{}]):
+    def populate_island(self, population: [{}], initial=False):
         """
         Resets the population count for each species.
         Populates the island with the amount of animals in the parameters.
@@ -48,8 +48,9 @@ class Rossumoya:
         if population is None:
             raise ValueError("No Input population.")
 
-        Herbivore.reset_count()
-        Carnivore.reset_count()
+        if initial is True:
+            Herbivore.reset_count()
+            Carnivore.reset_count()
 
         for cell_info in population:
             row, col = cell_info.get("loc")
@@ -62,3 +63,6 @@ class Rossumoya:
                         unit_area.add_carn(Carnivore(pop.get("age"), pop.get("weight")))
                     case _:
                         raise ValueError("Unknown species.")
+
+    def reset_animal_move_flag(self):
+        [[cell.reset_animal_move_flag() for cell in rows] for rows in self._cells]

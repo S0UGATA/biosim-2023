@@ -74,7 +74,7 @@ class Fauna:
     def __init__(self, age=0, weight=0.):
         self._age = age
         self._weight = weight
-        self._has_moved = False
+        self.has_moved = False
         self.increase_count()
 
     def __str__(self):
@@ -87,14 +87,6 @@ class Fauna:
     @property
     def weight(self):
         return self._weight
-
-    @property
-    def has_moved(self):
-        return self._has_moved
-
-    @has_moved.setter
-    def has_moved(self, has_moved: bool):
-        self._has_moved = has_moved
 
     @property
     def fitness(self):
@@ -228,7 +220,10 @@ class Fauna:
         return die
 
     def will_you_move(self) -> float:
-        """ Returns the probability of an animal moving, depending on fitness and mu """
+        """
+        Returns the probability of an animal moving, depending on fitness and mu, and that the
+        animal has not already moved once the current year.
+        """
         return (not self.has_moved) and random.random() < self.fitness * self._params.mu
 
     def _new_animal(self, age, weight):
@@ -420,4 +415,36 @@ class Carnivore(Fauna):
     def __init__(self, age: int = 0, weight: int = 0):
         super().__init__(age, weight)
 
-    # TODO feed() on herbivores.
+    def feed_on_herbivores_and_gain_weight(self, eat_herbs: [Herbivore]):
+        """ Changes the number of Herbivores as the Carnivores feed on them. The weight of the
+        Carnivores are updated in addition to the fitness. """
+
+        logging.debug(f"\t\tfeed_on_herbivores_and_gain_weight:")
+
+        remaining_meat = self._params.F
+        logging.debug(f"\t\t\tRemaining meat:{remaining_meat}")
+        for herb in eat_herbs:
+            c_fitness = self.fitness
+            h_fitness = herb.fitness
+            if c_fitness <= h_fitness:
+                return
+            elif 0 < (c_fitness - h_fitness) < self._params.DeltaPhiMax:
+                prob = ((c_fitness - h_fitness) / self._params.DeltaPhiMax)
+            else:
+                prob = 1
+            rand = random.random()
+            logging.debug(f"\t\t\trand:{rand}")
+            will_kill = rand < prob
+            logging.debug(f"\t\t\tcfit:{c_fitness}, hfit:{h_fitness}")
+            logging.debug(f"\t\t\tprob:{prob}")
+            logging.debug(f"\t\t\twill_kill:{will_kill}")
+            if remaining_meat > 0 and will_kill:
+                logging.debug(f"\t\t\tRemaining meat:{remaining_meat}")
+                amount_to_eat = min(remaining_meat, herb.weight)
+                remaining_meat -= amount_to_eat
+                logging.debug(f"\t\t\tamount_to_eat:{amount_to_eat}")
+                logging.debug(f"\t\t\therb len before: {len(eat_herbs)}")
+                eat_herbs.remove(herb)
+                Herbivore.decrease_count()
+                logging.debug(f"\t\t\therb len after: {len(eat_herbs)}")
+                self._change_weight(self._params.beta * amount_to_eat)

@@ -5,15 +5,16 @@ import csv
 import logging
 import random
 import sys
+from os import path
 
-from biosim.model.fauna import Herbivore
+from biosim.model.fauna import Herbivore, Carnivore
 from biosim.model.rossumoya import Rossumoya
 
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Hans Ekkehard Plesser / NMBU
 
-logging.basicConfig(filename=f'{sys.path[1]}/biosim.log',
+logging.basicConfig(filename=f'{sys.path[0]}/biosim.log',
                     format='%(message)s',
                     level=logging.INFO)
 
@@ -96,7 +97,7 @@ class BioSim:
         - `img_dir` and `img_base` must either be both None or both strings.
         """
         self._island = Rossumoya(island_map)
-        self._island.initial_populate_island(ini_pop)
+        self._island.populate_island(ini_pop, initial=True)
         random.seed(seed)
         self._vis_years = vis_years
         self._ymax_animals = ymax_animals
@@ -107,6 +108,7 @@ class BioSim:
         self._img_base = img_base
         self._img_fmt = img_fmt
         self._log_file = log_file
+        self._simulated_until_years = 0
 
     def set_animal_parameters(self, species, params):
         """
@@ -154,16 +156,22 @@ class BioSim:
         csvfile = None
         writer = None
         if self._log_file is not None:
-            csvfile = open(f"{sys.path[1]}/{self._log_file}.csv", 'w', newline="")
+            file_path = f"{sys.path[0]}/{self._log_file}.csv"
+            new_file = not path.exists(file_path)
+            csvfile = open(f"{sys.path[0]}/{self._log_file}.csv", 'a', newline="")
             writer = csv.writer(csvfile, delimiter=',')
-            writer.writerow(["Year", "Herbivore Count"])
+            if new_file:
+                writer.writerow(["Year", "Herbivore Count", "Carnivore Count"])
 
-        for year in range(1, num_years):
+        for _ in range(num_years):
             if self._log_file is not None:
-                writer.writerow([year, Herbivore.count()])
-            logging.debug(f"Year:{year}")
-            for r, row in enumerate(self._island.cells):
-                for c, cell in enumerate(row):
+                writer.writerow([self._simulated_until_years, Herbivore.count(), Carnivore.count()])
+            logging.debug(f"Year:{self._simulated_until_years}")
+            self._island.reset_animal_move_flag()
+            for r, rows in enumerate(self._island.cells):
+                for c, cell in enumerate(rows):
+                    if not cell.can_animals_move_here():
+                        continue
                     logging.debug(f"  Cell:{cell}")
                     cell.make_babies()
                     cell.eat()
@@ -172,6 +180,7 @@ class BioSim:
                     cell.get_thin()
                     cell.maybe_die()
                     logging.debug("-------------")
+            self._simulated_until_years += 1
 
         if self._log_file is not None:
             csvfile.flush()
@@ -186,6 +195,7 @@ class BioSim:
         population : List of dictionaries
             See BioSim Task Description, Sec 3.3.3 for details.
         """
+        self._island.populate_island(population)
 
     @property
     def year(self):

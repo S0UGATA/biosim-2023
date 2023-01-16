@@ -18,11 +18,11 @@ class Geography:
 
     def __init__(self,
                  fodder: int = None,
-                 can_move_here: bool = True,
+                 can_animals_move_here: bool = True,
                  can_be_border: bool = False):
         if fodder is not None:
             self.initialize_fodder_max(fodder)
-        self._can_move_here = can_move_here
+        self._can_animals_move_here = can_animals_move_here
         self._can_be_border = can_be_border
 
     def __str__(self):
@@ -33,8 +33,12 @@ class Geography:
         return self._params
 
     @property
-    def can_move_here(self):
-        return self._can_move_here
+    def can_animals_move_here(self):
+        return self._can_animals_move_here
+
+    @property
+    def can_be_border(self):
+        return self._can_be_border
 
     @classmethod
     def initialize_fodder_max(cls, f_max):
@@ -108,5 +112,5 @@ class Water(Geography):
 
     def __init__(self):
         super().__init__(fodder=0,
-                         can_move_here=False,
+                         can_animals_move_here=False,
                          can_be_border=True)
