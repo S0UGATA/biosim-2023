@@ -122,6 +122,15 @@ class UnitArea:
         logging.debug(f"\tno_babies_after:{len(babies)}")
         logging.debug(f"\tno_herbs_after:{len(self.herbs)}")
 
+        babies = []
+        no_carns = len(self._carns)
+        for carn in self._carns:
+            baby = carn.procreate(no_carns)
+            if baby is not None:
+                babies.append(baby)
+        if babies:
+            self.add_carns(babies)
+
     def eat(self):
         """
         Decides which animals get to eat. The amount of fodder is determined by the parameter f_max,
@@ -164,6 +173,8 @@ class UnitArea:
         [herb.get_older() for herb in self.herbs]
         [logging.debug(f"\therb.a_after:{herb.age}") for herb in self.herbs]
 
+        [carn.get_older() for carn in self._carns]
+
     def get_thin(self):
         """
         Decreases the weight of an animal as step 5 in the annual cycle of the island.
@@ -174,6 +185,8 @@ class UnitArea:
         [herb.lose_weight() for herb in self.herbs]
         [logging.debug(f"\therb.w_after:{herb.weight}") for herb in self.herbs]
 
+        [carn.lose_weight() for carn in self._carns]
+
     def maybe_die(self):
         """
         Checks if an animal is likely to die or not as step 6 in the annual cycle of the island.
@@ -183,6 +196,8 @@ class UnitArea:
         logging.debug(f"\tcount herbs_before: {len(self._herbs)}")
         self._herbs = [herb for herb in self.herbs if not herb.maybe_die()]
         logging.debug(f"\tcount herbs_after: {len(self._herbs)}")
+
+        self._carns = [carn for carn in self._carns if not carn.maybe_die()]
 
     def _find_geo(self, geo) -> Geography:
         """

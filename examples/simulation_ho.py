@@ -29,7 +29,7 @@ ini_herbs = [{'loc': (2, 2),
 
 for seed in range(100, 105):
     sim = BioSim(geogr, ini_herbs, seed=seed,
-                 log_file=f'examples/data/mono_ho_{seed:05d}',
+                 log_file=f'data/mono_ho_{seed:05d}',
                  img_dir='results',
                  img_base=f'mono_ho_{seed:05d}',
                  img_years=300)
@@ -38,7 +38,7 @@ for seed in range(100, 105):
 # Analyze logs:
 data = []
 plt.rcParams['figure.figsize'] = (12, 6)
-for logfile in Path(f"{sys.path[1]}/examples/data").glob('mono_ho_*.csv'):
+for logfile in Path(f"{sys.path[0]}/data").glob('mono_ho_*.csv'):
     d = pd.read_csv(logfile, skiprows=1, usecols=[0, 1], index_col=0,
                     names=['Year', 'Herbivores'])
     d['Seed'] = int(re.match(r'.*_(\d+)\.csv', str(logfile))[1])

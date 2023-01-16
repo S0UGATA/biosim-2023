@@ -6,7 +6,7 @@ import logging
 import random
 import sys
 
-from biosim.model.fauna import Herbivore
+from biosim.model.fauna import Herbivore, Carnivore
 from biosim.model.rossumoya import Rossumoya
 
 # The material in this file is licensed under the BSD 3-clause license
@@ -96,7 +96,7 @@ class BioSim:
         - `img_dir` and `img_base` must either be both None or both strings.
         """
         self._island = Rossumoya(island_map)
-        self._island.initial_populate_island(ini_pop)
+        self._island.populate_island(ini_pop, initial=True)
         random.seed(seed)
         self._vis_years = vis_years
         self._ymax_animals = ymax_animals
@@ -154,13 +154,13 @@ class BioSim:
         csvfile = None
         writer = None
         if self._log_file is not None:
-            csvfile = open(f"{sys.path[1]}/{self._log_file}.csv", 'w', newline="")
+            csvfile = open(f"{sys.path[0]}/{self._log_file}.csv", 'w', newline="")
             writer = csv.writer(csvfile, delimiter=',')
-            writer.writerow(["Year", "Herbivore Count"])
+            writer.writerow(["Year", "Herbivore Count", "Carnivore Count"])
 
         for year in range(1, num_years):
             if self._log_file is not None:
-                writer.writerow([year, Herbivore.count()])
+                writer.writerow([year, Herbivore.count(), Carnivore.count()])
             logging.debug(f"Year:{year}")
             for row in self._island.cells:
                 for cell in row:
@@ -186,6 +186,8 @@ class BioSim:
         population : List of dictionaries
             See BioSim Task Description, Sec 3.3.3 for details.
         """
+
+        self._island.populate_island(population)
 
     @property
     def year(self):
