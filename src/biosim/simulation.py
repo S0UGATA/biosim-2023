@@ -126,6 +126,7 @@ class BioSim:
         ValueError
             If invalid parameter values are passed.
         """
+        Rossumoya.set_animal_params(species, params)
 
     def set_landscape_parameters(self, landscape, params):
         """
@@ -143,6 +144,7 @@ class BioSim:
         ValueError
             If invalid parameter values are passed.
         """
+        Rossumoya.set_island_params(landscape, params)
 
     def simulate(self, num_years):
         """
@@ -167,19 +169,7 @@ class BioSim:
             if self._log_file is not None:
                 writer.writerow([self._simulated_until_years, Herbivore.count(), Carnivore.count()])
             logging.debug(f"Year:{self._simulated_until_years}")
-            self._island.reset_animal_move_flag()
-            for r, rows in enumerate(self._island.cells):
-                for c, cell in enumerate(rows):
-                    if not cell.can_animals_move_here():
-                        continue
-                    logging.debug(f"  Cell:{cell}")
-                    cell.make_babies()
-                    cell.eat()
-                    cell.wander_away(r, c, self._island.cells)
-                    cell.grow_old()
-                    cell.get_thin()
-                    cell.maybe_die()
-                    logging.debug("-------------")
+            self._island.go_through_annual_cycle()
             self._simulated_until_years += 1
 
         if self._log_file is not None:
@@ -200,14 +190,17 @@ class BioSim:
     @property
     def year(self):
         """Last year simulated."""
+        return self._simulated_until_years
 
     @property
     def num_animals(self):
         """Total number of animals on island."""
+        return Herbivore.count() + Carnivore.count()
 
     @property
     def num_animals_per_species(self):
         """Number of animals per species in island, as dictionary."""
+        return {'Herbivore': Herbivore.count(), 'Carnivore': Carnivore.count()}
 
     def make_movie(self):
-        """Create MPEG4 movie from visualization images saved."""
+        """TODO Create MPEG4 movie from visualization images saved."""

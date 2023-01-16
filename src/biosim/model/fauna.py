@@ -4,6 +4,7 @@
 import logging
 import math
 import random
+from copy import copy
 from typing import Tuple
 
 from biosim.model.parameters import FaunaParam
@@ -67,7 +68,7 @@ class Fauna:
     _new_animal(age, weight)
     Method that is used to create a new animal of type Herbivore or Carnivore.
     """
-
+    _default_params: FaunaParam
     _params: FaunaParam
     _count: int
 
@@ -108,29 +109,36 @@ class Fauna:
         assert 0 <= fitness <= 1
         return fitness
 
+    @property
+    def default_params(self):
+        return copy(self._default_params)
+
     @classmethod
     def set_animal_parameters(cls, params: {}):
         """
-        Set the parameters of an animal, either by default or by the input of a user
+        Set the parameters of an animal.
+        Validates input.
 
         Parameters
         ----------
         params: {}
         """
 
+        fauna_params = getattr(cls, "_params")
         for key, value in params.items():
             try:
-                if cls._params.key is not None:
-                    cls._params.key = value
+                value = float(value)
+                if getattr(fauna_params, key) is not None:
+                    setattr(fauna_params, key, value)
                 else:
-                    logging.error(f"[{key}:{value}] is invalid, ignoring it.")
-            except ValueError:
-                logging.error(f"[{key}:{value}] is invalid, ignoring it.")
+                    raise ValueError(f"[{key}:{value}] is invalid.")
+            except (AttributeError, ValueError) as e:
+                raise ValueError(f"[{key}:{value}] is invalid, inner error: {e}") from e
 
     @classmethod
     def decrease_count(cls):
         """ Decrease the count of total amount of animals of a species.
-        Method is used when an animal dies (see method :func:~Fauna.Fauna.maybe_die).
+        Method is used when an animal dies or is eaten.
         """
         cls._count -= 1
 
@@ -154,7 +162,7 @@ class Fauna:
 
     def procreate(self, number_of_animals: int):
         """
-        Procreation of animals. 
+        Procreation of animals.
         An offspring is produced based on five conditions.
 
         Parameters
@@ -253,7 +261,7 @@ class Fauna:
         """
         Decides where an animal may move.
 
-        A random numer is generated, and checked against quartile ranges from 0 to 1:  
+        A random number is generated, and checked against quartile ranges from 0 to 1:
             * 1st quartile -> Up
             * 2nd quartile -> Right
             * 3rd quartile -> Down
@@ -334,7 +342,7 @@ class Herbivore(Fauna):
                                   "F": 10,
                                   "DeltaPhiMax": None})
 
-    _params = _default_params
+    _params = copy(_default_params)
     _count: int = 0
 
     def __init__(self, age: int = 0, weight: int = 0.):
@@ -409,15 +417,17 @@ class Carnivore(Fauna):
                                   "F": 50,
                                   "DeltaPhiMax": 10})
 
-    _params = _default_params
+    _params = copy(_default_params)
     _count = 0
 
     def __init__(self, age: int = 0, weight: int = 0):
         super().__init__(age, weight)
 
     def feed_on_herbivores_and_gain_weight(self, eat_herbs: [Herbivore]):
-        """ Changes the number of Herbivores as the Carnivores feed on them. The weight of the
-        Carnivores are updated in addition to the fitness. """
+        """
+        Changes the number of Herbivores as the Carnivores feed on them.
+        The weight of the Carnivores are updated accordingly.
+        """
 
         logging.debug(f"\t\tfeed_on_herbivores_and_gain_weight:")
 

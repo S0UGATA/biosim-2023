@@ -32,13 +32,13 @@ ini_carns = [{'loc': (2, 2),
                        'weight': 20}
                       for _ in range(20)]}]
 
-for seed in range(100, 120):
+for seed in range(100, 150):
     sim = BioSim(geogr, ini_herbs, seed=seed,
                  log_file=f'data/simulation_hc_{seed:05d}',
                  img_dir='results', img_base=f'simulation_hc_{seed:05d}', img_years=300)
     sim.simulate(50)
     sim.add_population(ini_carns)
-    sim.simulate(100)
+    sim.simulate(251)
 
 # Analyze logs:
 data = []
@@ -56,5 +56,5 @@ plt.plot(hc.Herbivores, 'b', alpha=0.4)
 plt.plot(hc.Carnivores, 'r', alpha=0.4)
 plt.show()
 
-print(sum(hc.loc[149, 'Carnivores'] == 0))
-print(sum(hc.loc[149, 'Herbivores'] == 0))
+print(sum(hc.loc[300, 'Carnivores'] == 0))
+print(sum(hc.loc[300, 'Herbivores'] == 0))

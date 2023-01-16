@@ -21,6 +21,8 @@ class UnitArea:
                  carns: list[Carnivore] = None):
         """
         Initializes an UnitArea cell.
+            * Validates if animals are allowed in the cell.
+            * Validates if the cell can be a boundary.
 
         Parameters
         ----------
@@ -33,9 +35,9 @@ class UnitArea:
         carns: list
             List of Carnivores in the cell.
         """
-        self._is_animals_allowed = True
-        self._geo: Geography = self._find_geo(geo)
         self._loc = loc
+        self._is_animals_allowed = True
+        self._geo: Geography = self._assign_geo(geo)
         self._herbs = herbs if herbs is not None else []
         self._carns = carns if carns is not None else []
 
@@ -124,13 +126,6 @@ class UnitArea:
         self.add_carns(self._make_babies_of(self._carns))
 
     def eat(self):
-        """
-        Decides which animals get to eat. The amount of fodder is determined by the parameter f_max,
-        The list of animals is shuffled randomly to ensure that the animal that gets to eat is
-        chosen at random.
-        As long as there is food, animals get to eat. If the value of the remaining fodder is
-        equal to 0, cycle breaks and no more animals get to eat.
-        """
         logging.debug("\tEat:")
         self._herbivores_eat()
         self._carnivores_eat()
@@ -204,15 +199,21 @@ class UnitArea:
         return self._geo.can_be_border
 
     def reset_animal_move_flag(self):
+        """
+        Resets the movement flag for animals to False at the start of the annual cycle.
+        This flag is set to True to prevent migration waves in the same year.
+        """
         for herb in self.herbs:
             herb.has_moved = False
         for carn in self.carns:
             carn.has_moved = False
 
-    def _find_geo(self, geo) -> Geography:
+    def _assign_geo(self, geo) -> Geography:
         """
         Initializing and creating the map of the island by defining each UnitArea with the right
         geo value: H for Highland, L for Lowland, W for water, and D for Desert.
+
+        Validates if the cell can be a boundary.
 
         Parameters
         ----------
@@ -222,13 +223,16 @@ class UnitArea:
         """
         match geo:
             case "H":
+                self._raise_error_if_boundary(geo)
                 return Highland()
             case "L":
+                self._raise_error_if_boundary(geo)
                 return Lowland()
             case "W":
                 self._is_animals_allowed = False
                 return Water()
             case "D":
+                self._raise_error_if_boundary(geo)
                 return Desert()
             case _:
                 raise ValueError(f"Geography {geo} is not a valid value.")
@@ -247,6 +251,12 @@ class UnitArea:
         return babies
 
     def _herbivores_eat(self):
+        """
+        Decides which herbs get to eat. The amount of fodder is determined by the parameter f_max,
+        The list of herbs is shuffled randomly before feeding.
+        As long as there is food, herbs get to eat. If the value of the remaining fodder is
+        equal to 0, cycle breaks and no more herbs get to eat.
+        """
         logging.debug(f"\tHerbs:")
         remaining_fodder = self._geo.params.f_max
         logging.debug(f"\t Start Fodder:{remaining_fodder}")
@@ -260,6 +270,10 @@ class UnitArea:
             logging.debug(f"\t Remaining Fodder:{remaining_fodder}")
 
     def _carnivores_eat(self):
+        """
+        Carnivores try to kill + eat as per their decreasing fitness, on herbivores as per their
+        increasing fitness.
+        """
         logging.debug(f"\tCarns:")
         self._carns.sort(key=lambda carn: -carn.fitness)
         self._herbs.sort(key=lambda herb: herb.fitness)
@@ -268,8 +282,35 @@ class UnitArea:
             carn.feed_on_herbivores_and_gain_weight(self._herbs)
             logging.debug(f"\t {carn}")
 
+    def _raise_error_if_boundary(self, geo):
+        """
+        Blindly raises a ValueError if cell is a boundary.
+        Should be called only from a non-water cell.
+        """
+        if self._loc[0] == 1 or self._loc[1] == 1:
+            raise ValueError(f"{geo} cannot be a border cell.")
+
     @staticmethod
     def _migrate_to(animal: Fauna, row, col, cells):
+        """
+        Calculates the relative movement of an animal.
+
+        Parameters
+        ----------
+        animal
+            The animal in question
+        row
+            Current row of animal
+        col
+            Current col of animal
+        cells
+            Total Island
+
+        Returns
+        -------
+        Returns a tuple with relative coordinates (delta-row, delta-col)
+        to which an animal will move, if at all.
+        """
         will_move = animal.will_you_move()
         if not will_move:
             return None

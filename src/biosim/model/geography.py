@@ -1,6 +1,8 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
+from copy import copy
+
 from biosim.model.parameters import GeoParam
 
 
@@ -13,7 +15,7 @@ class Geography:
     _params: GeoParam
     Contains all the specified parameters for Geograpny
     """
-
+    _default_params: GeoParam
     _params: GeoParam
 
     def __init__(self,
@@ -47,7 +49,7 @@ class Geography:
 
         Parameters
         ----------
-        f_max: int
+        f_max: float
 
         """
         cls._params.f_max = f_max
@@ -63,7 +65,7 @@ class Highland(Geography):
     Set parameter for the default amount of fodder in Highland: amount = 300
     """
     _default_params = GeoParam(300)
-    _params = _default_params
+    _params = copy(_default_params)
 
     def __init__(self, fodder=None):
         super().__init__(fodder)
@@ -79,7 +81,7 @@ class Lowland(Geography):
     Set parameter for the default amount of fodder in Lowland: amount = 800
     """
     _default_params = GeoParam(800)
-    _params = _default_params
+    _params = copy(_default_params)
 
     def __init__(self, fodder=None):
         super().__init__(fodder)
@@ -93,6 +95,7 @@ class Desert(Geography):
     ----------
     Set parameter for the default value of fodder in Desert: amount = 0
     """
+    _default_params = GeoParam(0)
     _params = GeoParam(0)
 
     def __init__(self):
@@ -108,6 +111,7 @@ class Water(Geography):
      _params = GeoParam(0)
      Set parameter for the default value of fodder in Water: amount = 0
     """
+    _default_params = GeoParam(0)
     _params = GeoParam(0)
 
     def __init__(self):
