@@ -389,8 +389,8 @@ class Carnivore(Fauna):
 
         remaining_meat = self._params.F
         logging.debug(f"\t\t\tRemaining meat:{remaining_meat}")
-        c_fitness = self.fitness
         for herb in eat_herbs:
+            c_fitness = self.fitness
             h_fitness = herb.fitness
             if c_fitness <= h_fitness:
                 prob = 0
