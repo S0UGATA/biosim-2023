@@ -6,12 +6,16 @@
 Test set for Fauna super class interface, in addition to child classes Herbivore and Carnivore
 interface.
 """
+from random import random
 
 import pytest
 from biosim.model.fauna import Herbivore, Carnivore
 from biosim.model.parameters import FaunaParam
 
-""" Instances were initialized weight and age is zero, in addition to input of age and weight"""
+"""Random seed for tests"""
+SEED = 123456
+"""Significance level for statistical tests"""
+ALPHA = 0.01
 
 
 def reset_animal_params():
@@ -43,34 +47,33 @@ def test_get_older_carn_herb():
     herb_set = Herbivore(5, 20)
     carn_set = Carnivore(6, 24)
 
-    for year in range(10):
+    no_years = 10
+    for _ in range(no_years):
         herb.get_older()
         herb_set.get_older()
         carn.get_older()
         carn_set.get_older()
-        assert herb.age == year + 1
-        assert herb_set.age == year + 6
-        assert carn.age == year + 1
-        assert carn_set.age == year + 7
-
-
-
+    assert herb.age == no_years
+    assert herb_set.age == no_years + 5
+    assert carn.age == no_years
+    assert carn_set.age == no_years + 6
 
 
 def test_eat_and_gain_weight_herb():
     """ Test that an Herbivore that has eaten an F amount of fodder gains weight according to the
     formula β*F, where β = 0.9 for Herbivores."""
     herb = Herbivore()
-    carn = Carnivore()
-    herb_set = Herbivore(5, 20)
-    carn_set = Carnivore(6, 24)
 
     amount_fodder = 10
-    herb.feed_and_gain_weight(amount_fodder)
-    assert herb.weight == pytest.approx(9)
+    beta = 0.9
+    w_increase = amount_fodder * beta # Formula for the increase of weight when a Herbivore eats
+    w_before = herb.weight # Weight of the Herbivore before feeding
+    no_cycles = 10
 
-    herb_set.feed_and_gain_weight(amount_fodder)
-    assert herb_set.weight == pytest.approx(29)
+    for _ in range(no_cycles):
+        herb.feed_and_gain_weight(amount_fodder)
+        assert herb.weight == pytest.approx(w_before + w_increase)
+        w_before += w_increase
 
 
 def test_eat_and_gain_weight_carn():
@@ -84,4 +87,25 @@ def test_eat_and_gain_weight_carn():
     herbs = [herb, herb_set]
     assert carn_set.weight == 24
     carn_set.feed_on_herbivores_and_gain_weight(herbs)
-    assert carn_set.weight != 24
+    assert carn_set.weight > 24
+
+
+def test_weight_of_newborns_z_test():
+    """This test is a probability test: executes procreate() N number of times.  We have that the
+    number n of "successes", where procreate() returns an offspring, should be according to the log
+    normal distribution ln(X) ~ N(μ, σ^2). Here, the parameters are
+    the mean μ = w_birth and variance σ^2= (σ_birth)^2.
+
+    We have
+    Z = (sum of X - mean) / standard deviation
+
+    """
+
+    random.seed(SEED)
+    no_trials = 100
+
+    herb = Herbivore()
+    herb.set_animal_parameters
+
+
+
