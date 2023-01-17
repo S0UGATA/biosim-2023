@@ -66,8 +66,8 @@ def test_eat_and_gain_weight_herb():
 
     amount_fodder = 10
     beta = 0.9
-    w_increase = amount_fodder * beta # Formula for the increase of weight when a Herbivore eats
-    w_before = herb.weight # Weight of the Herbivore before feeding
+    w_increase = amount_fodder * beta  # Formula for the increase of weight when a Herbivore eats
+    w_before = herb.weight  # Weight of the Herbivore before feeding
     no_cycles = 10
 
     for _ in range(no_cycles):
@@ -106,6 +106,3 @@ def test_weight_of_newborns_z_test():
 
     herb = Herbivore()
     herb.set_animal_parameters
-
-
-
