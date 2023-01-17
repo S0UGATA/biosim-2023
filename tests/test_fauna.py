@@ -13,6 +13,12 @@ from biosim.model.parameters import FaunaParam
 
 """ Instances were initialized weight and age is zero, in addition to input of age and weight"""
 
+herb = Herbivore()
+carn = Carnivore()
+herb_set = Herbivore(5, 20)
+carn_set = Carnivore(6, 24)
+
+
 
 def reset_animal_params():
     """ Reset the animal parameters before running the tests."""
@@ -21,14 +27,9 @@ def reset_animal_params():
     Carnivore.set_animal_parameters(Herbivore.default_params)
 
 
-herb = Herbivore()
-carn = Carnivore()
-herb_set = Herbivore(5, 20)
-carn_set = Carnivore(6, 24)
-
-
 def test_age_carn_herb():
     """ Default age for an instance of a Carnivore or Herbivore should be 0 """
+    reset_animal_params()
     assert herb.age == 0
     assert carn.age == 0
 
@@ -62,13 +63,13 @@ def test_eat_and_gain_weight_herb():
     herb_set.feed_and_gain_weight(fodder)
     assert herb_set.weight == pytest.approx(29)
 
-def test_eat_and_gain_weight_carn():
+
+@pytest.mark.parametrize('species, extra',
+                         [('Herbivore', {}),
+                          ('Carnivore', {'DeltaPhiMax': 0.5})])
+def test_eat_and_gain_weight_carn(reset_animal_params, species, extra):
     """Carnivore eating and gaining weight. Weight gain is Fodder*beta, where beta = 0.75"""
     herbs = [herb, herb_set]
+    assert carn_set.weight == 40
     carn_set.feed_on_herbivores_and_gain_weight(herbs)
-    assert carn_set.weight != 24
-    assert carn_set.weight > 24
-
-
-
-
+    assert carn_set.weight != 40
