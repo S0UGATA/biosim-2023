@@ -266,7 +266,7 @@ class UnitArea:
         As long as there is food, herbs get to eat. If the value of the remaining fodder is
         equal to 0, cycle breaks and no more herbs get to eat.
         """
-        logging.debug(f"\tHerbs:")
+        logging.debug("\tHerbs:")
         remaining_fodder = self._geo.params.f_max
         logging.debug(f"\t Start Fodder:{remaining_fodder}")
         herb_indices = list(range(len(self._herbs)))
@@ -283,7 +283,7 @@ class UnitArea:
         Carnivores try to kill + eat as per their decreasing fitness, on herbivores as per their
         increasing fitness.
         """
-        logging.debug(f"\tCarns:")
+        logging.debug("\tCarns:")
         self._carns.sort(key=lambda carn: -carn.fitness)
         self._herbs.sort(key=lambda herb: herb.fitness)
         for carn in self._carns:

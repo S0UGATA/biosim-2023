@@ -60,7 +60,7 @@ class Fauna:
     _change_weight(by_amount)
     Private method that calculates the new weight of an animal. The current weight either decreases
     or increases, but if a decrease results in a negative value the weight is set to 0.
-     
+
     _baby_weight(mean_birth, sd_birth)
     Method that calculates the weight of the newborn from an animal of type Herbivore or Carnivore.
     Parameters are defined beforehand, and changes depending on the Fauna (Herbivore or Carnivore).
@@ -433,7 +433,7 @@ class Carnivore(Fauna):
         The weight of the Carnivores are updated accordingly.
         """
 
-        logging.debug(f"\t\tfeed_on_herbivores_and_gain_weight:")
+        logging.debug("\t\tfeed_on_herbivores_and_gain_weight:")
 
         remaining_meat = self._params.F
         logging.debug(f"\t\t\tRemaining meat:{remaining_meat}")

@@ -1,5 +1,6 @@
 """
 Simulate herbivore population in single lowland cell, then add carnivore population.
+Changed animal params.
 Repeat for several seeds.
 """
 
@@ -38,6 +39,9 @@ for seed in range(100, 150):
     sim = BioSim(geogr, ini_herbs, seed=seed,
                  log_file=f'data/simulation_hc_{seed:05d}',
                  img_dir='results', img_base=f'simulation_hc_{seed:05d}', img_years=300)
+
+    sim.set_animal_parameters('Carnivore', {'DeltaPhiMax': 15})
+
     sim.simulate(50)
     sim.add_population(ini_carns)
     sim.simulate(251)
