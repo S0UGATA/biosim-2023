@@ -11,6 +11,7 @@ from random import random
 import pytest
 from biosim.model.fauna import Herbivore, Carnivore
 from biosim.model.parameters import FaunaParam
+from biosim.simulation import BioSim
 
 """Random seed for tests"""
 SEED = 123456
@@ -18,7 +19,7 @@ SEED = 123456
 ALPHA = 0.01
 
 
-def reset_animal_params():
+def reset_animal_params_():
     """ Reset the animal parameters before running the tests."""
     yield
     Herbivore.set_animal_parameters(Herbivore.default_params)
@@ -90,19 +91,28 @@ def test_eat_and_gain_weight_carn():
     assert carn_set.weight > 24
 
 
-def test_weight_of_newborns_z_test():
-    """This test is a probability test: executes procreate() N number of times.  We have that the
-    number n of "successes", where procreate() returns an offspring, should be according to the log
-    normal distribution ln(X) ~ N(μ, σ^2). Here, the parameters are
-    the mean μ = w_birth and variance σ^2= (σ_birth)^2.
+# TODO: This does _not_ raise a ValueError, is going to be fixed asap.
+@pytest.mark.parametrize('bad_age, bad_weight', [(-1, -1)])
+def test_grow_old_herb_carn(bad_age, bad_weight):
+    """It should not be possible to initialize a negative age and/or weight when instantiating a
+    new Herbivore and/or Carnivore."""
+    with pytest.raises(ValueError):
+        Herbivore(bad_age, bad_weight)
+        Carnivore(bad_age, bad_weight)
 
-    We have
-    Z = (sum of X - mean) / standard deviation
+    def test_weight_of_newborns_z_test():
+        """This test is a probability test: executes procreate() N number of times.  We have that the
+        number n of "successes", where procreate() returns an offspring, should be according to the log
+        normal distribution ln(X) ~ N(μ, σ^2). Here, the parameters are
+        the mean μ = w_birth and variance σ^2= (σ_birth)^2.
 
-    """
+        We have
+        Z = (sum of X - mean) / standard deviation
 
-    random.seed(SEED)
-    no_trials = 100
+        """
 
-    herb = Herbivore()
-    herb.set_animal_parameters
+        random.seed(SEED)
+        no_trials = 100
+
+        herb = Herbivore()
+        herb.set_animal_parameters
