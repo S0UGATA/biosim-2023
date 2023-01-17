@@ -42,7 +42,12 @@ class UnitArea:
         self._carns = carns if carns is not None else []
 
     def __str__(self):
-        return f"{str(self._geo)}-H{len(self._herbs)}-C{len(self._carns)}"
+        val = f"{str(self._geo)}"
+        if len(self._herbs) > 0:
+            val += f".H{len(self._herbs)}"
+        if len(self._carns) > 0:
+            val += f".C{len(self._carns)}"
+        return val
 
     @property
     def herbs(self):

@@ -86,7 +86,7 @@ class Rossumoya:
                 logging.debug(f"  Cell:{cell}")
                 cell.make_babies()
                 cell.eat()
-                #cell.wander_away(r, c, self.cells)
+                cell.wander_away(r, c, self.cells)
                 cell.grow_old()
                 cell.get_thin()
                 cell.maybe_die()
