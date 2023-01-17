@@ -171,6 +171,7 @@ class BioSim:
             logging.debug(f"Year:{self._simulated_until_years}")
             self._island.go_through_annual_cycle()
             self._simulated_until_years += 1
+            # self._print_migration_data()
 
         if self._log_file is not None:
             csvfile.flush()
@@ -204,3 +205,8 @@ class BioSim:
 
     def make_movie(self):
         """TODO Create MPEG4 movie from visualization images saved."""
+
+    def _print_migration_data(self):
+        print(f"Y:{self._simulated_until_years}")
+        print(f"H:{Herbivore.count()}.C:{Carnivore.count()}")
+        print(self._island)

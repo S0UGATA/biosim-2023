@@ -3,6 +3,8 @@
 # (C) Copyright 2023 Tonje, Sougata / NMBU
 import logging
 
+from prettytable import PrettyTable
+
 from biosim.model.fauna import Herbivore, Carnivore
 from biosim.model.geography import Highland, Lowland
 from biosim.model.unit_area import UnitArea
@@ -39,7 +41,9 @@ class Rossumoya:
         self._cells = island_cells
 
     def __str__(self):
-        return '\n'.join(['\t|\t'.join([str(col) for col in row]) for row in self._cells])
+        island = PrettyTable(header=False)
+        [island.add_row(row) for row in self._cells]
+        return str(island)
 
     @property
     def cells(self):
@@ -82,7 +86,7 @@ class Rossumoya:
                 logging.debug(f"  Cell:{cell}")
                 cell.make_babies()
                 cell.eat()
-                cell.wander_away(r, c, self.cells)
+                #cell.wander_away(r, c, self.cells)
                 cell.grow_old()
                 cell.get_thin()
                 cell.maybe_die()

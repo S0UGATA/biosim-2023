@@ -2,7 +2,8 @@
 Simulate herbivore population in single lowland cell for several seeds.
 """
 
-__author__ = 'Tonje, Sougata, NMBU'
+__author__ = "Tonje Martine Lorgen Kirkholt", "Sougata Bhattacharya"
+__email__ = "tonje.martine.lorgen.kirkholt@nmbu.no", "sougata.bhattacharya@nmbu.no"
 
 import re
 import sys

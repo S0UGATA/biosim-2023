@@ -42,7 +42,14 @@ class UnitArea:
         self._carns = carns if carns is not None else []
 
     def __str__(self):
-        return f"{str(self._geo)}-H{len(self._herbs)}-C{len(self._carns)}"
+        val = f"{str(self._geo)}"
+        c = Herbivore.count()
+        if c > 0:
+            val += f".H{c}"
+        c = Carnivore.count()
+        if c > 0:
+            val += f".C{c}"
+        return val
 
     @property
     def herbs(self):
@@ -134,21 +141,25 @@ class UnitArea:
         """
         Migration of animals to neighbouring UnitAreas as step 3 in the annual cycle of the island.
         """
+        to_remove = []
         for herb in self._herbs:
             move_to = self._migrate_to(herb, row, col, cells)
             if move_to is None:
                 continue
             move_to.add_herb(herb)
-            self._herbs.remove(herb)
+            to_remove.append(herb)
             herb.has_moved = True
+        self._herbs = [herb for herb in self._herbs if herb not in to_remove]
 
+        to_remove = []
         for carn in self._carns:
             move_to = self._migrate_to(carn, row, col, cells)
             if move_to is None:
                 continue
             move_to.add_carn(carn)
-            self._carns.remove(carn)
+            to_remove.append(carn)
             carn.has_moved = True
+        self._carns = [carn for carn in self._carns if carn not in to_remove]
 
     def grow_old(self):
         """
@@ -279,7 +290,10 @@ class UnitArea:
         self._herbs.sort(key=lambda herb: herb.fitness)
         for carn in self._carns:
             logging.debug(f"\t {carn}")
-            carn.feed_on_herbivores_and_gain_weight(self._herbs)
+            eaten_herbs = carn.feed_on_herbivores_and_gain_weight(self._herbs)
+            if self._herbs is not None and eaten_herbs is not None:
+                self._herbs = [herb for herb in self._herbs if herb not in eaten_herbs]
+                Herbivore.decrease_count(len(eaten_herbs))
             logging.debug(f"\t {carn}")
 
     def _raise_error_if_boundary(self, geo):

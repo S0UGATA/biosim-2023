@@ -3,7 +3,8 @@ Simulate herbivore population in single lowland cell, then add carnivore populat
 Repeat for several seeds.
 """
 
-__author__ = 'Hans Ekkehard Plesser, NMBU'
+__author__ = "Tonje Martine Lorgen Kirkholt", "Sougata Bhattacharya"
+__email__ = "tonje.martine.lorgen.kirkholt@nmbu.no", "sougata.bhattacharya@nmbu.no"
 
 import re
 import sys

@@ -50,7 +50,7 @@ if __name__ == '__main__':
                  vis_years=1)
 
     sim.set_animal_parameters('Herbivore', {'zeta': 3.2, 'xi': 1.8})
-    sim.set_animal_parameters('Carnivore', {'a_half': 70, 'phi_age': 0.5,
+    sim.set_animal_parameters('Carnivore', {'a_half': "A", 'phi_age': 0.5,
                                             'omega': 0.3, 'F': 65,
                                             'DeltaPhiMax': 9.})
     sim.set_landscape_parameters('L', {'f_max': 700})

@@ -79,7 +79,11 @@ class Fauna:
         self.increase_count()
 
     def __str__(self):
-        return f"A{self._age}-W{self._weight}-F{self.fitness}"
+        return f"{self.__class__.__name__[0]}" \
+               f"-A{self._age}" \
+               f"-W{round(self._weight, 2)}" \
+               f"-F{round(self.fitness, 2)}" \
+               f"-M{int(self.has_moved)}"
 
     @property
     def age(self):
@@ -136,11 +140,11 @@ class Fauna:
                 raise ValueError(f"[{key}:{value}] is invalid, inner error: {e}") from e
 
     @classmethod
-    def decrease_count(cls):
+    def decrease_count(cls, by=1):
         """ Decrease the count of total amount of animals of a species.
         Method is used when an animal dies or is eaten.
         """
-        cls._count -= 1
+        cls._count -= by
 
     @classmethod
     def increase_count(cls):
@@ -433,6 +437,7 @@ class Carnivore(Fauna):
 
         remaining_meat = self._params.F
         logging.debug(f"\t\t\tRemaining meat:{remaining_meat}")
+        eaten_herbs = []
         for herb in eat_herbs:
             c_fitness = self.fitness
             h_fitness = herb.fitness
@@ -454,7 +459,7 @@ class Carnivore(Fauna):
                 remaining_meat -= amount_to_eat
                 logging.debug(f"\t\t\tamount_to_eat:{amount_to_eat}")
                 logging.debug(f"\t\t\therb len before: {len(eat_herbs)}")
-                eat_herbs.remove(herb)
-                Herbivore.decrease_count()
+                eaten_herbs.append(herb)
                 logging.debug(f"\t\t\therb len after: {len(eat_herbs)}")
                 self._change_weight(self._params.beta * amount_to_eat)
+        return eaten_herbs
