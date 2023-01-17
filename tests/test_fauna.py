@@ -9,8 +9,8 @@ interface.
 from random import random
 
 import pytest
+
 from biosim.model.fauna import Herbivore, Carnivore
-from biosim.model.parameters import FaunaParam
 
 """Random seed for tests"""
 SEED = 123456

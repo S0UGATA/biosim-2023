@@ -1,7 +1,6 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
-import logging
 
 from prettytable import PrettyTable
 
@@ -83,14 +82,12 @@ class Rossumoya:
             for c, cell in enumerate(rows):
                 if not cell.can_animals_move_here():
                     continue
-                logging.debug(f"  Cell:{cell}")
                 cell.make_babies()
                 cell.eat()
                 cell.wander_away(r, c, self.cells)
                 cell.grow_old()
                 cell.get_thin()
                 cell.maybe_die()
-                logging.debug("-------------")
 
     def reset_animal_move_flag(self):
         [[cell.reset_animal_move_flag() for cell in rows] for rows in self._cells]
@@ -140,7 +137,6 @@ class Rossumoya:
     def set_animal_params(species, params):
         if species is None or params is None:
             raise ValueError(f"Empty species: {species} or params: {params}")
-
         match species:
             case "Herbivore":
                 Herbivore.set_animal_parameters(params)

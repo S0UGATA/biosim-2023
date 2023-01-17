@@ -2,7 +2,6 @@
 Template for BioSim class.
 """
 import csv
-import logging
 import random
 import sys
 from os import path
@@ -10,13 +9,10 @@ from os import path
 from biosim.model.fauna import Herbivore, Carnivore
 from biosim.model.rossumoya import Rossumoya
 
+
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Hans Ekkehard Plesser / NMBU
-
-logging.basicConfig(filename=f'{sys.path[0]}/biosim.log',
-                    format='%(message)s',
-                    level=logging.INFO)
 
 
 class BioSim:
@@ -168,7 +164,6 @@ class BioSim:
         for _ in range(num_years):
             if self._log_file is not None:
                 writer.writerow([self._simulated_until_years, Herbivore.count(), Carnivore.count()])
-            logging.debug(f"Year:{self._simulated_until_years}")
             self._island.go_through_annual_cycle()
             self._simulated_until_years += 1
             self._print_migration_data()

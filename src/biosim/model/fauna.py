@@ -1,11 +1,12 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
-import logging
 import math
 import random
 from copy import copy
 from typing import Tuple
+
+from numba import jit
 
 from biosim.model.parameters import FaunaParam
 
@@ -73,6 +74,10 @@ class Fauna:
     _count: int
 
     def __init__(self, age=0, weight=0.):
+        if age < 0 :
+            raise ValueError("Age cannot be negative")
+        if weight <= 0:
+            raise ValueError("Weight has to be > 0")
         self._age = age
         self._weight = weight
         self.has_moved = False
@@ -103,15 +108,8 @@ class Fauna:
         where a = age, and w = weight.
         """
 
-        if self._weight <= 0:
-            return 0
-        q_plus = 1 / (
-                1 + (math.e ** (self._params.phi_age * (self._age - self._params.a_half))))
-        q_minus = 1 / (
-                1 + (math.e ** -(self._params.phi_weight * (self._weight - self._params.w_half))))
-        fitness = q_plus * q_minus
-        assert 0 <= fitness <= 1
-        return fitness
+        return self._fitness(self._weight, self._params.phi_weight, self._params.w_half,
+                             self._age, self._params.phi_age, self._params.a_half)
 
     @property
     def default_params(self):
@@ -174,31 +172,16 @@ class Fauna:
         number_of_animals: int
         """
 
-        logging.debug("\t\tProcreate")
-        logging.debug(f"\t\t{self}")
-
         if self._weight < self._params.zeta * (self._params.w_birth + self._params.sigma_birth):
             return None
-
         prob = min(1, self._params.gamma * self.fitness * number_of_animals)
-        logging.debug(f"\t\t\tprob:{prob}")
         rand = random.random()
-        logging.debug(f"\t\t\trand:{rand}")
-
         w_baby = Fauna._baby_weight(self._params.w_birth, self._params.sigma_birth)
-        logging.debug(f"\t\t\tw_baby:{w_baby}")
-
         xi_w_baby = self._params.xi * w_baby
-        logging.debug(f"\t\t\txi_w_baby:{xi_w_baby}")
-        logging.debug(f"\t\t\tself._weight:{self._weight}")
         if self._weight < xi_w_baby:
             return None
         self._change_weight(-xi_w_baby)
-        logging.debug(f"\t\t\tself._weight:{self._weight}")
-
-        baby = self._new_animal(0, w_baby) if rand < prob else None
-        logging.debug(f"\t\t\tBaby:{baby}")
-        return baby
+        return self._new_animal(0, w_baby) if rand < prob else None
 
     def get_older(self):
         """ Adds one year to the age of an animal """
@@ -206,15 +189,14 @@ class Fauna:
 
     def lose_weight(self):
         """ Decreases the weight of an animal """
-        logging.debug("\t\tlose_weight")
+
         by = -self._weight * self._params.eta
-        logging.debug(f"\t\t\tBy:{by}")
         self._change_weight(by)
 
     def maybe_die(self) -> bool:
         """ Check if an animal is likely to die or not.
         Returning True if animal dies, False otherwise. """
-        logging.debug("\t\tdie")
+
         die: bool
         if self._weight <= 0:
             die = True
@@ -222,13 +204,9 @@ class Fauna:
             rand = random.random()
             fitness = self.fitness
             prob = self._params.omega * (1 - fitness)
-            logging.debug(f"\t\t\trand:{rand}")
-            logging.debug(f"\t\t\tfitness:{fitness}")
-            logging.debug(f"\t\t\tprob:{prob}")
             die = rand < prob
         if die:
             self.decrease_count()
-        logging.debug(f"\t\t\tdie:{die}")
         return die
 
     def will_you_move(self) -> float:
@@ -261,6 +239,7 @@ class Fauna:
         self._weight = max(self._weight + by_amount, 0)
 
     @staticmethod
+    @jit
     def where_will_you_move() -> Tuple:
         """
         Decides where an animal may move.
@@ -286,6 +265,7 @@ class Fauna:
             return 0, -1
 
     @staticmethod
+    @jit
     def _baby_weight(mean_birth, sd_birth):
         """
         Calculate the weight of a newborn animal by using the mean and standard deviation
@@ -296,20 +276,24 @@ class Fauna:
         sd_birth: float
         """
 
-        logging.debug("\t\t\tweight_of_baby")
-        logging.debug(f"\t\t\t\tmean_birth:{mean_birth}")
-        logging.debug(f"\t\t\t\tsd_birth:{sd_birth}")
         mu2 = mean_birth ** 2
-        logging.debug(f"\t\t\t\tmu2:{mu2}")
         sd2 = sd_birth ** 2
-        logging.debug(f"\t\t\t\tsd2:{sd2}")
         mean = math.log(mu2 / math.sqrt(mu2 + sd2))
-        logging.debug(f"\t\t\t\tmean:{mean}")
         sd = math.sqrt(math.log(1 + (sd2 / mu2)))
-        logging.debug(f"\t\t\t\tsd:{sd}")
-        baby_weight = random.lognormvariate(mean, sd)
-        logging.debug(f"\t\t\t\tbaby_weight:{baby_weight}")
-        return baby_weight
+        return random.lognormvariate(mean, sd)
+
+    @staticmethod
+    @jit
+    def _fitness(w, phi_weight, w_half, a, phi_age, a_half):
+        if w <= 0:
+            return 0
+        q_plus = 1 / (
+                1 + (math.e ** (phi_age * (a - a_half))))
+        q_minus = 1 / (
+                1 + (math.e ** -(phi_weight * (w - w_half))))
+        fitness = q_plus * q_minus
+        assert 0 <= fitness <= 1
+        return fitness
 
 
 class Herbivore(Fauna):
@@ -374,17 +358,15 @@ class Herbivore(Fauna):
         remaining_fodder: int
             The amount of fodder left after the animal has eaten.
         """
-        logging.debug("\t\tfeed_and_gain_weight")
+
         if self._params.F <= start_fodder:
             eat_fodder = self._params.F
             remaining_fodder = start_fodder - eat_fodder
         else:
             eat_fodder = start_fodder
             remaining_fodder = 0
-        logging.debug(f"\t\t\tWeight before:{self._weight}")
+
         self._change_weight(self._params.beta * eat_fodder)
-        logging.debug(f"\t\t\tWeight after:{self._weight}")
-        logging.debug(f"\t\t\tremaining_fodder:{remaining_fodder}")
         return remaining_fodder
 
 
@@ -433,10 +415,7 @@ class Carnivore(Fauna):
         The weight of the Carnivores are updated accordingly.
         """
 
-        logging.debug("\t\tfeed_on_herbivores_and_gain_weight:")
-
         remaining_meat = self._params.F
-        logging.debug(f"\t\t\tRemaining meat:{remaining_meat}")
         eaten_herbs = []
         for herb in eat_herbs:
             c_fitness = self.fitness
@@ -448,18 +427,10 @@ class Carnivore(Fauna):
             else:
                 prob = 1
             rand = random.random()
-            logging.debug(f"\t\t\trand:{rand}")
             will_kill = rand < prob
-            logging.debug(f"\t\t\tcfit:{c_fitness}, hfit:{h_fitness}")
-            logging.debug(f"\t\t\tprob:{prob}")
-            logging.debug(f"\t\t\twill_kill:{will_kill}")
             if remaining_meat > 0 and will_kill:
-                logging.debug(f"\t\t\tRemaining meat:{remaining_meat}")
                 amount_to_eat = min(remaining_meat, herb.weight)
                 remaining_meat -= amount_to_eat
-                logging.debug(f"\t\t\tamount_to_eat:{amount_to_eat}")
-                logging.debug(f"\t\t\therb len before: {len(eat_herbs)}")
                 eaten_herbs.append(herb)
-                logging.debug(f"\t\t\therb len after: {len(eat_herbs)}")
                 self._change_weight(self._params.beta * amount_to_eat)
         return eaten_herbs

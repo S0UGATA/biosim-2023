@@ -1,7 +1,6 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
-import logging
 import random
 from typing import Tuple
 
@@ -124,14 +123,12 @@ class UnitArea:
         The offspring is added to a list containing the newborns from the current cycle, which is
         then added back to the list of animals of that species at the end.
         """
-        logging.debug("\tHerb-babies:")
-        self.add_herbs(self._make_babies_of(self._herbs))
 
-        logging.debug("\tCarn-babies:")
+        self.add_herbs(self._make_babies_of(self._herbs))
         self.add_carns(self._make_babies_of(self._carns))
 
     def eat(self):
-        logging.debug("\tEat:")
+
         self._herbivores_eat()
         self._carnivores_eat()
 
@@ -164,42 +161,25 @@ class UnitArea:
         Adds one year to the age of an animal as step 4 in the annual cycle of the island.
         Uses method get_older(self) in fauna.py.
         """
-        logging.debug("\tGet Old:")
-        [logging.debug(f"\therb.a_before:{herb.age}") for herb in self._herbs]
-        [herb.get_older() for herb in self._herbs]
-        [logging.debug(f"\therb.a_after:{herb.age}") for herb in self._herbs]
 
-        [logging.debug(f"\tcarn.a_before:{carn.age}") for carn in self._carns]
+        [herb.get_older() for herb in self._herbs]
         [carn.get_older() for carn in self._carns]
-        [logging.debug(f"\tcarn.a_after:{carn.age}") for carn in self._carns]
 
     def get_thin(self):
         """
         Decreases the weight of an animal as step 5 in the annual cycle of the island.
         Uses the method lose_weight(self) in fauna.py.
         """
-        logging.debug("\tGet thin:")
-        [logging.debug(f"\therb.w_before:{herb.weight}") for herb in self._herbs]
         [herb.lose_weight() for herb in self._herbs]
-        [logging.debug(f"\therb.w_after:{herb.weight}") for herb in self._herbs]
-
-        [logging.debug(f"\tcarn.w_before:{carn.weight}") for carn in self._carns]
         [carn.lose_weight() for carn in self._carns]
-        [logging.debug(f"\tcarn.w_after:{carn.weight}") for carn in self._carns]
 
     def maybe_die(self):
         """
         Checks if an animal is likely to die or not as step 6 in the annual cycle of the island.
         Uses the method maybe_die(self) in fauna.py
         """
-        logging.debug("\tDie:")
-        logging.debug(f"\tcount herbs_before: {len(self._herbs)}")
         self._herbs = [herb for herb in self._herbs if not herb.maybe_die()]
-        logging.debug(f"\tcount herbs_after: {len(self._herbs)}")
-
-        logging.debug(f"\tcount carns_before: {len(self._carns)}")
         self._carns = [carn for carn in self._carns if not carn.maybe_die()]
-        logging.debug(f"\tcount carns_after: {len(self._carns)}")
 
     def can_animals_move_here(self):
         return self._geo.can_animals_move_here
@@ -228,7 +208,6 @@ class UnitArea:
         ----------
         geo
         Specifying the type of the UnitArea.
-
         """
         match geo:
             case "H":
@@ -249,14 +228,10 @@ class UnitArea:
     def _make_babies_of(self, animals):
         no_animals = len(animals)
         babies = []
-        logging.debug(f"\t no_animal_start:{no_animals}")
-        logging.debug(f"\t no_babies_start:{len(babies)}")
         for animal in animals:
             baby = animal.procreate(no_animals)
             if baby is not None:
                 babies.append(baby)
-        logging.debug(f"\t no_babies_after:{len(babies)}")
-        logging.debug(f"\t no_animals_after:{len(self._herbs)}")
         return babies
 
     def _herbivores_eat(self):
@@ -266,33 +241,28 @@ class UnitArea:
         As long as there is food, herbs get to eat. If the value of the remaining fodder is
         equal to 0, cycle breaks and no more herbs get to eat.
         """
-        logging.debug("\tHerbs:")
+
         remaining_fodder = self._geo.params.f_max
-        logging.debug(f"\t Start Fodder:{remaining_fodder}")
         herb_indices = list(range(len(self._herbs)))
         random.shuffle(herb_indices)
         for index in herb_indices:
             if remaining_fodder <= 0:
                 break
-            logging.debug(f"\t Herb:{index}")
             remaining_fodder = self._herbs[index].feed_and_gain_weight(remaining_fodder)
-            logging.debug(f"\t Remaining Fodder:{remaining_fodder}")
 
     def _carnivores_eat(self):
         """
         Carnivores try to kill + eat as per their decreasing fitness, on herbivores as per their
         increasing fitness.
         """
-        logging.debug("\tCarns:")
+
         self._carns.sort(key=lambda carn: -carn.fitness)
         self._herbs.sort(key=lambda herb: herb.fitness)
         for carn in self._carns:
-            logging.debug(f"\t {carn}")
             eaten_herbs = carn.feed_on_herbivores_and_gain_weight(self._herbs)
             if self._herbs is not None and eaten_herbs is not None:
                 self._herbs = [herb for herb in self._herbs if herb not in eaten_herbs]
                 Herbivore.decrease_count(len(eaten_herbs))
-            logging.debug(f"\t {carn}")
 
     def _raise_error_if_boundary(self, geo):
         """

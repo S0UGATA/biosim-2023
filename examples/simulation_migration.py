@@ -48,4 +48,4 @@ if __name__ == '__main__':
                               {'mu': 1, 'omega': 0, 'gamma': 0, 'eta': 0,
                                'F': 0, 'a_half': 10000})
 
-    sim.simulate(num_years=2)
+    sim.simulate(num_years=5)
