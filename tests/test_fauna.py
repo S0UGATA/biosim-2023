@@ -19,6 +19,7 @@ SEED = 123456
 ALPHA = 0.01
 
 
+# TODO: Unsure about this, may be removed.
 def reset_animal_params_():
     """ Reset the animal parameters before running the tests."""
     yield
@@ -28,7 +29,6 @@ def reset_animal_params_():
 
 def test_age_carn_herb():
     """ Test that the default age for an instance of an Herbivore or Carnivore is equal to 0. """
-    reset_animal_params()
     herb = Herbivore()
     carn = Carnivore()
     herb_set = Herbivore(5, 20)

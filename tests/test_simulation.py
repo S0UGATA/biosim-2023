@@ -10,6 +10,12 @@ import pytest
 from biosim.simulation import BioSim
 
 
+# TODO: Create tests similar to the ones in test_biosim_interface,
+def test_create_island():
+    """Create unit areas with only water"""
+    BioSim(island_map="WW\nWW", ini_pop=[], seed=1, vis_years=0)
+
+
 @pytest.fixture
 def reset_animal_params():
     yield
