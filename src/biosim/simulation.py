@@ -171,7 +171,7 @@ class BioSim:
             logging.debug(f"Year:{self._simulated_until_years}")
             self._island.go_through_annual_cycle()
             self._simulated_until_years += 1
-            # self._print_migration_data()
+            self._print_migration_data()
 
         if self._log_file is not None:
             csvfile.flush()
