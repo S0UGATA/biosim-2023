@@ -42,14 +42,7 @@ class UnitArea:
         self._carns = carns if carns is not None else []
 
     def __str__(self):
-        val = f"{str(self._geo)}"
-        c = Herbivore.count()
-        if c > 0:
-            val += f".H{c}"
-        c = Carnivore.count()
-        if c > 0:
-            val += f".C{c}"
-        return val
+        return f"{str(self._geo)}-H{len(self._herbs)}-C{len(self._carns)}"
 
     @property
     def herbs(self):
