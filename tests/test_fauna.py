@@ -150,6 +150,26 @@ def test_unfit_herbs_always_die():
         assert herb.maybe_die() is True
 
 
+# TODO: Currently working on making checks for negative values in parameter settings
+@pytest.mark.parametrize('bad_param', [({'a:half': -1}), ({'omega': -1}),
+                                       ({'w.birth': -1}), ({'mu': -1})])
+def test_bad_parameters_herb(bad_param):
+    """All parameter values should be positive integers, except the delta phi max which should be
+    strictly positive (only for Carnivores)."""
+    herb = Herbivore()
+    with pytest.raises(ValueError):
+        herb.set_animal_parameters(params=bad_param)
+
+
+# TODO: Currently working on making checks for negative values in parameter settings
+@pytest.mark.parametrize('bad_param', [({'DeltaPhiMax': 0}), ({'DeltaPhiMax': 0}),
+                                       ({'w.birth': -1}), ({'w_half': -1})])
+def test_bad_param_carn(bad_param):
+    carn = Carnivore()
+    with pytest.raises(ValueError):
+        carn.set_animal_parameters(params=bad_param)
+
+
 # TODO: Z-test and/or binomial test has to be made
 def test_weight_of_newborns_z_test():
     """This test is a probability test: executes procreate() N number of times.  We have that the
