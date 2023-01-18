@@ -19,7 +19,6 @@ def test_create_island():
 
 @pytest.mark.parametrize('island_map', ["LWW\nWWW\nWWL", "WWW\nWWW\nWWL", "DWW\nWLW\nWWD",
                                         "LHL\nLWL\nLHL", "HWW\nWWW\nDDD", "WWW\nLWL\nWWW"])
-
 def test_island_border(island_map):
     """The border of the island can only be surrounded by water"""
     with pytest.raises(ValueError):
@@ -37,6 +36,7 @@ def test_size_of_island():
     """The grid of the island should be a square"""
     with pytest.raises(ValueError):
         BioSim(island_map="WWW\nWW\nWWW", ini_pop=[], seed=1, vis_years=0)
+        BioSim(island_map="WWW\nWW\nWWWWWW", ini_pop=[], seed=1, vis_years=0)
 
 
 @pytest.fixture
@@ -103,3 +103,37 @@ def test_set_default_animal_params(reset_animal_params, fauna_type, set_param):
 
     BioSim(island_map="W",
            ini_pop=[], seed=1, vis_years=0).set_animal_parameters(fauna_type, set_param)
+
+
+@pytest.fixture()
+def reusable_island():
+    """Create an island that can be used in other tests."""
+    return BioSim(island_map="WWWW\nWHLW\nWWWW",
+                  ini_pop=[],
+                  seed=1,
+                  vis_years=0)
+
+
+@pytest.mark.parametrize('geo_type', ['H', 'L', 'D'])
+def test_placement_of_population(geo_type):
+    """Population of animals can be placed on all geo types except water"""
+    BioSim(island_map="WWWW\nWW{}W\nWWWW".format(geo_type),
+           ini_pop=[{'loc': (2, 3),
+                     'pop': [{'species': 'Herbivore', 'age': 3, 'weight': 5.},
+                             {'species': 'Carnivore', 'age': 3, 'weight': 12.}]},
+                    {'loc': (2, 3),
+                     'pop': [{'species': 'Herbivore', 'age': 2, 'weight': 20.},
+                             {'species': 'Carnivore', 'age': 2, 'weight': 14.}]}],
+           seed=1,
+           vis_years=0)
+    with pytest.raises(ValueError):
+        BioSim(island_map="WWWW\nWWWW\nWWWW".format(geo_type),
+               ini_pop=[{'loc': (2, 3),
+                         'pop': [{'species': 'Herbivore', 'age': 3, 'weight': 5.},
+                                 {'species': 'Carnivore', 'age': 3, 'weight': 12.}]},
+                        {'loc': (2, 3),
+                         'pop': [{'species': 'Herbivore', 'age': 2, 'weight': 20.},
+                                 {'species': 'Carnivore', 'age': 2, 'weight': 14.}]}],
+               seed=1, vis_years=0)
+
+# TODO: Add tests for visualization and images when this is done
