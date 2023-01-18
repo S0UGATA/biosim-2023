@@ -12,12 +12,17 @@ from biosim.simulation import BioSim
 
 # TODO: Create tests similar to the ones in test_biosim_interface,
 def test_create_island():
-    """Create unit areas with only water"""
-    BioSim(island_map="WW\nWW", ini_pop=[], seed=1, vis_years=0)
+    """All types of islands can be created, as long as the border is water"""
 
+    BioSim(island_map="WWW\nWWW\nWWW", ini_pop=[], seed=1, vis_years=0)
+
+
+def test_island_border():
+    """The island border can only be water"""
+    BioSim(island_map="LWW\nWWW\nWWL", ini_pop=[], seed=1, vis_years=0)
 
 @pytest.fixture
-def reset_animal_params():
+def reset_fauna_params():
     yield
     BioSim(island_map="W",
            ini_pop=[], seed=1, vis_years=0).set_animal_parameters('Herbivore',
