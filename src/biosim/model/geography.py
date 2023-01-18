@@ -17,17 +17,13 @@ class Geography:
     """
     _default_params: GeoParam
     _params: GeoParam
+    _can_animals_move_here: bool
+    _can_be_border: bool
+    _can_have_fodder: bool
 
-    def __init__(self,
-                 fodder: float = 0.,
-                 can_animals_move_here: bool = True,
-                 can_be_border: bool = False):
-        if fodder is not None:
-            if fodder < 0.:
-                raise ValueError("Fodder cannot be negative.")
-            self.initialize_fodder_max(fodder)
-        self._can_animals_move_here = can_animals_move_here
-        self._can_be_border = can_be_border
+    def __init__(self, fodder: float = 0.):
+
+        self.initialize_fodder_max(fodder)
 
     def __str__(self):
         return self.__class__.__name__[0]
@@ -44,6 +40,10 @@ class Geography:
     def can_be_border(self):
         return self._can_be_border
 
+    @property
+    def can_have_fodder(self):
+        return self._can_have_fodder
+
     @classmethod
     def initialize_fodder_max(cls, f_max):
         """
@@ -54,6 +54,10 @@ class Geography:
         f_max: float
 
         """
+        if f_max is None or f_max < 0.0:
+            raise ValueError("Fodder cannot be negative.")
+        if not cls._can_have_fodder and f_max > 0:
+            raise ValueError("Can not add fodder here.")
         cls._params.f_max = f_max
 
 
@@ -68,8 +72,11 @@ class Highland(Geography):
     """
     _default_params = GeoParam(300)
     _params = copy(_default_params)
+    _can_animals_move_here = True
+    _can_be_border = False
+    _can_have_fodder = True
 
-    def __init__(self, fodder=None):
+    def __init__(self, fodder=_default_params.f_max):
         super().__init__(fodder)
 
 
@@ -84,8 +91,11 @@ class Lowland(Geography):
     """
     _default_params = GeoParam(800)
     _params = copy(_default_params)
+    _can_animals_move_here = True
+    _can_be_border = False
+    _can_have_fodder = True
 
-    def __init__(self, fodder=None):
+    def __init__(self, fodder=_default_params.f_max):
         super().__init__(fodder)
 
 
@@ -99,6 +109,9 @@ class Desert(Geography):
     """
     _default_params = GeoParam(0)
     _params = GeoParam(0)
+    _can_animals_move_here = True
+    _can_be_border = False
+    _can_have_fodder = False
 
     def __init__(self):
         super().__init__(0)
@@ -115,8 +128,9 @@ class Water(Geography):
     """
     _default_params = GeoParam(0)
     _params = GeoParam(0)
+    _can_animals_move_here = False
+    _can_be_border = True
+    _can_have_fodder = False
 
     def __init__(self):
-        super().__init__(fodder=0,
-                         can_animals_move_here=False,
-                         can_be_border=True)
+        super().__init__(fodder=0)

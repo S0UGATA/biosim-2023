@@ -38,7 +38,6 @@ class UnitArea:
             List of Carnivores in the cell.
         """
         self._loc = loc
-        self._is_animals_allowed = True
         self._geo: Geography = self._assign_geo(geo)
         self._herbs = herbs if herbs is not None else []
         self._carns = carns if carns is not None else []
@@ -75,7 +74,7 @@ class UnitArea:
         """
         if herbivore is None:
             return
-        if not self._is_animals_allowed:
+        if not self._geo.can_animals_move_here:
             raise ValueError(f"No animals allowed in {self._geo}")
         self._herbs.append(herbivore)
 
@@ -89,7 +88,7 @@ class UnitArea:
         """
         if herbivores is None:
             return
-        if not self._is_animals_allowed:
+        if not self._geo.can_animals_move_here:
             raise ValueError(f"No animals allowed in {self._geo}")
         self._herbs.extend(herbivores)
 
@@ -104,7 +103,7 @@ class UnitArea:
         """
         if carnivore is None:
             return
-        if not self._is_animals_allowed:
+        if not self._geo.can_animals_move_here:
             raise ValueError(f"No animals allowed in {self._geo}")
         self._carns.append(carnivore)
 
@@ -119,7 +118,7 @@ class UnitArea:
         """
         if carnivores is None:
             return
-        if not self._is_animals_allowed:
+        if not self._geo.can_animals_move_here:
             raise ValueError(f"No animals allowed in {self._geo}")
         self._carns.extend(carnivores)
 
@@ -225,7 +224,6 @@ class UnitArea:
                 self._raise_error_if_boundary(geo)
                 return Lowland()
             case "W":
-                self._is_animals_allowed = False
                 return Water()
             case "D":
                 self._raise_error_if_boundary(geo)
@@ -268,6 +266,7 @@ class UnitArea:
         Blindly raises a ValueError if cell is a boundary.
         Should be called only from a non-water cell.
         """
+        # TODO: This is not correct for the whole island
         if self._loc[0] == 1 or self._loc[1] == 1:
             raise ValueError(f"{geo} cannot be a border cell.")
 

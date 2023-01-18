@@ -28,6 +28,20 @@ def reset_animal_params_():
 
 
 def test_init_animal():
+    """ Test that the default age for an instance of an Herbivore or Carnivore is equal to 0, and
+    the weight is greater than 0. """
+    random.seed(20)
+    cycles = 10
+    for _ in range(cycles):
+        herb = Herbivore()
+        carn = Carnivore()
+        assert herb.age == 0
+        assert herb.weight != 0
+        assert carn.age == 0
+        assert carn.weight != 0
+
+
+def test_set_init_animal():
     """Initialization of animal with set input of age and weight."""
     random.seed(20)
     cycles = 20
@@ -38,20 +52,12 @@ def test_init_animal():
         Carnivore(age, weight)
 
 
-def test_age_carn_herb():
-    """ Test that the default age for an instance of an Herbivore or Carnivore is equal to 0. """
-    herb = Herbivore()
-    carn = Carnivore()
-    assert herb.age == 0
-    assert carn.age == 0
-
-
 def test_get_older_carn_herb():
     """ Test that the age of an animal increases by one when get_older() is used."""
-    herb = Herbivore()
-    carn = Carnivore()
-    herb_set = Herbivore(5, 20)
-    carn_set = Carnivore(6, 24)
+    herb = Herbivore()  # Initialized without set values for weight and age
+    carn = Carnivore()  # Initialized without set values for weight and age
+    herb_set = Herbivore(5, 20)  # Herbivore with set values for weight and age
+    carn_set = Carnivore(6, 24)  # Carnivore with set values for weight and age
 
     no_years = 10
     for _ in range(no_years):
@@ -110,8 +116,7 @@ def test_eat_and_gain_weight_carn():
     assert carn_set.weight > 24
 
 
-# TODO: This does _not_ raise a ValueError, is going to be fixed asap.
-@pytest.mark.parametrize('bad_age, bad_weight', [(-1, -1)])
+@pytest.mark.parametrize('bad_age, bad_weight', [(-1, -1), (-1, 0), (-1, 1)])
 def test_grow_old_herb_carn(bad_age, bad_weight):
     """It should not be possible to initialize a negative age and/or weight when instantiating a
     new Herbivore and/or Carnivore."""
@@ -120,6 +125,32 @@ def test_grow_old_herb_carn(bad_age, bad_weight):
         Carnivore(bad_age, bad_weight)
 
 
+def test_animal_fitness():
+    """The calculated fitness of an animal should always be 0 < fitness_animal < 1"""
+    random.seed(SEED)
+    no_animals = 1000
+    for _ in range(no_animals):
+        age = random.randint(0, 60)
+        weight = random.randint(1, 80)
+        herb = Herbivore(age, weight)
+        carn = Carnivore(age, weight)
+        assert 0 < herb.fitness < 1
+        assert 0 < carn.fitness < 1
+
+
+def test_unfit_herbs_always_die():
+    """An animal dies with certainty if weight = 0. """
+    random.seed(SEED)
+    cycles = 1000
+
+    for _ in range(cycles):
+        rand_age = random.randint(1000, 5000)
+        herb = Herbivore(rand_age)
+        herb.set_animal_parameters(params={'omega': 1})
+        assert herb.maybe_die() is True
+
+
+# TODO: Z-test and/or binomial test has to be made
 def test_weight_of_newborns_z_test():
     """This test is a probability test: executes procreate() N number of times.  We have that the
     number n of "successes", where procreate() returns an offspring, should be according to the log
