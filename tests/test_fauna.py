@@ -27,6 +27,17 @@ def reset_animal_params_():
     Carnivore.set_animal_parameters(Herbivore.default_params)
 
 
+def test_init_animal():
+    """Initialization of animal with set input of age and weight."""
+    random.seed(20)
+    cycles = 20
+    age = random.randint(0, 10)
+    weight = random.randint(1, 50)
+    for _ in range(1, cycles):
+        herb = Herbivore(age, weight)
+        carn = Carnivore(age, weight)
+
+
 def test_age_carn_herb():
     """ Test that the default age for an instance of an Herbivore or Carnivore is equal to 0. """
     herb = Herbivore()
@@ -58,6 +69,20 @@ def test_get_older_carn_herb():
     assert herb_set.age == no_years + 5
     assert carn.age == no_years
     assert carn_set.age == no_years + 6
+
+
+def test_init_weight():
+    """The initialized weight of an animal has to be greater than 0."""
+    herb = Herbivore()
+    carn = Carnivore()
+    assert herb.weight != 0
+    assert carn.weight != 0
+
+    year = 10
+    weight = random.randint(1, 10)
+    for age in range(1, year):
+        herb = Herbivore(age, weight)
+        assert herb.weight != 0
 
 
 def test_eat_and_gain_weight_herb():
