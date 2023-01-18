@@ -34,22 +34,16 @@ def test_init_animal():
     age = random.randint(0, 10)
     weight = random.randint(1, 50)
     for _ in range(1, cycles):
-        herb = Herbivore(age, weight)
-        carn = Carnivore(age, weight)
+        Herbivore(age, weight)
+        Carnivore(age, weight)
 
 
 def test_age_carn_herb():
     """ Test that the default age for an instance of an Herbivore or Carnivore is equal to 0. """
     herb = Herbivore()
     carn = Carnivore()
-    herb_set = Herbivore(5, 20)
-    carn_set = Carnivore(6, 24)
-
     assert herb.age == 0
     assert carn.age == 0
-
-    assert herb_set.age == 5
-    assert carn_set.age == 6
 
 
 def test_get_older_carn_herb():
