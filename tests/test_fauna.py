@@ -34,8 +34,8 @@ def test_init_animal():
     age = random.randint(0, 10)
     weight = random.randint(1, 50)
     for _ in range(1, cycles):
-        herb = Herbivore(age, weight)
-        carn = Carnivore(age, weight)
+        Herbivore(age, weight)
+        Carnivore(age, weight)
 
 
 def test_age_carn_herb():
