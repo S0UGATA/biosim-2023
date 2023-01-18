@@ -2,7 +2,7 @@
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
 
-from prettytable import PrettyTable
+from prettytable import PrettyTable, ALL
 
 from biosim.model.fauna import Herbivore, Carnivore
 from biosim.model.geography import Highland, Lowland
@@ -40,14 +40,9 @@ class Rossumoya:
         self._cells = island_cells
 
     def __str__(self):
-        island = PrettyTable(header=False)
+        island = PrettyTable(header=False, preserve_internal_border=True, hrules=ALL)
         [island.add_row(row) for row in self._cells]
         return str(island)
-
-    @property
-    def cells(self):
-        """ Returns the underlying 2d array of UnitAreas. """
-        return self._cells
 
     def populate_island(self, population: [{}], initial=False):
         """
@@ -78,13 +73,13 @@ class Rossumoya:
 
     def go_through_annual_cycle(self):
         self.reset_animal_move_flag()
-        for r, rows in enumerate(self.cells):
+        for r, rows in enumerate(self._cells):
             for c, cell in enumerate(rows):
                 if not cell.can_animals_move_here():
                     continue
                 cell.make_babies()
                 cell.eat()
-                cell.wander_away(r, c, self.cells)
+                cell.wander_away(r, c, self._cells)
                 cell.grow_old()
                 cell.get_thin()
                 cell.maybe_die()
@@ -116,6 +111,8 @@ class Rossumoya:
             raise ValueError(f"param : {params} does not contain f_max")
         try:
             f_max = float(f_max)
+            if f_max < 0.:
+                raise ValueError("Fodder cannot be negative.")
         except ValueError as e:
             raise ValueError(f"f_max cannot be {f_max}, inner error: {e}") from e
 
@@ -144,3 +141,7 @@ class Rossumoya:
                 Carnivore.set_animal_parameters(params)
             case _:
                 raise ValueError(f"Invalid species: {species}")
+
+    @staticmethod
+    def console_output_island(param):
+        UnitArea.console_output_island = param

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
@@ -6,12 +7,11 @@
 Test set for Fauna super class interface, in addition to child classes Herbivore and Carnivore
 interface.
 """
-from random import random
+import random
 
 import pytest
+
 from biosim.model.fauna import Herbivore, Carnivore
-from biosim.model.parameters import FaunaParam
-from biosim.simulation import BioSim
 
 """Random seed for tests"""
 SEED = 123456
@@ -61,8 +61,8 @@ def test_get_older_carn_herb():
 
 
 def test_eat_and_gain_weight_herb():
-    """ Test that an Herbivore that has eaten an F amount of fodder gains weight according to the
-    formula β*F, where β = 0.9 for Herbivores."""
+    """ Test that a Herbivore that has eaten an F amount of fodder gains weight according to the
+    formula beta*F, where beta = 0.9 for Herbivores."""
     herb = Herbivore()
 
     amount_fodder = 10
@@ -78,7 +78,7 @@ def test_eat_and_gain_weight_herb():
 
 
 def test_eat_and_gain_weight_carn():
-    """Carnivore eating and gaining weight. Weight gain is Fodder*β, where beta = 0.75"""
+    """Carnivore eating and gaining weight. Weight gain is Fodder*beta, where beta = 0.75"""
     herb = Herbivore()
     carn = Carnivore()
     herb_set = Herbivore(5, 20)
@@ -100,19 +100,20 @@ def test_grow_old_herb_carn(bad_age, bad_weight):
         Herbivore(bad_age, bad_weight)
         Carnivore(bad_age, bad_weight)
 
-    def test_weight_of_newborns_z_test():
-        """This test is a probability test: executes procreate() N number of times.  We have that the
-        number n of "successes", where procreate() returns an offspring, should be according to the log
-        normal distribution ln(X) ~ N(μ, σ^2). Here, the parameters are
-        the mean μ = w_birth and variance σ^2= (σ_birth)^2.
 
-        We have
-        Z = (sum of X - mean) / standard deviation
+def test_weight_of_newborns_z_test():
+    """This test is a probability test: executes procreate() N number of times.  We have that the
+    number n of "successes", where procreate() returns an offspring, should be according to the log
+    normal distribution ln(X) ~ N(mu, sigma^2). Here, the parameters are
+    the mean mu = w_birth and variance sigma^2= (sigma_birth)^2.
 
-        """
+    We have
+    Z = (sum of X - mean) / standard deviation
 
-        random.seed(SEED)
-        no_trials = 100
+    """
 
-        herb = Herbivore()
-        herb.set_animal_parameters
+    random.seed(SEED)
+    # no_trials = 100
+
+    herb = Herbivore()
+    herb.set_animal_parameters

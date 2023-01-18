@@ -76,7 +76,7 @@ def test_set_default_animal_params(reset_animal_params, fauna_type, set_param):
                      "omega": 0.8,
                      "F": 50,
                      "DeltaPhiMax": 10}
-    animal_params.update(set_param)
+    animal_params |= set_param
 
     BioSim(island_map="W",
            ini_pop=[], seed=1, vis_years=0).set_animal_parameters(fauna_type, set_param)

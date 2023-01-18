@@ -4,6 +4,8 @@
 [build-system]
 requires = [
     "setuptools",
-    "wheel"
+    "wheel",
+    "prettytable",
+    "matplotlib"
 ]
 build-backend = "setuptools.build_meta"

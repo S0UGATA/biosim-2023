@@ -4,6 +4,8 @@
 import random
 from typing import Tuple
 
+from numba import jit
+
 from biosim.model.fauna import Herbivore, Carnivore, Fauna
 from biosim.model.geography import Highland, Lowland, Water, Desert, Geography
 
@@ -12,6 +14,7 @@ class UnitArea:
     """
     Class that defines the building blocks of the island.
     """
+    console_output_island = False
 
     def __init__(self,
                  loc: tuple,
@@ -42,11 +45,16 @@ class UnitArea:
 
     def __str__(self):
         val = f"{str(self._geo)}"
-        if len(self._herbs) > 0:
-            val += f".H{len(self._herbs)}"
-        if len(self._carns) > 0:
-            val += f".C{len(self._carns)}"
-        return val
+        h_len = len(self._herbs)
+        c_len = len(self._carns)
+        if h_len > 0:
+            val += f".H{h_len}"
+        if c_len > 0:
+            val += f".C{c_len}"
+        if not self.console_output_island:
+            return val
+        sel_count = h_len + c_len
+        return val if sel_count == 0 else self._color(sel_count) + val + "\033[0m"
 
     @property
     def herbs(self):
@@ -124,8 +132,8 @@ class UnitArea:
         then added back to the list of animals of that species at the end.
         """
 
-        self.add_herbs(self._make_babies_of(self._herbs))
-        self.add_carns(self._make_babies_of(self._carns))
+        self.add_herbs(UnitArea._make_babies_of(self._herbs))
+        self.add_carns(UnitArea._make_babies_of(self._carns))
 
     def eat(self):
 
@@ -225,15 +233,6 @@ class UnitArea:
             case _:
                 raise ValueError(f"Geography {geo} is not a valid value.")
 
-    def _make_babies_of(self, animals):
-        no_animals = len(animals)
-        babies = []
-        for animal in animals:
-            baby = animal.procreate(no_animals)
-            if baby is not None:
-                babies.append(baby)
-        return babies
-
     def _herbivores_eat(self):
         """
         Decides which herbs get to eat. The amount of fodder is determined by the parameter f_max,
@@ -273,6 +272,16 @@ class UnitArea:
             raise ValueError(f"{geo} cannot be a border cell.")
 
     @staticmethod
+    def _make_babies_of(animals):
+        no_animals = len(animals)
+        babies = []
+        for animal in animals:
+            baby = animal.procreate(no_animals)
+            if baby is not None:
+                babies.append(baby)
+        return babies
+
+    @staticmethod
     def _migrate_to(animal: Fauna, row, col, cells):
         """
         Calculates the relative movement of an animal.
@@ -299,3 +308,13 @@ class UnitArea:
         relative_position: Tuple = animal.where_will_you_move()
         move_to: UnitArea = cells[row + relative_position[0]][col + relative_position[1]]
         return move_to if move_to.can_animals_move_here() else None
+
+    @staticmethod
+    @jit
+    def _color(selected):
+        ll = 0
+        for count, ul in enumerate(range(0, 60, 10)):
+            if ll <= selected < ul + 1:
+                return f"\33[0;30;4{count + 1}m"
+            ll = ul
+        return "\33[0;30;46m"

@@ -15,11 +15,11 @@ if __name__ == '__main__':
     geogr = """\
                WWWWWWWWWWW
                WLLLLLLLLLW
-               WLLLLLLLLLW
-               WLLLLLLLLLW
-               WLLLLLLLLLW
-               WLLLLLLLLLW
-               WLLLLLLLLLW
+               WLLLLLHHHHW
+               WHHHHLLLLLW
+               WLLLLLHHHHW
+               WHHHHLLLLLW
+               WLLLLDDDDLW
                WLLLLLLLLLW
                WWWWWWWWWWW"""
     geogr = textwrap.dedent(geogr)
@@ -28,24 +28,25 @@ if __name__ == '__main__':
                   'pop': [{'species': 'Herbivore',
                            'age': 0,
                            'weight': 5000}
-                          for _ in range(500)]}]
+                          for _ in range(1000)]}]
     ini_carns = [{'loc': (5, 6),
                   'pop': [{'species': 'Carnivore',
                            'age': 0,
                            'weight': 5000}
-                          for _ in range(500)]}]
+                          for _ in range(1000)]}]
 
     sim = BioSim(island_map=geogr,
                  ini_pop=ini_herbs,
-                 seed=100)
+                 seed=100,
+                 console_output_island=True)
 
     sim.add_population(ini_carns)
 
     sim.set_animal_parameters('Herbivore',
                               {'mu': 1, 'omega': 0, 'gamma': 0, 'eta': 0,
-                               'F': 0, 'a_half': 10000})
+                               'F': 0, 'a_half': 50})
     sim.set_animal_parameters('Carnivore',
                               {'mu': 1, 'omega': 0, 'gamma': 0, 'eta': 0,
-                               'F': 0, 'a_half': 10000})
+                               'F': 0, 'a_half': 50})
 
-    sim.simulate(num_years=5)
+    sim.simulate(num_years=7)

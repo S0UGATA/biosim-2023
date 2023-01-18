@@ -19,10 +19,12 @@ class Geography:
     _params: GeoParam
 
     def __init__(self,
-                 fodder: int = None,
+                 fodder: float = 0.,
                  can_animals_move_here: bool = True,
                  can_be_border: bool = False):
         if fodder is not None:
+            if fodder < 0.:
+                raise ValueError("Fodder cannot be negative.")
             self.initialize_fodder_max(fodder)
         self._can_animals_move_here = can_animals_move_here
         self._can_be_border = can_be_border

@@ -5,5 +5,3 @@
 """
 Test set for UnitArea class interface.
 """
-
-import pytest

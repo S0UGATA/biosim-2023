@@ -32,7 +32,8 @@ class BioSim:
                  img_dir=None,
                  img_base=None,
                  img_fmt='png',
-                 log_file=None):
+                 log_file=None,
+                 console_output_island=False):
         """
         Parameters
         ----------
@@ -105,6 +106,7 @@ class BioSim:
         self._img_fmt = img_fmt
         self._log_file = log_file
         self._simulated_until_years = 0
+        self._console_output_island = console_output_island
 
     def set_animal_parameters(self, species, params):
         """
@@ -160,7 +162,7 @@ class BioSim:
             writer = csv.writer(csvfile, delimiter=',')
             if new_file:
                 writer.writerow(["Year", "Herbivore Count", "Carnivore Count"])
-
+        self._print_migration_data()
         for _ in range(num_years):
             if self._log_file is not None:
                 writer.writerow([self._simulated_until_years, Herbivore.count(), Carnivore.count()])
@@ -202,6 +204,8 @@ class BioSim:
         """TODO Create MPEG4 movie from visualization images saved."""
 
     def _print_migration_data(self):
-        print(f"Y:{self._simulated_until_years}")
-        print(f"H:{Herbivore.count()}.C:{Carnivore.count()}")
-        print(self._island)
+        if self._console_output_island:
+            Rossumoya.console_output_island(True)
+            print(f"Y:{self._simulated_until_years}")
+            print(f"H:{Herbivore.count()}.C:{Carnivore.count()}")
+            print(self._island)

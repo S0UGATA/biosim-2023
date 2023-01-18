@@ -34,7 +34,7 @@ ini_carns = [{'loc': (2, 2),
                        'weight': 20}
                       for _ in range(20)]}]
 
-for seed in range(100, 150):
+for seed in range(100, 199):
     sim = BioSim(geogr, ini_herbs, seed=seed,
                  log_file=f'data/simulation_hc_{seed:05d}',
                  img_dir='results', img_base=f'simulation_hc_{seed:05d}', img_years=300)

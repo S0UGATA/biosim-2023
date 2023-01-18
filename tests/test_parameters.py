@@ -6,5 +6,3 @@
 Test set for Parameters super class interface, in addition to child classes FaunaParam and GeoParam
 interface.
 """
-
-import pytest

@@ -5,5 +5,3 @@
 """
 Test set for Rossumøya class interface.
 """
-
-import pytest

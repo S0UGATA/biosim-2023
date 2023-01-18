@@ -3,6 +3,7 @@
 # (C) Copyright 2023 Tonje, Sougata / NMBU
 import math
 import random
+import sys
 from copy import copy
 from typing import Tuple
 
@@ -74,9 +75,9 @@ class Fauna:
     _count: int
 
     def __init__(self, age=0, weight=0.):
-        if age < 0 :
+        if age < 0:
             raise ValueError("Age cannot be negative")
-        if weight <= 0:
+        if weight <= 0.:
             raise ValueError("Weight has to be > 0")
         self._age = age
         self._weight = weight
@@ -174,14 +175,14 @@ class Fauna:
 
         if self._weight < self._params.zeta * (self._params.w_birth + self._params.sigma_birth):
             return None
-        prob = min(1, self._params.gamma * self.fitness * number_of_animals)
-        rand = random.random()
+        if random.random() >= min(1, self._params.gamma * self.fitness * number_of_animals):
+            return None
         w_baby = Fauna._baby_weight(self._params.w_birth, self._params.sigma_birth)
         xi_w_baby = self._params.xi * w_baby
         if self._weight < xi_w_baby:
             return None
         self._change_weight(-xi_w_baby)
-        return self._new_animal(0, w_baby) if rand < prob else None
+        return self._new_animal(0, w_baby)
 
     def get_older(self):
         """ Adds one year to the age of an animal """
@@ -201,10 +202,7 @@ class Fauna:
         if self._weight <= 0:
             die = True
         else:
-            rand = random.random()
-            fitness = self.fitness
-            prob = self._params.omega * (1 - fitness)
-            die = rand < prob
+            die = random.random() < self._params.omega * (1 - self.fitness)
         if die:
             self.decrease_count()
         return die
@@ -333,7 +331,7 @@ class Herbivore(Fauna):
     _params = copy(_default_params)
     _count: int = 0
 
-    def __init__(self, age: int = 0, weight: int = 0.):
+    def __init__(self, age: int = 0, weight: float = sys.float_info.min):
         """
         Parameters
         ----------
@@ -343,7 +341,7 @@ class Herbivore(Fauna):
         super().__init__(age, weight)
 
     # 2.
-    def feed_and_gain_weight(self, start_fodder: int) -> int:
+    def feed_and_gain_weight(self, start_fodder: float) -> float:
         """
         Changes the weight of the Herbivore that eats, and returns the value of the remaining
         fodder.
@@ -406,7 +404,7 @@ class Carnivore(Fauna):
     _params = copy(_default_params)
     _count = 0
 
-    def __init__(self, age: int = 0, weight: int = 0):
+    def __init__(self, age: int = 0, weight: float = sys.float_info.min):
         super().__init__(age, weight)
 
     def feed_on_herbivores_and_gain_weight(self, eat_herbs: [Herbivore]):
