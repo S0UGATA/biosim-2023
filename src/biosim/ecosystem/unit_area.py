@@ -218,15 +218,12 @@ class UnitArea:
         """
         match geo:
             case "H":
-                self._raise_error_if_boundary(geo)
                 return Highland()
             case "L":
-                self._raise_error_if_boundary(geo)
                 return Lowland()
             case "W":
                 return Water()
             case "D":
-                self._raise_error_if_boundary(geo)
                 return Desert()
             case _:
                 raise ValueError(f"Geography {geo} is not a valid value.")
@@ -260,15 +257,6 @@ class UnitArea:
             if self._herbs is not None and eaten_herbs is not None:
                 self._herbs = [herb for herb in self._herbs if herb not in eaten_herbs]
                 Herbivore.decrease_count(len(eaten_herbs))
-
-    def _raise_error_if_boundary(self, geo):
-        """
-        Blindly raises a ValueError if cell is a boundary.
-        Should be called only from a non-water cell.
-        """
-        # TODO: This is not correct for the whole island
-        if self._loc[0] == 1 or self._loc[1] == 1:
-            raise ValueError(f"{geo} cannot be a border cell.")
 
     @staticmethod
     def _make_babies_of(animals):

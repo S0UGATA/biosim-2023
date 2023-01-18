@@ -33,10 +33,17 @@ class Rossumoya:
             raise ValueError("Rossumøya is non rectangular")
 
         island_cells = []
-        island_cells.extend(
-            [UnitArea((r + 1, c + 1), geo) for c, geo in enumerate(row)]
-            for r, row in enumerate(rows)
-        )
+
+        max_rows_idx = len(rows) - 1
+        max_col_idx = len(rows[0]) - 1
+        for r, row in enumerate(rows):
+            island_row = []
+            for c, geo in enumerate(row):
+                cell = UnitArea((r + 1, c + 1), geo)
+                if not cell.can_be_border() and (r in (0, max_rows_idx) or c in (0, max_col_idx)):
+                    raise ValueError(f"{geo} cannot be a border")
+                island_row.append(cell)
+            island_cells.append(island_row)
         self._cells = island_cells
 
     def __str__(self):
