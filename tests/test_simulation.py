@@ -17,9 +17,27 @@ def test_create_island():
     BioSim(island_map="WWW\nWWW\nWWW", ini_pop=[], seed=1, vis_years=0)
 
 
-def test_island_border():
-    """The island border can only be water"""
-    BioSim(island_map="LWW\nWWW\nWWL", ini_pop=[], seed=1, vis_years=0)
+@pytest.mark.parametrize('island_map', ["LWW\nWWW\nWWL", "WWW\nWWW\nWWL", "DWW\nWLW\nWWD",
+                                        "LHL\nLWL\nLHL", "HWW\nWWW\nDDD", "WWW\nLWL\nWWW"])
+
+def test_island_border(island_map):
+    """The border of the island can only be surrounded by water"""
+    with pytest.raises(ValueError):
+        BioSim(island_map=island_map, ini_pop=[], seed=1, vis_years=0)
+
+
+@pytest.mark.parametrize('bad_value', [-1, 100, "A", "P", "Å", "*"])
+def test_geo_input_param(bad_value):
+    """Input of invalid geo type should raise an error"""
+    with pytest.raises(ValueError):
+        BioSim(island_map="WWW\nW{}W\nWWW", ini_pop=[], seed=1, vis_years=0)
+
+
+def test_size_of_island():
+    """The grid of the island should be a square"""
+    with pytest.raises(ValueError):
+        BioSim(island_map="WWW\nWW\nWWW", ini_pop=[], seed=1, vis_years=0)
+
 
 @pytest.fixture
 def reset_fauna_params():
