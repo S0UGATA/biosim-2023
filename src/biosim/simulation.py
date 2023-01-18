@@ -6,8 +6,9 @@ import random
 import sys
 from os import path
 
-from biosim.model.fauna import Herbivore, Carnivore
-from biosim.model.rossumoya import Rossumoya
+from biosim.ecosystem.fauna import Herbivore, Carnivore
+from biosim.ecosystem.rossumoya import Rossumoya
+from biosim.visualization.visuals import Visuals
 
 
 # The material in this file is licensed under the BSD 3-clause license
@@ -96,14 +97,14 @@ class BioSim:
         self._island = Rossumoya(island_map)
         self._island.populate_island(ini_pop, initial=True)
         random.seed(seed)
-        self._vis_years = vis_years
-        self._ymax_animals = ymax_animals
-        self._cmax_animals = cmax_animals
-        self._hist_specs = hist_specs
-        self._img_years = img_years
-        self._img_dir = img_dir
-        self._img_base = img_base
-        self._img_fmt = img_fmt
+        self._visuals = Visuals(vis_years,
+                                ymax_animals,
+                                cmax_animals,
+                                hist_specs,
+                                img_years,
+                                img_dir,
+                                img_base,
+                                img_fmt)
         self._log_file = log_file
         self._simulated_until_years = 0
         self._console_output_island = console_output_island

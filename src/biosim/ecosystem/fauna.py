@@ -9,7 +9,7 @@ from typing import Tuple
 
 from numba import jit
 
-from biosim.model.parameters import FaunaParam
+from biosim.ecosystem.parameters import FaunaParam
 
 
 class Fauna:
@@ -130,11 +130,16 @@ class Fauna:
         fauna_params = getattr(cls, "_params")
         for key, value in params.items():
             try:
+                if value is None:
+                    continue
                 value = float(value)
-                if getattr(fauna_params, key) is not None:
-                    setattr(fauna_params, key, value)
-                else:
+                if getattr(fauna_params, key) is None:
                     raise ValueError(f"[{key}:{value}] is invalid.")
+                if key == "DeltaPhiMax" and value <= 0.:
+                    raise ValueError("DeltaPhiMax should be > 0")
+                elif value < 0.:
+                    raise ValueError(f"{key} should be >= 0")
+                setattr(fauna_params, key, value)
             except (AttributeError, ValueError) as e:
                 raise ValueError(f"[{key}:{value}] is invalid, inner error: {e}") from e
 

@@ -4,9 +4,9 @@
 
 from prettytable import PrettyTable, ALL
 
-from biosim.model.fauna import Herbivore, Carnivore
-from biosim.model.geography import Highland, Lowland
-from biosim.model.unit_area import UnitArea
+from biosim.ecosystem.fauna import Herbivore, Carnivore
+from biosim.ecosystem.geography import Highland, Lowland
+from biosim.ecosystem.unit_area import UnitArea
 
 
 class Rossumoya:
