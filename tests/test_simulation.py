@@ -5,6 +5,9 @@
 """
 Test set for BioSim class interface.
 """
+import glob
+import os
+
 import pytest
 
 from biosim.simulation import BioSim
@@ -81,7 +84,7 @@ def reset_fauna_params():
 
 @pytest.mark.parametrize('fauna_type, set_param', [('Herbivore', {'F': 5.0}),
                                                    ('Carnivore', {'DeltaPhiMax': 11.0})])
-def test_set_default_animal_params(reset_animal_params, fauna_type, set_param):
+def test_set_default_animal_params(reset_fauna_params, fauna_type, set_param):
     """It should be possible to define and set parameters of your own choosing when instantiating
     an animal, either Herbivore or Carnivore."""
     animal_params = {"w_birth": 6,
@@ -135,5 +138,41 @@ def test_placement_of_population(geo_type):
                          'pop': [{'species': 'Herbivore', 'age': 2, 'weight': 20.},
                                  {'species': 'Carnivore', 'age': 2, 'weight': 14.}]}],
                seed=1, vis_years=0)
+
+
+def test_total_no_animals(reusable_island):
+    """The total amount of animals is vailable"""
+    assert reusable_island.num_animals == 0
+
+
+def test_animal_count_per_species(reusable_island):
+    """The total amount of animals per species should be available."""
+    assert reusable_island.num_animals_per_species == {'Herbivore': 0, 'Carnivore': 0}
+
+
+# This is resused from test_biosim_interface
+@pytest.fixture
+def figfile_base():
+    """Name for the figfile is provided and the figfiles can be deleted after the test is
+    completed."""
+    file = 'img_name'
+    yield file
+    for f in glob.glob(f"{file}_0*.png"):
+        os.remove(f)
+
+
+# TODO: Check this after image saving is done
+def test_figure_saved(figfile_base):
+    """Test that figure are saved during simulation"""
+    sim = BioSim(island_map="WWWW\nWLHW\nWWWW",
+                 ini_pop=[],
+                 seed=1,
+                 img_dir='.',
+                 img_base=figfile_base,
+                 img_fmt='png')
+    sim.simulate(2)
+
+    assert os.path.isfile(figfile_base + '_00001.png')
+    assert os.path.isfile(figfile_base + '_00002.png')
 
 # TODO: Add tests for visualization and images when this is done
