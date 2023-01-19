@@ -162,7 +162,7 @@ def test_bad_parameters_herb(bad_param):
 
 
 # TODO: Currently working on making checks for negative values in parameter settings
-@pytest.mark.parametrize('bad_param', [({'DeltaPhiMax': 0}), ({'DeltaPhiMax': 0}),
+@pytest.mark.parametrize('bad_param', [({'DeltaPhiMax': 0}), ({'DeltaPhiMax': -1}),
                                        ({'w.birth': -1}), ({'w_half': -1})])
 def test_bad_param_carn(bad_param):
     carn = Carnivore()
