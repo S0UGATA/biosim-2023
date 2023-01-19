@@ -87,6 +87,10 @@ class Rossumoya:
                 cell.make_babies()
                 cell.eat()
                 cell.wander_away(r, c, self._cells)
+        for rows in self._cells:
+            for cell in rows:
+                if not cell.can_animals_move_here():
+                    continue
                 cell.grow_old()
                 cell.get_thin()
                 cell.maybe_die()
