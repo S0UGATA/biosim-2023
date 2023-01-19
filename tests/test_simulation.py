@@ -13,6 +13,7 @@ import random
 
 import pytest
 
+from biosim.ecosystem.fauna import Herbivore
 from biosim.simulation import BioSim
 
 
@@ -111,7 +112,7 @@ def test_set_default_animal_params(reset_fauna_params, fauna_type, set_param):
            ini_pop=[], seed=1, vis_years=0).set_animal_parameters(fauna_type, set_param)
 
 
-@pytest.fixture()
+@pytest.fixture
 def reusable_island():
     """Create an island that can be used in other tests."""
     return BioSim(island_map="WWWW\nWHLW\nWWWW",
@@ -165,8 +166,15 @@ def test_num_years_simulated(reusable_island):
 
 
 def test_total_no_animals(reusable_island):
-    """The total amount of animals is vailable"""
+    """The total amount of animals is available. Tested with and without adding population."""
     assert reusable_island.num_animals == 0
+    ini_herbs = [{'loc': (2, 2),
+                  'pop': [{'species': 'Herbivore',
+                           'age': 5,
+                           'weight': 20}
+                          for _ in range(50)]}]
+    reusable_island.add_population(ini_herbs)
+    assert reusable_island.num_animals == 50
 
 
 def test_animal_count_per_species(reusable_island):
