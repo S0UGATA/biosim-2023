@@ -3,10 +3,13 @@
 # (C) Copyright 2023 Tonje, Sougata / NMBU
 
 """
-Test set for BioSim class interface.
+Test set for BioSim class interface. The following tests check if the class interface can be used,
+whereas the class functions are tested in their own files.
 """
+
 import glob
 import os
+import random
 
 import pytest
 
@@ -138,6 +141,27 @@ def test_placement_of_population(geo_type):
                          'pop': [{'species': 'Herbivore', 'age': 2, 'weight': 20.},
                                  {'species': 'Carnivore', 'age': 2, 'weight': 14.}]}],
                seed=1, vis_years=0)
+
+
+def test_multi_call_simulation(reusable_island):
+    """The simulation can be called repeatedly"""
+    random.seed(1234)
+    cycles = 20
+    for _ in range(cycles):
+        no_years = random.randint(10, 100)
+        reusable_island.simulate(num_years=no_years)
+
+
+def test_num_years_simulated(reusable_island):
+    """The number of years that has been simulated is available"""
+    random.seed(1234)
+    cycles = 20
+    prev_years_sim = 0
+    for _ in range(cycles):
+        add_years_sim = random.randint(10, 100)
+        reusable_island.simulate(num_years=add_years_sim)
+        prev_years_sim += add_years_sim
+        assert reusable_island.year == prev_years_sim
 
 
 def test_total_no_animals(reusable_island):
