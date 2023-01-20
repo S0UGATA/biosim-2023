@@ -1,6 +1,8 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
+import subprocess
+
 import matplotlib
 import numpy as np
 from matplotlib import pyplot as plt
@@ -200,22 +202,6 @@ class Visuals:
                                                     lw=2)
             self._hists[key] = row3[col]
 
-    def save_frame(self, current_year):
-        """
-        Makes a single visual frame and saves it to disk as per the img_file_name, if it is present.
-        """
-        if self._img_dir is None and self._img_base is None:
-            return
-
-        if (self._img_dir is None) ^ (self._img_base is None):
-            raise ValueError("img_dir and img_base must both be None or filled")
-
-        if current_year % self._img_years != 0:
-            return
-
-        plt.savefig(f"./{self._img_dir}/{self._img_base}_{self._img_counter:05d}.{self._img_fmt}")
-        self._img_counter += 1
-
     def set_island(self, island_map):
 
         map_rgba = [[self._rgba_value[column] for column in row]
@@ -237,6 +223,44 @@ class Visuals:
         self._flush_it()
         plt.pause(1e-6)
         self.save_frame(current_year)
+
+    def save_frame(self, current_year):
+        """
+        Makes a single visual frame and saves it to disk as per the img_file_name, if it is present.
+        """
+        if self._img_dir is None and self._img_base is None:
+            return
+
+        if (self._img_dir is None) ^ (self._img_base is None):
+            raise ValueError("img_dir and img_base must both be None or filled")
+
+        if current_year % self._img_years != 0:
+            return
+
+        plt.savefig(f"./{self._img_dir}/{self._img_base}_{self._img_counter:05d}.{self._img_fmt}")
+        self._img_counter += 1
+
+    def make_movie(self):
+        if self._img_dir is None and self._img_base is None:
+            return
+
+        if (self._img_dir is None) ^ (self._img_base is None):
+            raise ValueError("img_dir and img_base must both be None or filled")
+
+        try:
+            # Parameters chosen according to http://trac.ffmpeg.org/wiki/Encode/H.264,
+            # section "Compatibility"
+            subprocess.check_call(["ffmpeg",
+                                   '-i', './{}/{}_%05d.png'.format(self._img_dir, self._img_base),
+                                   '-y',
+                                   '-profile:v', 'baseline',
+                                   '-level', '3.0',
+                                   # "-loglevel", "trace",
+                                   '-pix_fmt', 'yuv420p',
+                                   "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2",
+                                   './{}/{}.{}'.format(self._img_dir, self._img_base, "mp4")])
+        except subprocess.CalledProcessError as err:
+            raise RuntimeError('ERROR: ffmpeg failed with: {}'.format(err))
 
     def _set_year(self, year):
         self._year.set_text(f"Year: {year}")

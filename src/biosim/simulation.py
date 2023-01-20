@@ -179,7 +179,6 @@ class BioSim:
             if self._log_file is not None:
                 writer.writerow([self._current_year, Herbivore.count(), Carnivore.count()])
 
-            self._current_year += 1
             self._island.go_through_annual_cycle()
 
             self._print_migration_data()
@@ -188,12 +187,14 @@ class BioSim:
                     self._current_year % self._visuals.vis_years == 0:
                 self._visuals.refresh(self._current_year, self._island.animal_details())
 
+            self._current_year += 1
+
         if self._log_file is not None:
             csvfile.flush()
             csvfile.close()
 
         if self._visuals.is_enabled():
-            plt.show()
+            plt.show(block=False)
 
     def add_population(self, population):
         """
@@ -222,7 +223,8 @@ class BioSim:
         return {'Herbivore': Herbivore.count(), 'Carnivore': Carnivore.count()}
 
     def make_movie(self):
-        """TODO Create MPEG4 movie from visualization images saved."""
+        """ Create MPEG4 movie from visualization images saved."""
+        self._visuals.make_movie()
 
     def _print_migration_data(self):
         if self._console_output_island:
