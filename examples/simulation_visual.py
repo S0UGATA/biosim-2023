@@ -55,7 +55,7 @@ if __name__ == '__main__':
                  cmax_animals={'Herbivore': 150, 'Carnivore': 150},
                  img_dir='results',
                  img_base='sample',
-                 img_years=5,
+                 img_years=1,
                  vis_years=1)
-    sim.simulate(300)
+    sim.simulate(401)
     sim.make_movie()

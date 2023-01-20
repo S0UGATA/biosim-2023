@@ -7,7 +7,7 @@ from typing import Tuple
 from numba import jit
 
 from biosim.ecosystem.fauna import Herbivore, Carnivore, Fauna
-from biosim.ecosystem.geography import Highland, Lowland, Water, Desert, Geography
+from biosim.ecosystem.geography import Geography, Highland, Lowland, Water, Desert
 
 
 class UnitArea:
@@ -204,30 +204,6 @@ class UnitArea:
         for carn in self.carns:
             carn.has_moved = False
 
-    def _assign_geo(self, geo) -> Geography:
-        """
-        Initializing and creating the map of the island by defining each UnitArea with the right
-        geo value: H for Highland, L for Lowland, W for water, and D for Desert.
-
-        Validates if the cell can be a boundary.
-
-        Parameters
-        ----------
-        geo
-        Specifying the type of the UnitArea.
-        """
-        match geo:
-            case "H":
-                return Highland()
-            case "L":
-                return Lowland()
-            case "W":
-                return Water()
-            case "D":
-                return Desert()
-            case _:
-                raise ValueError(f"Geography {geo} is not a valid value.")
-
     def _herbivores_eat(self):
         """
         Decides which herbs get to eat. The amount of fodder is determined by the parameter f_max,
@@ -257,6 +233,31 @@ class UnitArea:
             if self._herbs is not None and eaten_herbs is not None:
                 self._herbs = [herb for herb in self._herbs if herb not in eaten_herbs]
                 Herbivore.decrease_count(len(eaten_herbs))
+
+    @staticmethod
+    def _assign_geo(geo) -> Geography:
+        """
+        Initializing and creating the map of the island by defining each UnitArea with the right
+        geo value: H for Highland, L for Lowland, W for water, and D for Desert.
+
+        Validates if the cell can be a boundary.
+
+        Parameters
+        ----------
+        geo
+        Specifying the type of the UnitArea.
+        """
+        match geo:
+            case "H":
+                return Highland()
+            case "L":
+                return Lowland()
+            case "W":
+                return Water()
+            case "D":
+                return Desert()
+            case _:
+                raise ValueError(f"Geography {geo} is not a valid value.")
 
     @staticmethod
     def _make_babies_of(animals):

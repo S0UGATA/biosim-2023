@@ -7,10 +7,12 @@ import matplotlib
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
-from matplotlib.figure import Figure, SubFigure
+from matplotlib.figure import SubFigure, Figure
 from matplotlib.image import AxesImage
 from matplotlib.lines import Line2D
+from matplotlib.patches import StepPatch
 from matplotlib.text import Annotation
+from numpy import ndarray
 
 from biosim.ecosystem.fauna import Herbivore, Carnivore
 
@@ -23,9 +25,9 @@ class Visuals:
                    'D': (1.0, 1.0, 0.5, 0.8)}  # light yellow
 
     _ylgn = matplotlib.cm.YlGn
-    _ylgn.set_bad(color=(0.0, 0.7, 1.0, 0.6))
+    _ylgn.set_bad(color=(0.0, 0.7, 1.0, 1.0))
     _oranges = matplotlib.cm.Oranges
-    _oranges.set_bad(color=(0.0, 0.7, 1.0, 0.6))
+    _oranges.set_bad(color=(0.0, 0.7, 1.0, 1.0))
 
     def __init__(self,
                  vis_years=1,
@@ -64,10 +66,10 @@ class Visuals:
         self._herb_heat_image: AxesImage = None
         self._carn_heat_image: AxesImage = None
         self._subfigs: [SubFigure] = None
-        self._hists = {}
-        self._hist_carn = {}
-        self._hist_herb = {}
-        self._hist_bin_edges = {}
+        self._hists: {str: Axes} = {}
+        self._hist_carn: {str: StepPatch} = {}
+        self._hist_herb: {str: StepPatch} = {}
+        self._hist_bin_edges: {str: ndarray} = {}
 
     @property
     def img_years(self):
@@ -82,6 +84,8 @@ class Visuals:
 
     def initialize_figure(self, year_max, animal_details) -> {}:
         """
+        Initializes the figure to br drawn in the following format:
+
         +-----------+-----------+-----------+-----------+---------+---+
         |  Island_map | Legend |   Year       |      Animal Count     |
         +-----------+-----------+-----------+-----------+---------+---+
@@ -93,36 +97,43 @@ class Visuals:
         Returns
         -------
         skele:
-            A dict of references to the frame itself, and all the above axes.
+            A dictionary of references to the initialized
+            Figure, SubFigure, axes, Line2Ds, AxesImages, StepPatches etc.
         """
 
+        # Validation, and default value assignment:
         if self._hist_specs is None:
             self._hist_specs = {'fitness': {'max': 1.0, 'delta': 0.05},
                                 'age': {'max': 60.0, 'delta': 2},
                                 'weight': {'max': 60, 'delta': 2}}
 
+        # Main Figure
         if self._figure is None:
             self._figure = plt.figure(constrained_layout=True, figsize=(10, 10))
 
+        # Subfigs of 3 rows
         self._subfigs = self._figure.subfigures(3, 1, height_ratios=[2, 2, 1])
 
         self._subfigs[0].set_facecolor("floralwhite")
         self._subfigs[1].set_facecolor("floralwhite")
         self._subfigs[2].set_facecolor("floralwhite")
 
+        # 1st row has Island, year, and animal count graph:
         row1 = self._subfigs[0].subplots(1, 4, width_ratios=[3, 1, 2, 3])
 
+        # Island
         self._island = row1[0]
         self._island.set_title("Island")
 
         self._island_legend = row1[1]
         self._island_legend.axis("off")
 
+        # Year
         row1[2].axis("off")
         self._year = row1[2].annotate("Year: 0", (0.2, 0.5),
                                       color='darkslategrey', weight='bold',
                                       ha='center', va='center', size=14)
-
+        # Animal count graph
         self._animal_count = row1[3]
         self._animal_count.set_title("Animal Count")
         self._animal_count.set_xlim(0, year_max + 1)
@@ -145,11 +156,11 @@ class Visuals:
                                                                      dtype=float),
                                                         linestyle='-',
                                                         color='red')[0]
-
         ydata = self._carn_count_line.get_ydata()
         ydata[0] = 0
         self._carn_count_line.set_ydata(ydata)
 
+        # 2nd row has heat maps for herbivores and carnivores.
         row2 = self._subfigs[1].subplots(1, 2)
 
         cmax_h = 200
@@ -169,7 +180,7 @@ class Visuals:
                      ax=self._herb_heat,
                      orientation='vertical',
                      location="right")
-        self._herb_heat_image.set_clim(10, cmax_h)
+        self._herb_heat_image.set_clim(0, cmax_h)
 
         self._carn_heat = row2[1]
         self._carn_heat.set_title("Carnivore Distribution")
@@ -182,8 +193,9 @@ class Visuals:
                      ax=self._carn_heat,
                      orientation='vertical',
                      location="right")
-        self._carn_heat_image.set_clim(10, cmax_c)
+        self._carn_heat_image.set_clim(0, cmax_c)
 
+        # 3rd row has histograms for Fitness, Age and Weight.
         row3 = self._subfigs[2].subplots(1, len(self._hist_specs))
 
         for col, key in enumerate(self._hist_specs):
@@ -203,6 +215,13 @@ class Visuals:
             self._hists[key] = row3[col]
 
     def set_island(self, island_map):
+        """
+        The method sets up the island axes.
+
+        Parameters
+        ----------
+        island_map
+        """
 
         map_rgba = [[self._rgba_value[column] for column in row]
                     for row in island_map.splitlines()]
@@ -216,6 +235,17 @@ class Visuals:
             self._island_legend.text(0.35, ix * 0.2, name, transform=self._island_legend.transAxes)
 
     def refresh(self, current_year, animal_details):
+        """
+        This method is called every year to recalculate the changes in the animal characteristics
+        and reflect them on the figure.
+
+        Parameters
+        ----------
+        current_year: int
+            The current year.
+        animal_details: dict
+            A dictionary containing animal characteristics, like count, age, weight, fitness
+        """
         self._set_year(current_year)
         self._refresh_animal_count_graph(Herbivore.count(), Carnivore.count(), current_year)
         self._refresh_heatmaps(animal_details)
@@ -226,7 +256,12 @@ class Visuals:
 
     def save_frame(self, current_year):
         """
-        Makes a single visual frame and saves it to disk as per the img_file_name, if it is present.
+        Saves a single frame to disk as per the img_file_name.
+
+        Parameters
+        ----------
+        current_year: int
+            The current year.
         """
         if self._img_dir is None and self._img_base is None:
             return
@@ -241,6 +276,9 @@ class Visuals:
         self._img_counter += 1
 
     def make_movie(self):
+        """
+        Make a movie from the saved pictures from the save_frame() function.
+        """
         if self._img_dir is None and self._img_base is None:
             return
 
@@ -250,17 +288,25 @@ class Visuals:
         try:
             # Parameters chosen according to http://trac.ffmpeg.org/wiki/Encode/H.264,
             # section "Compatibility"
-            subprocess.check_call(["ffmpeg",
-                                   '-i', './{}/{}_%05d.png'.format(self._img_dir, self._img_base),
-                                   '-y',
-                                   '-profile:v', 'baseline',
-                                   '-level', '3.0',
-                                   # "-loglevel", "trace",
-                                   '-pix_fmt', 'yuv420p',
-                                   "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2",
-                                   './{}/{}.{}'.format(self._img_dir, self._img_base, "mp4")])
+            subprocess.check_call(
+                [
+                    "ffmpeg",
+                    '-i',
+                    f'./{self._img_dir}/{self._img_base}_%05d.png',
+                    '-y',
+                    '-profile:v',
+                    'baseline',
+                    '-level',
+                    '3.0',
+                    '-pix_fmt',
+                    'yuv420p',
+                    "-vf",
+                    "pad=ceil(iw/2)*2:ceil(ih/2)*2",
+                    f'./{self._img_dir}/{self._img_base}.mp4',
+                ]
+            )
         except subprocess.CalledProcessError as err:
-            raise RuntimeError('ERROR: ffmpeg failed with: {}'.format(err))
+            raise RuntimeError(f'ERROR: ffmpeg failed with: {err}')
 
     def _set_year(self, year):
         self._year.set_text(f"Year: {year}")
@@ -287,16 +333,17 @@ class Visuals:
 
     def _refresh_histograms(self, animal_details):
         for hist_type in self._hists:
-            data_herb = animal_details[hist_type + "_herbivore"]
+            data_herb = animal_details[f"{hist_type}_herbivore"]
             hist_counts_herb, _ = np.histogram(data_herb, self._hist_bin_edges[hist_type])
             self._hist_herb[hist_type].set_data(hist_counts_herb)
 
-            data_carn = animal_details[hist_type + "_carnivore"]
+            data_carn = animal_details[f"{hist_type}_carnivore"]
             hist_counts_carn, _ = np.histogram(data_carn, self._hist_bin_edges[hist_type])
             self._hist_carn[hist_type].set_data(hist_counts_carn)
 
             self._hists[hist_type].set_ylim(
-                [0, max(hist_counts_herb.max(axis=0), hist_counts_carn.max(axis=0)) * 1.1])
+                [0, max(hist_counts_herb.max(axis=0, initial=0),
+                        hist_counts_carn.max(axis=0, initial=0)) * 1.1])
 
     def _flush_it(self):
         self._subfigs[0].canvas.draw()

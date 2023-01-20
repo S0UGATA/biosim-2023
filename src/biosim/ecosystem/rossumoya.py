@@ -108,7 +108,6 @@ class Rossumoya:
 
         Parameters
         ----------
-        self
         landscape
         params
 
