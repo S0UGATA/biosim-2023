@@ -6,6 +6,8 @@ import random
 import sys
 from os import path
 
+from matplotlib import pyplot as plt
+
 from biosim.ecosystem.fauna import Herbivore, Carnivore
 from biosim.ecosystem.rossumoya import Rossumoya
 from biosim.visualization.visuals import Visuals
@@ -94,6 +96,7 @@ class BioSim:
 
         - `img_dir` and `img_base` must either be both None or both strings.
         """
+        self._island_map = island_map
         self._island = Rossumoya(island_map)
         self._island.populate_island(ini_pop, initial=True)
         random.seed(seed)
@@ -163,17 +166,32 @@ class BioSim:
             writer = csv.writer(csvfile, delimiter=',')
             if new_file:
                 writer.writerow(["Year", "Herbivore Count", "Carnivore Count"])
+
         self._print_migration_data()
+
+        if self._visuals.is_enabled():
+            self._visuals.initialize_figure(num_years, self._island.animal_distr())
+            self._visuals.set_island(self._island_map)
+
         for _ in range(num_years):
             if self._log_file is not None:
                 writer.writerow([self._simulated_until_years, Herbivore.count(), Carnivore.count()])
+
             self._island.go_through_annual_cycle()
             self._simulated_until_years += 1
+
             self._print_migration_data()
+
+            if self._visuals.is_enabled():
+                self._visuals.refresh(self._simulated_until_years,
+                                      num_years,
+                                      self._island.animal_distr())
 
         if self._log_file is not None:
             csvfile.flush()
             csvfile.close()
+
+        plt.show(blocking=False)
 
     def add_population(self, population):
         """

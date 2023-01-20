@@ -1,7 +1,7 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
-
+import numpy as np
 from prettytable import PrettyTable, ALL
 
 from biosim.ecosystem.fauna import Herbivore, Carnivore
@@ -33,7 +33,6 @@ class Rossumoya:
             raise ValueError("Rossumøya is non rectangular")
 
         island_cells = []
-
         max_rows_idx = len(rows) - 1
         max_col_idx = len(rows[0]) - 1
         for r, row in enumerate(rows):
@@ -45,6 +44,9 @@ class Rossumoya:
                 island_row.append(cell)
             island_cells.append(island_row)
         self._cells = island_cells
+
+        self._hlist = np.zeros((len(self._cells), len(self._cells[0])))
+        self._clist = np.copy(self._hlist)
 
     def __str__(self):
         island = PrettyTable(header=False, preserve_internal_border=True, hrules=ALL)
@@ -156,3 +158,14 @@ class Rossumoya:
     @staticmethod
     def console_output_island(param):
         UnitArea.console_output_island = param
+
+    def animal_distr(self) -> {}:
+        for r, rows in enumerate(self._cells):
+            for c, cell in enumerate(rows):
+                if cell.can_animals_move_here():
+                    self._hlist[r, c] = len(cell.herbs)
+                    self._clist[r, c] = len(cell.carns)
+                else:
+                    self._hlist[r, c] = -1
+                    self._clist[r, c] = -1
+        return {"herb": self._hlist, "carn": self._clist}
