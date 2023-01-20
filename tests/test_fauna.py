@@ -7,11 +7,12 @@
 Test set for Fauna super class interface, in addition to child classes Herbivore and Carnivore
 interface.
 """
+import math
 import random
-
 import pytest
+import scipy.stats as stats
 
-from biosim.ecosystem.fauna import Herbivore, Carnivore
+from biosim.ecosystem.fauna import Herbivore, Carnivore, Fauna
 
 """Random seed for tests"""
 SEED = 123456
@@ -180,16 +181,35 @@ def test_weight_of_newborns_z_test():
     We have
     Z = (sum of X - mean) / standard deviation
 
+    We set an alpha level of 0.05,
+
     """
-    mean_newborn_herb = 8.0 #mu
-    sd_newborn_herb = 1.5 # sigma
-    mean = 0.0
-    alpha = 0.05
-    N = 50 # sample size
-
-
     random.seed(SEED)
-    # no_trials = 100
+    mean_newborn_herb = 8.0  # mu
+    sd_newborn_herb = 1.5  # sigma
+    alpha = 0.05
+    no_animals = 50  # sample size
+    mean = mean_newborn_herb / no_animals
+    animals = []
+    babies = []
+    num_births = 0
 
-    herb = Herbivore()
-    herb.set_animal_parameters
+    for _ in range(no_animals):
+        weight = random.randint(10, 50)
+        age = random.randint(1, 10)
+        herb = Herbivore(age, weight)
+        animals.append(herb)
+        newborn = herb.procreate(no_animals)
+        if newborn is not None:
+            babies.append(newborn)
+    num_births = len(babies)
+    for baby in babies:
+        weight += baby.weight
+    mean = weight / num_births
+
+    z_score = (mean) / (sd_newborn_herb / math.sqrt(no_animals))
+    phi = 2 * stats.norm.cdf(-abs(z_score))
+    assert phi > alpha
+
+
+
