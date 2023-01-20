@@ -170,7 +170,7 @@ class BioSim:
         self._print_migration_data()
 
         if self._visuals.is_enabled():
-            self._visuals.initialize_figure(num_years, self._island.animal_distr())
+            self._visuals.initialize_figure(num_years, self._island.animal_details())
             self._visuals.set_island(self._island_map)
 
         for _ in range(num_years):
@@ -183,15 +183,13 @@ class BioSim:
             self._print_migration_data()
 
             if self._visuals.is_enabled():
-                self._visuals.refresh(self._simulated_until_years,
-                                      num_years,
-                                      self._island.animal_distr())
+                self._visuals.refresh(self._simulated_until_years, self._island.animal_details())
 
         if self._log_file is not None:
             csvfile.flush()
             csvfile.close()
 
-        plt.show(blocking=False)
+        plt.show(block=False)
 
     def add_population(self, population):
         """

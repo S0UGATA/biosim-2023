@@ -61,11 +61,14 @@ class Visuals:
         self._carn_heat_image: AxesImage = None
         self._subfigs: [SubFigure] = None
         self._hists = {}
+        self._hist_carn = {}
+        self._hist_herb = {}
+        self._hist_bin_edges = {}
 
     def is_enabled(self):
         return self._vis_years != 0
 
-    def initialize_figure(self, year_max, animal_distribution) -> {}:
+    def initialize_figure(self, year_max, animal_details) -> {}:
         """
         +-----------+-----------+-----------+-----------+---------+---+
         |  Island_map | Legend |   Year       |      Animal Count     |
@@ -142,7 +145,7 @@ class Visuals:
         self._herb_heat.set_title("Herbivore Distribution")
         self._herb_heat.axis("off")
 
-        self._herb_heat_image = self._herb_heat.imshow(animal_distribution["herb"],
+        self._herb_heat_image = self._herb_heat.imshow(animal_details["count_herbivore"],
                                                        interpolation='nearest',
                                                        cmap=self._ylgn)
         plt.colorbar(self._herb_heat_image,
@@ -155,7 +158,7 @@ class Visuals:
         self._carn_heat.set_title("Carnivore Distribution")
         self._carn_heat.axis("off")
 
-        self._carn_heat_image = self._carn_heat.imshow(animal_distribution["carn"],
+        self._carn_heat_image = self._carn_heat.imshow(animal_details["count_carnivore"],
                                                        interpolation='nearest',
                                                        cmap=self._oranges)
         plt.colorbar(self._carn_heat_image,
@@ -168,7 +171,18 @@ class Visuals:
 
         for col, key in enumerate(self._hist_specs):
             row3[col].set_title(key.capitalize())
-            self._hists[key.capitalize()] = row3[col]
+            bin_max = self._hist_specs[key]["max"]
+            bin_width = self._hist_specs[key]["delta"]
+            self._hist_bin_edges[key] = np.arange(0, bin_max + bin_width / 2, bin_width)
+            hist_counts = np.zeros_like(self._hist_bin_edges[key][:-1], dtype=float)
+            self._hist_carn[key] = row3[col].stairs(hist_counts,
+                                                    self._hist_bin_edges[key],
+                                                    color='red',
+                                                    lw=2)
+            self._hist_herb[key] = row3[col].stairs(hist_counts,
+                                                    self._hist_bin_edges[key],
+                                                    lw=2)
+            self._hists[key] = row3[col]
 
     def save_frame(self, ymax, cmax, hist_specs, img_file_name):
         """
@@ -189,11 +203,11 @@ class Visuals:
                                                         facecolor=self._rgba_value[name]))
             self._island_legend.text(0.35, ix * 0.2, name, transform=self._island_legend.transAxes)
 
-    def refresh(self, year, max_years, animal_distr):
+    def refresh(self, year, animal_details):
         self._set_year(year)
         self._refresh_animal_count_graph(Herbivore.count(), Carnivore.count(), year)
-        self._refresh_heatmaps(animal_distr)
-        self._refresh_histograms()
+        self._refresh_heatmaps(animal_details)
+        self._refresh_histograms(animal_details)
         self._flush_it()
         plt.pause(1e-6)
 
@@ -212,14 +226,25 @@ class Visuals:
         if self._ymax_animals is None:
             self._animal_count.set_ylim(0, max(max(hline), max(cline)) * 1.10)
 
-    def _refresh_heatmaps(self, animal_distr: {}):
-        self._herb_heat_image.set_data(np.ma.masked_where(animal_distr["herb"] == -1,
-                                                          animal_distr["herb"]))
-        self._carn_heat_image.set_data(np.ma.masked_where(animal_distr["carn"] == -1,
-                                                          animal_distr["carn"]))
+    def _refresh_heatmaps(self, animal_details: {}):
+        hc = animal_details["count_herbivore"]
+        cc = animal_details["count_carnivore"]
+        self._herb_heat_image.set_data(np.ma.masked_where(hc == -1, hc))
+        self._carn_heat_image.set_data(np.ma.masked_where(cc == -1, cc))
 
-    def _refresh_histograms(self):
-        pass
+    def _refresh_histograms(self, animal_details):
+        for hist_type in self._hists:
+            data_herb = animal_details[hist_type + "_herbivore"]
+            hist_counts_herb, _ = np.histogram(data_herb, self._hist_bin_edges[hist_type])
+            self._hist_herb[hist_type].set_data(hist_counts_herb)
+
+            data_carn = animal_details[hist_type + "_carnivore"]
+            hist_counts_carn, _ = np.histogram(data_carn, self._hist_bin_edges[hist_type])
+            self._hist_carn[hist_type].set_data(hist_counts_carn)
+
+            self._hists[hist_type].set_ylim(
+                [0, max(hist_counts_herb.max(axis=0), hist_counts_carn.max(axis=0)) * 1.1])
+
     def _flush_it(self):
         self._subfigs[0].canvas.draw()
         self._subfigs[1].canvas.draw()
@@ -227,5 +252,3 @@ class Visuals:
         self._subfigs[0].canvas.flush_events()
         self._subfigs[1].canvas.flush_events()
         self._subfigs[2].canvas.flush_events()
-
-

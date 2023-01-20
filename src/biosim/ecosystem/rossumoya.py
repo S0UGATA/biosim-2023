@@ -159,13 +159,27 @@ class Rossumoya:
     def console_output_island(param):
         UnitArea.console_output_island = param
 
-    def animal_distr(self) -> {}:
+    def animal_details(self) -> {}:
+        age_h, age_c = [], []
+        weight_h, weight_c = [], []
+        fit_h, fit_c = [], []
         for r, rows in enumerate(self._cells):
             for c, cell in enumerate(rows):
                 if cell.can_animals_move_here():
                     self._hlist[r, c] = len(cell.herbs)
                     self._clist[r, c] = len(cell.carns)
+                    for herb in cell.herbs:
+                        age_h.append(herb.age)
+                        weight_h.append(herb.weight)
+                        fit_h.append(herb.fitness)
+                    for carn in cell.carns:
+                        age_c.append(carn.age)
+                        weight_c.append(carn.weight)
+                        fit_c.append(carn.fitness)
                 else:
                     self._hlist[r, c] = -1
                     self._clist[r, c] = -1
-        return {"herb": self._hlist, "carn": self._clist}
+        return {"count_herbivore": self._hlist, "age_herbivore": age_h,
+                "weight_herbivore": weight_h, "fitness_herbivore": fit_h,
+                "count_carnivore": self._clist, "age_carnivore": age_c,
+                "weight_carnivore": weight_c, "fitness_carnivore": fit_c}
