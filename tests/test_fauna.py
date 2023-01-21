@@ -181,15 +181,14 @@ def test_weight_of_newborns_z_test():
     Z = (sum of X - mean) / standard deviation
 
     """
-    mean_newborn_herb = 8.0 #mu
-    sd_newborn_herb = 1.5 # sigma
-    mean = 0.0
-    alpha = 0.05
-    N = 50 # sample size
-
+    # TODO mean_newborn_herb = 8.0  # mu
+    # TODO sd_newborn_herb = 1.5  # sigma
+    # TODO mean = 0.0
+    # TODO alpha = 0.05
+    # TODO N = 50  # sample size
 
     random.seed(SEED)
-    # no_trials = 100
+    # TODO no_trials = 100
 
-    herb = Herbivore()
-    herb.set_animal_parameters
+    # TODO herb = Herbivore()
+    # TODO herb.set_animal_parameters
