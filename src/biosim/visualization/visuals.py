@@ -18,6 +18,14 @@ from biosim.ecosystem.fauna import Herbivore, Carnivore
 
 
 class Visuals:
+    """
+    The Visuals class holds all parameters and methods used for graphical representation of the
+    simulation of animal characteristics over the Island of Rossumøya.
+
+    matplotlib is used to create plots and save them.
+    ffmpeg is used to create a movie out of the saved figures.
+    """
+
     #                    R    G    B    A
     _rgba_value = {'W': (0.0, 0.7, 1.0, 1.0),  # blue
                    'L': (0.0, 0.4, 0.0, 0.8),  # dark green
@@ -38,6 +46,20 @@ class Visuals:
                  img_dir=None,
                  img_base=None,
                  img_fmt='png'):
+        """
+        Initializes the visual params of this class.
+
+        Parameters
+        ----------
+        vis_years
+        ymax_animals
+        cmax_animals
+        hist_specs
+        img_years
+        img_dir
+        img_base
+        img_fmt
+        """
 
         if vis_years > 0 and img_years is not None and img_years % vis_years != 0:
             raise ValueError("img_years needs to be multiples of vis_years")
@@ -246,7 +268,7 @@ class Visuals:
         animal_details: dict
             A dictionary containing animal characteristics, like count, age, weight, fitness
         """
-        self._set_year(current_year)
+        self._refresh_year(current_year)
         self._refresh_animal_count_graph(Herbivore.count(), Carnivore.count(), current_year)
         self._refresh_heatmaps(animal_details)
         self._refresh_histograms(animal_details)
@@ -306,9 +328,9 @@ class Visuals:
                 ]
             )
         except subprocess.CalledProcessError as err:
-            raise RuntimeError(f'ERROR: ffmpeg failed with: {err}')
+            raise RuntimeError(f'ERROR: ffmpeg failed with: {err}') from err
 
-    def _set_year(self, year):
+    def _refresh_year(self, year):
         self._year.set_text(f"Year: {year}")
 
     def _refresh_animal_count_graph(self, hcount, ccount, current_year):
@@ -332,7 +354,7 @@ class Visuals:
         self._carn_heat_image.set_data(np.ma.masked_where(cc == -1, cc))
 
     def _refresh_histograms(self, animal_details):
-        for hist_type in self._hists:
+        for hist_type in self._hists.items():
             data_herb = animal_details[f"{hist_type}_herbivore"]
             hist_counts_herb, _ = np.histogram(data_herb, self._hist_bin_edges[hist_type])
             self._hist_herb[hist_type].set_data(hist_counts_herb)
