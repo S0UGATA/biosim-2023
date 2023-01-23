@@ -88,7 +88,7 @@ have been changed.
 ```
 examples/simulation.visual.py
 ```
-In this simulation, [found here](examples/simulation_visual.py), we simulate a period of 200 years. 
+In this simulation, [found here](examples/simulation_visual.py), we simulate a period of 400 years. 
 The initialized animals in year 0 are 200 Herbivores and 50 Carnivores. The movie found 
 [here](result) is the changes visualized per year from this simulation. 
 
@@ -96,12 +96,27 @@ The initialized animals in year 0 are 200 Herbivores and 50 Carnivores. The movi
 
 
 ### Extra additions
+#### 1. 
 In ```biosim/simulation.py```, an extra parameter has been added to the *BioSim*-class parameters: 
 **console_output_island**. Setting this to *True* enables print-out of island map in the console. 
 Running ```examples/simulation.py``` ([here](examples/simulation_migration.py)) gives us the following output in the console for year 3:
-![Output of island map in console.](console_map.png)
+![Output of island map in console.](readme_imgs/console_map.png)
 The parameters in the mentioned file is set in a way so that we can observe that the migration 
 for each animal in each cell works properly (following the set restrictions).
+
+#### 2. 
+- while getting the details of the animals in each cells, we set the length of the animals = 1 in each cell
+- while refreshing the heatmaps we set a mask on the cells where the number of animals are -1
+- in the visuals.py, we set the color of the mask = blue
+- this makes sure that the water areas are masked, and therefore blue
+In the separate window where the statistics are visualized, we have added the color blue to be 
+added where the length of the list of animals = -1
+![Output of island map in separate window](readme_imgs/stats_visual.png)
+
+  
+#### 3. 
+-- added str to make debugging easier --
+-- take pictures of different types of debugging --
 
 ### Credits:
  - Code optimization done with Sourcery: https://sourcery.ai/

@@ -349,7 +349,6 @@ class Visuals:
 
     def _refresh_animal_count_graph(self, hcount, ccount, current_year):
         index = current_year // self._vis_years
-        print(f"index{index}, count{hcount}, {ccount}")
         hline = self._herb_count_line.get_ydata()
         hline[index] = hcount
         self._herb_count_line.set_ydata(hline)
