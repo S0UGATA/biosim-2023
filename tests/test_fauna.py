@@ -14,6 +14,7 @@ import statistics
 import pytest
 import scipy.stats as stats
 from matplotlib import pyplot as plt
+from statsmodels.stats.weightstats import ztest
 
 from biosim.ecosystem.fauna import Herbivore, Carnivore, Fauna
 
@@ -174,20 +175,8 @@ def test_bad_param_carn(bad_param):
         carn.set_animal_parameters(params=bad_param)
 
 
-# TODO: Z-test and/or binomial test has to be made
-def test_weight_of_newborns_z_test():
-    """This test is a probability test: executes procreate() N number of times.  We have that the
-    number n of "successes", where procreate() returns an offspring, should be according to the log
-    normal distribution ln(X) ~ N(mu, sigma^2). Here, the parameters are
-    the mean mu = w_birth and variance sigma^2= (sigma_birth)^2.
-
-    We have
-    Z = (sum of X - mean) / standard deviation
-
-    We set an alpha level of 0.05"""
-
-
 def test_weight_of_newborns_distribution():
+    # TODO: Add more to this documentation
     """This test checks the distribution of the weight of the newborns. The test compares two
     lists: one with the actual mean and one with the hypothesized mean with a value obtained from
     the default parameters.
@@ -198,7 +187,7 @@ def test_weight_of_newborns_distribution():
     animals = []
     actual_baby_weight = []
     for _ in range(sample_size):
-        weight = random.randint(1000, 5010)  # Increase the possible weight to ensure births
+        weight = random.randint(1000, 5010)  # Increase the range of assigned weight to ensure births
         age = random.randint(1, 10)
         herb = Herbivore(age, weight)
         animals.append(herb)
@@ -206,15 +195,11 @@ def test_weight_of_newborns_distribution():
         if newborn is not None:
             actual_baby_weight.append(newborn.weight)
 
-    actual_mean = statistics.mean(actual_baby_weight)
     exp_mean = Herbivore._params.w_birth
-    exp_var = Herbivore._params.sigma_birth
+    exp_sd = Herbivore._params.sigma_birth
 
-    exp_baby_weight = [_baby_weight(exp_mean, exp_var) for _ in actual_baby_weight]
-    z_score = (actual_mean - exp_mean) / math.sqrt(exp_var)
-    phi = 2 * stats.norm.cdf(-abs(z_score))
-    assert phi > ALPHA
-
+    exp_baby_weight = [_baby_weight(exp_mean, exp_sd) for _ in actual_baby_weight]
+    assert ztest(actual_baby_weight, exp_baby_weight, value=0)[1] > ALPHA
 
     plt.figure()
     plt.hist(actual_baby_weight, label="Actual")
@@ -226,7 +211,7 @@ def test_weight_of_newborns_distribution():
 def _baby_weight(mean_birth, sd_birth):
     """
     Method that calculates the weight of the newborn from an animal of type
-    Herbivore or Carnivore.
+    Herbivore or Carnivore. For use in other tests.
 
     Parameters
     ----------
