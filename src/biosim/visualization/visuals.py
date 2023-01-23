@@ -104,7 +104,7 @@ class Visuals:
     def is_enabled(self):
         return self._vis_years != 0
 
-    def initialize_figure(self, year_max, animal_details) -> {}:
+    def initialize_figure(self, number_of_years, animal_details) -> {}:
         """
         Initializes the figure to br drawn in the following format:
 
@@ -134,7 +134,8 @@ class Visuals:
             self._figure = plt.figure(constrained_layout=True, figsize=(10, 10))
 
         # Subfigs of 3 rows
-        self._subfigs = self._figure.subfigures(3, 1, height_ratios=[2, 2, 1])
+        if self._subfigs is None:
+            self._subfigs = self._figure.subfigures(3, 1, height_ratios=[2, 2, 1])
 
         self._subfigs[0].set_facecolor("floralwhite")
         self._subfigs[1].set_facecolor("floralwhite")
@@ -158,29 +159,20 @@ class Visuals:
         # Animal count graph
         self._animal_count = row1[3]
         self._animal_count.set_title("Animal Count")
-        self._animal_count.set_xlim(0, year_max + 1)
+        self._animal_count.set_xlim(0, number_of_years + 1)
         self._animal_count.set_facecolor("antiquewhite")
         if self._ymax_animals is not None:
             self._animal_count.set_ylim(0, self._ymax_animals)
-        xdata = np.arange(0, year_max + 1, self._vis_years)
-        self._herb_count_line = self._animal_count.plot(xdata,
-                                                        np.full_like(xdata,
-                                                                     np.nan,
-                                                                     dtype=float),
-                                                        linestyle='-')[0]
-        ydata = self._herb_count_line.get_ydata()
-        ydata[0] = 0
-        self._herb_count_line.set_ydata(ydata)
+        xdata = np.arange(0, number_of_years + 1, self._vis_years)
+        ydata = np.full_like(xdata, np.nan, dtype=float)
+        self._herb_count_line = self._animal_count_plot(self._herb_count_line,
+                                                        self._animal_count,
+                                                        xdata, ydata)
 
-        self._carn_count_line = self._animal_count.plot(xdata,
-                                                        np.full_like(xdata,
-                                                                     np.nan,
-                                                                     dtype=float),
-                                                        linestyle='-',
-                                                        color='red')[0]
-        ydata = self._carn_count_line.get_ydata()
-        ydata[0] = 0
-        self._carn_count_line.set_ydata(ydata)
+        self._carn_count_line = self._animal_count_plot(self._carn_count_line,
+                                                        self._animal_count,
+                                                        xdata, ydata,
+                                                        "red")
 
         # 2nd row has heat maps for herbivores and carnivores.
         row2 = self._subfigs[1].subplots(1, 2)
@@ -235,6 +227,28 @@ class Visuals:
                                                     self._hist_bin_edges[key],
                                                     lw=2)
             self._hists[key] = row3[col]
+
+    def extend_figure(self, current_year, num_year):
+        """
+        This method is called to extend the animal count plot when simulation is called multiple
+        times, extending the x-axis params.
+
+        Parameters
+        ----------
+        current_year
+        num_year
+        """
+        self._animal_count.set_xlim(0, current_year + num_year + 1)
+        xdata = np.arange(current_year, current_year + num_year + 1, self._vis_years)
+        ydata = np.full_like(xdata, np.nan, dtype=float)
+        self._herb_count_line = self._animal_count_plot(self._herb_count_line,
+                                                        self._animal_count,
+                                                        xdata, ydata)
+
+        self._carn_count_line = self._animal_count_plot(self._carn_count_line,
+                                                        self._animal_count,
+                                                        xdata, ydata,
+                                                        "red")
 
     def set_island(self, island_map):
         """
@@ -335,7 +349,7 @@ class Visuals:
 
     def _refresh_animal_count_graph(self, hcount, ccount, current_year):
         index = current_year // self._vis_years
-
+        print(f"index{index}, count{hcount}, {ccount}")
         hline = self._herb_count_line.get_ydata()
         hline[index] = hcount
         self._herb_count_line.set_ydata(hline)
@@ -374,3 +388,18 @@ class Visuals:
         self._subfigs[0].canvas.flush_events()
         self._subfigs[1].canvas.flush_events()
         self._subfigs[2].canvas.flush_events()
+
+    @staticmethod
+    def _animal_count_plot(count_line, animal_count, xdata, ydata, color=None):
+        if count_line is not None:
+            old_xdata, old_ydata = count_line.get_data()
+            count_line.set_data(np.hstack((old_xdata[:-1], xdata)),
+                                np.hstack((old_ydata[:-1], ydata)))
+        else:
+            count_line = animal_count.plot(xdata, ydata,
+                                           linestyle='-',
+                                           color=color)[0]
+            ydata = count_line.get_ydata()
+            ydata[0] = 0
+            count_line.set_ydata(ydata)
+        return count_line
