@@ -162,7 +162,7 @@ class BioSim:
         if self._log_file is not None:
             file_path = f"{sys.path[0]}/{self._log_file}.csv"
             new_file = not path.exists(file_path)
-            csvfile = open(f"{sys.path[0]}/{self._log_file}.csv", 'a', newline="")
+            csvfile = open(f"{sys.path[0]}/{self._log_file}.csv", 'a', newline="", encoding="utf-8")
             writer = csv.writer(csvfile, delimiter=',')
             if new_file:
                 writer.writerow(["Year", "Herbivore Count", "Carnivore Count"])
@@ -170,8 +170,11 @@ class BioSim:
         self._print_migration_data()
 
         if self._visuals.is_enabled():
-            self._visuals.initialize_figure(num_years, self._island.animal_details())
-            self._visuals.set_island(self._island_map)
+            if self._current_year == 0:
+                self._visuals.initialize_figure(num_years, self._island.animal_details())
+                self._visuals.set_island(self._island_map)
+            else:
+                self._visuals.extend_figure(self._current_year, num_years,)
         else:
             print("Graphics is disabled.")
 
