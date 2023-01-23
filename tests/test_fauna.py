@@ -9,14 +9,12 @@ interface.
 """
 import math
 import random
-import statistics
 
 import pytest
-import scipy.stats as stats
 from matplotlib import pyplot as plt
 from statsmodels.stats.weightstats import ztest
 
-from biosim.ecosystem.fauna import Herbivore, Carnivore, Fauna
+from biosim.ecosystem.fauna import Herbivore, Carnivore
 
 """Random seed for tests"""
 SEED = 123456
@@ -187,7 +185,7 @@ def test_weight_of_newborns_distribution():
     animals = []
     actual_baby_weight = []
     for _ in range(sample_size):
-        weight = random.randint(1000, 5010)  # Increase the range of assigned weight to ensure births
+        weight = random.randint(1000, 5010)  # High weight ensures babies are being born
         age = random.randint(1, 10)
         herb = Herbivore(age, weight)
         animals.append(herb)

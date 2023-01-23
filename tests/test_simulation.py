@@ -231,6 +231,4 @@ def test_saved_figure(figfile_base):
     assert os.path.isfile(f'{figfile_base}_00000.png')
     assert os.path.isfile(f'{figfile_base}_00001.png')
 
-
-
 # TODO: Add tests for visualization and images when this is done

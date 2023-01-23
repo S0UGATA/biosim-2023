@@ -4,8 +4,8 @@ Simulate herbivore population in single lowland cell for several seeds.
 
 __author__ = 'Hans Ekkehard Plesser, NMBU'
 
-import textwrap
 
+import textwrap
 from biosim.simulation import BioSim
 
 geogr = """\
