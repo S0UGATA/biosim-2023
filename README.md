@@ -43,28 +43,30 @@ parameters are taken from the default values in this example (can be set, see ex
 
 Initializing the simulation would look like this:
 ```
-for seed in range(from, to):
+for seed in range(100, 103):
     sim = BioSim(geogr, [ini_herbs and/or ini_herbs], seed=seed,
                  log_file=f'data/simulation_hc_{seed:05d}',
                  img_dir='data', img_base=f'simulation_hc_{seed:05d}', img_years=300)
 ```
 
-Where the optional parameters for *BioSim*, and the pre-set values, are:
+The different parameters and what type of values that can be used is documented in
 ```
-ini_pop: The population of animals, add either one type or both with "+" between
-seed: The number of seeds
-vis_years=1: Pre-set to visualize 1 year
-ymax_animals=None: Set a max amount of animals on the island
-cmax_animals=None: Set a max amount of animals on the island
-hist_specs=None: 
-img_years=None: 
-img_dir=None: 
-img_base=None: 
-img_fmt='png': 
-log_file=None: Name of the file with the 
-console_output_island=False: Output of Island map in the console
+biosim/simulation.py
 ```
 
+The final simulation is called by using
+```
+sim.simulate(301)
+```
+Where the chosen value is the number of years you want to simulate. For further documentation and 
+information about the different classes, parameters and possible restrictions is documented in each
+file and package in the folder
+```
+biosim
+```
+
+
+### Examples of simulations
 #### 1. Simulation with a default set of parameters
 ```
 examples/simulation_migration_default_params.py
@@ -74,7 +76,7 @@ Carnivores. The weight and age is instantiated, and the number of each fauna typ
 
 #### 3. Simulation with changed parameters
 
-#### 2. Simulation with visualization
+#### 2. Full simulation with visualization over 200 years
 ```
 examples/simulation.visual.py
 ```
