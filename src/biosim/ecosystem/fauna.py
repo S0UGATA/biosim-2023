@@ -9,7 +9,7 @@ from typing import Tuple
 
 from numba import jit
 
-from biosim.model.parameters import FaunaParam
+from biosim.ecosystem.parameters import FaunaParam
 
 
 class Fauna:
@@ -17,59 +17,14 @@ class Fauna:
     Super class used to represent each species on Rossumøya: Herbivores and Carnivores
 
     Subclasses: Herbivore and Carnivore
-    ...
 
     Attributes
-    -----------
-    _params: Parameters.FaunaParam
-    A class variable containing the specified parameters for Fauna, shared across all animals
-    of the same species.
-
-    Methods
-    -----------
-    set_animal_parameters(params: {})
-    A class method that changes the default values for the animal parameters. The user can change
-    any of the values, and as many as preferred, before the simulation is started.
-
-    fitness():
-    Method that calculates the fitness for each animal, which describes the overall condition of
-    the animal. The value changes each annual cycle, calculated based on age and weight using
-    the formula (3) and equation values are given by formula (4).
-
-    procreate(N)
-    Method that decides which animals are producing an offspring. The following conditions are set:
-    a) An animal can only have offspring if its weight < zeta (w_birth + sigma_birth)
-    b) For each animal there is a probability for producing offspring, which is
-     min(1, (gamma * fitness * N)) where N is the number of animals of the same species in the cell
-     at the start of the breeding season. The gamma value is set before the simulation, either
-     by user or by default, and the fitness is calculated by the method calculate_fitness(self).
-     c) Each animal can give birth to at most one offspring per year.
-     d) At birth, the parent loses xi times the actual birth-weight of the baby.
-     e) If the parent would lose more than their own weight, no baby is born and the weight of the
-     parent remains unchanged.
-
-     get_older()
-     Method that adds one year to the animal after an annual cycle.
-
-     lose_weight()
-     Method that uses the _change_weight() method to decrease the weight of an animal.
-
-     maybe_die()
-     A method that checks if an animal dies or not. Two conditions decides: if the animals
-     weight is equal to zero, death definitely follows. Then there is a probability condition, set
-     by the following equation: omega(1 - fitness).
-
-    _change_weight(by_amount)
-    Private method that calculates the new weight of an animal. The current weight either decreases
-    or increases, but if a decrease results in a negative value the weight is set to 0.
-
-    _baby_weight(mean_birth, sd_birth)
-    Method that calculates the weight of the newborn from an animal of type Herbivore or Carnivore.
-    Parameters are defined beforehand, and changes depending on the Fauna (Herbivore or Carnivore).
-
-    _new_animal(age, weight)
-    Method that is used to create a new animal of type Herbivore or Carnivore.
+    ----------
+    _params : Parameters.FaunaParam
+        A class variable containing the specified parameters for Fauna, shared across all animals
+        of the same species.
     """
+
     _default_params: FaunaParam
     _params: FaunaParam
     _count: int
@@ -102,11 +57,9 @@ class Fauna:
     @property
     def fitness(self):
         """
-        Calculate and return the fitness of an animal defined by two factors; q_plus and
-        q_minus, defined and used in the following equations:
-        .. code:: python
-           Phi (fitness)  = q(-1, a, a_half, phi_age) * q(1, w, w_half, phi_weight)
-        where a = age, and w = weight.
+        Method that calculates the fitness for each animal, which describes the overall condition of
+        the animal. The value changes each annual cycle, calculated based on age and weight using
+        the formula (3) and equation values are given by formula (4).
         """
 
         return self._fitness(self._weight, self._params.phi_weight, self._params.w_half,
@@ -119,8 +72,9 @@ class Fauna:
     @classmethod
     def set_animal_parameters(cls, params: {}):
         """
-        Set the parameters of an animal.
-        Validates input.
+        A class method that changes the default values for the animal parameters.
+        The user can change any of the values, and as many as preferred,
+        before the simulation is started.
 
         Parameters
         ----------
@@ -130,11 +84,16 @@ class Fauna:
         fauna_params = getattr(cls, "_params")
         for key, value in params.items():
             try:
+                if value is None:
+                    continue
                 value = float(value)
-                if getattr(fauna_params, key) is not None:
-                    setattr(fauna_params, key, value)
-                else:
+                if getattr(fauna_params, key) is None:
                     raise ValueError(f"[{key}:{value}] is invalid.")
+                if key == "DeltaPhiMax" and value <= 0.:
+                    raise ValueError("DeltaPhiMax should be > 0")
+                if value < 0.:
+                    raise ValueError(f"{key} should be >= 0")
+                setattr(fauna_params, key, value)
             except (AttributeError, ValueError) as e:
                 raise ValueError(f"[{key}:{value}] is invalid, inner error: {e}") from e
 
@@ -165,8 +124,18 @@ class Fauna:
 
     def procreate(self, number_of_animals: int):
         """
-        Procreation of animals.
-        An offspring is produced based on five conditions.
+        Method that decides which animals are producing an offspring.
+        The following conditions are set:
+        a) An animal can only have offspring if its weight < zeta (w_birth + sigma_birth)
+        b) For each animal there is a probability for producing offspring, which is
+        min(1, (gamma * fitness * N)) where N is the number of animals of the same species in the
+        cell at the start of the breeding season. The gamma value is set before the simulation,
+        either by user or by default, and the fitness is calculated by the method
+        calculate_fitness(self).
+        c) Each animal can give birth to at most one offspring per year.
+        d) At birth, the parent loses xi times the actual birth-weight of the baby.
+        e) If the parent would lose more than their own weight, no baby is born and the weight of
+        the parent remains unchanged.
 
         Parameters
         ----------
@@ -195,8 +164,10 @@ class Fauna:
         self._change_weight(by)
 
     def maybe_die(self) -> bool:
-        """ Check if an animal is likely to die or not.
-        Returning True if animal dies, False otherwise. """
+        """
+        Check if an animal is likely to die or not.
+        Returning True if animal dies, False otherwise.
+        """
 
         die: bool
         if self._weight <= 0:
@@ -228,7 +199,8 @@ class Fauna:
 
     def _change_weight(self, by_amount):
         """
-        Change the weight of an animal by the passed amount.
+        Private method that calculates the new weight of an animal. The current weight either
+        decreases or increases, but if a decrease results in a negative value the weight is set to 0
 
         Parameters
         ----------
@@ -255,18 +227,19 @@ class Fauna:
         where = random.random()
         if 0 <= where < 0.25:
             return -1, 0
-        elif 0.25 <= where < 0.5:
+        if 0.25 <= where < 0.5:
             return 0, 1
-        elif 0.5 <= where < 0.75:
+        if 0.5 <= where < 0.75:
             return 1, 0
-        elif 0.75 <= where < 1:
+        if 0.75 <= where < 1:
             return 0, -1
 
     @staticmethod
     @jit
     def _baby_weight(mean_birth, sd_birth):
         """
-        Calculate the weight of a newborn animal by using the mean and standard deviation
+        Method that calculates the weight of the newborn from an animal of type
+        Herbivore or Carnivore.
 
         Parameters
         ----------
@@ -302,14 +275,14 @@ class Herbivore(Fauna):
     Attributes
     ----------
     _default_params = FaunaParam
-    The default parameters that defines a Herbivore.
+        The default parameters that defines a Herbivore.
 
     _params = FaunaParam
-    Initialized with default_params,
-    but is overridden if .. py:function::`Fauna.Fauna.set_animal_parameters` is called.
+        Initialized with default_params,
+        but is overridden if .. py:function::`Fauna.Fauna.set_animal_parameters` is called.
 
     _count: int = 0
-    Initial count of Herbivores, is set to zero.
+        Initial count of Herbivores, is set to zero.
     """
 
     _default_params = FaunaParam({"w_birth": 8,
@@ -376,15 +349,16 @@ class Carnivore(Fauna):
     Attributes
     ----------
     _default_params = FaunaParam
-    The default parameters with set values which defines a Carnivore.
+        The default parameters with set values which defines a Carnivore.
 
     _params = FaunaParam
-    Initialized with default_params,
-    but is overridden if .. py:function::`Fauna.Fauna.set_animal_parameters` is called.
+        Initialized with default_params, can be overridden by Fauna.set_animal_parameters
 
     _count = 0
-    Initial count of Carnivores is set to zero.
+        Initial count of Carnivores is set to zero.
+
     """
+
     _default_params = FaunaParam({"w_birth": 6,
                                   "sigma_birth": 1,
                                   "beta": 0.75,
@@ -420,7 +394,7 @@ class Carnivore(Fauna):
             h_fitness = herb.fitness
             if c_fitness <= h_fitness:
                 return
-            elif 0 < (c_fitness - h_fitness) < self._params.DeltaPhiMax:
+            if 0 < (c_fitness - h_fitness) < self._params.DeltaPhiMax:
                 prob = ((c_fitness - h_fitness) / self._params.DeltaPhiMax)
             else:
                 prob = 1

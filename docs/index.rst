@@ -6,11 +6,16 @@
 Welcome to BioSim's documentation!
 ==================================
 
+This is a simulation on
+ * The island Rossumøya
+ * Its several geographies
+ * And its animals within
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   biosim
+   modules
 
 Indices and tables
 ==================

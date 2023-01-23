@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 from biosim.simulation import BioSim
 
 if __name__ == '__main__':
-
     geogr = """\
                WWWWWWWWWWWWWWWWWWWWW
                WWWWWWWWHWWWWLLLLLLLW
@@ -47,7 +46,9 @@ if __name__ == '__main__':
                  hist_specs={'fitness': {'max': 1.0, 'delta': 0.05},
                              'age': {'max': 60.0, 'delta': 2},
                              'weight': {'max': 60, 'delta': 2}},
-                 vis_years=1)
+                 cmax_animals={'Herbivore': 100, 'Carnivore': 100},
+                 img_dir='results',
+                 img_base='sample', log_file=f'data/simulation_hc_{1:05d}')
 
     sim.set_animal_parameters('Herbivore', {'zeta': 3.2, 'xi': 1.8})
     sim.set_animal_parameters('Carnivore', {'a_half': 70, 'phi_age': 0.5,
@@ -55,8 +56,9 @@ if __name__ == '__main__':
                                             'DeltaPhiMax': 9.})
     sim.set_landscape_parameters('L', {'f_max': 700})
 
-    sim.simulate(num_years=100)
+    sim.simulate(num_years=50)
     sim.add_population(population=ini_carns)
-    sim.simulate(num_years=100)
+    sim.simulate(num_years=200)
 
-    plt.savefig('/results/check_sim.pdf')
+    plt.savefig('results/check_sim.pdf')
+    sim.make_movie()

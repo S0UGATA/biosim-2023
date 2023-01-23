@@ -1,12 +1,12 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
-
+import numpy as np
 from prettytable import PrettyTable, ALL
 
-from biosim.model.fauna import Herbivore, Carnivore
-from biosim.model.geography import Highland, Lowland
-from biosim.model.unit_area import UnitArea
+from biosim.ecosystem.fauna import Herbivore, Carnivore
+from biosim.ecosystem.geography import Highland, Lowland
+from biosim.ecosystem.unit_area import UnitArea
 
 
 class Rossumoya:
@@ -33,11 +33,20 @@ class Rossumoya:
             raise ValueError("Rossumøya is non rectangular")
 
         island_cells = []
-        island_cells.extend(
-            [UnitArea((r + 1, c + 1), geo) for c, geo in enumerate(row)]
-            for r, row in enumerate(rows)
-        )
+        max_rows_idx = len(rows) - 1
+        max_col_idx = len(rows[0]) - 1
+        for r, row in enumerate(rows):
+            island_row = []
+            for c, geo in enumerate(row):
+                cell = UnitArea((r + 1, c + 1), geo)
+                if not cell.can_be_border() and (r in (0, max_rows_idx) or c in (0, max_col_idx)):
+                    raise ValueError(f"{geo} cannot be a border")
+                island_row.append(cell)
+            island_cells.append(island_row)
         self._cells = island_cells
+
+        self._hlist = np.zeros((len(self._cells), len(self._cells[0])))
+        self._clist = np.copy(self._hlist)
 
     def __str__(self):
         island = PrettyTable(header=False, preserve_internal_border=True, hrules=ALL)
@@ -80,6 +89,10 @@ class Rossumoya:
                 cell.make_babies()
                 cell.eat()
                 cell.wander_away(r, c, self._cells)
+        for rows in self._cells:
+            for cell in rows:
+                if not cell.can_animals_move_here():
+                    continue
                 cell.grow_old()
                 cell.get_thin()
                 cell.maybe_die()
@@ -95,7 +108,6 @@ class Rossumoya:
 
         Parameters
         ----------
-        self
         landscape
         params
 
@@ -145,3 +157,28 @@ class Rossumoya:
     @staticmethod
     def console_output_island(param):
         UnitArea.console_output_island = param
+
+    def animal_details(self) -> {}:
+        age_h, age_c = [], []
+        weight_h, weight_c = [], []
+        fit_h, fit_c = [], []
+        for r, rows in enumerate(self._cells):
+            for c, cell in enumerate(rows):
+                if cell.can_animals_move_here():
+                    self._hlist[r, c] = len(cell.herbs)
+                    self._clist[r, c] = len(cell.carns)
+                    for herb in cell.herbs:
+                        age_h.append(herb.age)
+                        weight_h.append(herb.weight)
+                        fit_h.append(herb.fitness)
+                    for carn in cell.carns:
+                        age_c.append(carn.age)
+                        weight_c.append(carn.weight)
+                        fit_c.append(carn.fitness)
+                else:
+                    self._hlist[r, c] = -1
+                    self._clist[r, c] = -1
+        return {"count_herbivore": self._hlist, "age_herbivore": age_h,
+                "weight_herbivore": weight_h, "fitness_herbivore": fit_h,
+                "count_carnivore": self._clist, "age_carnivore": age_c,
+                "weight_carnivore": weight_c, "fitness_carnivore": fit_c}

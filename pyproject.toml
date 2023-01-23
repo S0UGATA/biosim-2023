@@ -7,6 +7,7 @@ requires = [
     "wheel",
     "prettytable",
     "matplotlib",
-    "numba"
+    "numba",
+    "statsmodels"
 ]
 build-backend = "setuptools.build_meta"

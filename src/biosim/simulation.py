@@ -6,8 +6,11 @@ import random
 import sys
 from os import path
 
-from biosim.model.fauna import Herbivore, Carnivore
-from biosim.model.rossumoya import Rossumoya
+from matplotlib import pyplot as plt
+
+from biosim.ecosystem.fauna import Herbivore, Carnivore
+from biosim.ecosystem.rossumoya import Rossumoya
+from biosim.visualization.visuals import Visuals
 
 
 # The material in this file is licensed under the BSD 3-clause license
@@ -93,19 +96,20 @@ class BioSim:
 
         - `img_dir` and `img_base` must either be both None or both strings.
         """
+        self._island_map = island_map
         self._island = Rossumoya(island_map)
         self._island.populate_island(ini_pop, initial=True)
         random.seed(seed)
-        self._vis_years = vis_years
-        self._ymax_animals = ymax_animals
-        self._cmax_animals = cmax_animals
-        self._hist_specs = hist_specs
-        self._img_years = img_years
-        self._img_dir = img_dir
-        self._img_base = img_base
-        self._img_fmt = img_fmt
+        self._visuals = Visuals(vis_years,
+                                ymax_animals,
+                                cmax_animals,
+                                hist_specs,
+                                img_years,
+                                img_dir,
+                                img_base,
+                                img_fmt)
         self._log_file = log_file
-        self._simulated_until_years = 0
+        self._current_year = 0
         self._console_output_island = console_output_island
 
     def set_animal_parameters(self, species, params):
@@ -158,21 +162,42 @@ class BioSim:
         if self._log_file is not None:
             file_path = f"{sys.path[0]}/{self._log_file}.csv"
             new_file = not path.exists(file_path)
-            csvfile = open(f"{sys.path[0]}/{self._log_file}.csv", 'a', newline="")
+            csvfile = open(f"{sys.path[0]}/{self._log_file}.csv", 'a', newline="", encoding="utf-8")
             writer = csv.writer(csvfile, delimiter=',')
             if new_file:
                 writer.writerow(["Year", "Herbivore Count", "Carnivore Count"])
+
         self._print_migration_data()
+
+        if self._visuals.is_enabled():
+            if self._current_year == 0:
+                self._visuals.initialize_figure(num_years, self._island.animal_details())
+                self._visuals.set_island(self._island_map)
+            else:
+                self._visuals.extend_figure(self._current_year, num_years,)
+        else:
+            print("Graphics is disabled.")
+
         for _ in range(num_years):
             if self._log_file is not None:
-                writer.writerow([self._simulated_until_years, Herbivore.count(), Carnivore.count()])
+                writer.writerow([self._current_year, Herbivore.count(), Carnivore.count()])
+
             self._island.go_through_annual_cycle()
-            self._simulated_until_years += 1
+
             self._print_migration_data()
+
+            if self._visuals.is_enabled() and \
+                    self._current_year % self._visuals.vis_years == 0:
+                self._visuals.refresh(self._current_year, self._island.animal_details())
+
+            self._current_year += 1
 
         if self._log_file is not None:
             csvfile.flush()
             csvfile.close()
+
+        if self._visuals.is_enabled():
+            plt.show(block=False)
 
     def add_population(self, population):
         """
@@ -188,7 +213,7 @@ class BioSim:
     @property
     def year(self):
         """Last year simulated."""
-        return self._simulated_until_years
+        return self._current_year
 
     @property
     def num_animals(self):
@@ -201,11 +226,12 @@ class BioSim:
         return {'Herbivore': Herbivore.count(), 'Carnivore': Carnivore.count()}
 
     def make_movie(self):
-        """TODO Create MPEG4 movie from visualization images saved."""
+        """ Create MPEG4 movie from visualization images saved."""
+        self._visuals.make_movie()
 
     def _print_migration_data(self):
         if self._console_output_island:
             Rossumoya.console_output_island(True)
-            print(f"Y:{self._simulated_until_years}")
+            print(f"Y:{self._current_year}")
             print(f"H:{Herbivore.count()}.C:{Carnivore.count()}")
             print(self._island)
