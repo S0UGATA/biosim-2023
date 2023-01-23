@@ -51,15 +51,11 @@ for seed in range(100, 103):
                  img_dir='data', img_base=f'simulation_hc_{seed:05d}', img_years=300)
 ```
 
-The different parameters and what type of values that can be used is documented in
-```
-biosim/simulation.py
-```
+The different parameters and what type of values that can be used is documented in 
+```biosim/simulation.py```.
 
-The final simulation is called by using
-```
-sim.simulate(301)
-```
+The final simulation is called by using```sim.simulate(301)```.
+
 Where the chosen value is the number of years you want to simulate. For further documentation and 
 information about the different classes, parameters and possible restrictions is documented in each
 file and package in the folder ```biosim```.
@@ -110,9 +106,15 @@ for each animal in each cell works properly (following the set restrictions).
 ### Credits:
  - Code optimization done with Sourcery: https://sourcery.ai/
 
-[![Pipeline Status](https://gitlab.com/nmbu.no/emner/inf200/h2022/january-block-teams/a39_sougata_tonje/biosim-a39-sougata-tonje/badges/main/pipeline.svg)](https://gitlab.com/nmbu.no/emner/inf200/h2022/january-block-teams/a39_sougata_tonje/biosim-a39-sougata-tonje/-/pipelines?page=1&scope=branches&ref=main)
-
 
 ### Authors and contributors to the project
 - Sougata Bhattacharya, sougata.bhattacharya@nmbu.no
 - Tonje Martine Lorgen Kirkholt, tonje.martine.lorgen.kirkholt@nmbu.no
+
+[![Pipeline Status](https://gitlab.com/nmbu.no/emner/inf200/h2022/january-block-teams/a39_sougata_tonje/biosim-a39-sougata-tonje/badges/main/pipeline.svg)](https://gitlab.com/nmbu.no/emner/inf200/h2022/january-block-teams/a39_sougata_tonje/biosim-a39-sougata-tonje/-/pipelines?page=1&scope=branches&ref=main)  
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
+[![Flake8 badge](https://img.shields.io/badge/linting-flake8-blue)](https://flake8.pycqa.org/en/latest/)  
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)  
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)  
+[![made-with-sphinx-doc](https://img.shields.io/badge/Made%20with-Sphinx-1f425f.svg)](https://www.sphinx-doc.org/)   
+[![Tox badge](https://img.shields.io/badge/Made%20with-tox-yellowgreen)](https://tox.wiki/en/latest/)
