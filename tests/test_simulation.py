@@ -218,17 +218,19 @@ def figfile_base():
 
 
 # TODO: Check this after image saving is done
-def test_figure_saved(figfile_base):
-    """Test that figure are saved during simulation"""
+def test_saved_figure(figfile_base):
+    """Test that the figures are being saved during the simulation."""
     sim = BioSim(island_map="WWWW\nWLHW\nWWWW",
                  ini_pop=[],
                  seed=1,
                  img_dir='.',
                  img_base=figfile_base,
                  img_fmt='png')
-    sim.simulate(2)
+    sim.simulate(4)
 
     assert os.path.isfile(f'{figfile_base}_00000.png')
     assert os.path.isfile(f'{figfile_base}_00001.png')
+
+
 
 # TODO: Add tests for visualization and images when this is done

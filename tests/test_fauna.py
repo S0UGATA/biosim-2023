@@ -9,8 +9,11 @@ interface.
 """
 import math
 import random
+import statistics
+
 import pytest
 import scipy.stats as stats
+from matplotlib import pyplot as plt
 
 from biosim.ecosystem.fauna import Herbivore, Carnivore, Fauna
 
@@ -181,44 +184,58 @@ def test_weight_of_newborns_z_test():
     We have
     Z = (sum of X - mean) / standard deviation
 
-    We set an alpha level of 0.05,
+    We set an alpha level of 0.05"""
 
+
+def test_weight_of_newborns_distribution():
+    """This test checks the distribution of the weight of the newborns. The test compares two
+    lists: one with the actual mean and one with the hypothesized mean with a value obtained from
+    the default parameters.
     """
-    # TODO mean_newborn_herb = 8.0  # mu
-    # TODO sd_newborn_herb = 1.5  # sigma
-    # TODO mean = 0.0
-    # TODO alpha = 0.05
-    # TODO N = 50  # sample size
-    random.seed(SEED)
-    mean_newborn_herb = 8.0  # mu
-    sd_newborn_herb = 1.5  # sigma
-    alpha = 0.05
-    no_animals = 50  # sample size
-    mean = mean_newborn_herb / no_animals
-    animals = []
-    babies = []
-    num_births = 0
 
-    for _ in range(no_animals):
-        weight = random.randint(10, 50)
+    random.seed(SEED)
+    sample_size = 2000  # sample size
+    animals = []
+    actual_baby_weight = []
+    for _ in range(sample_size):
+        weight = random.randint(1000, 5010)  # Increase the possible weight to ensure births
         age = random.randint(1, 10)
         herb = Herbivore(age, weight)
         animals.append(herb)
-        newborn = herb.procreate(no_animals)
+        newborn = herb.procreate(sample_size)
         if newborn is not None:
-            babies.append(newborn)
-    num_births = len(babies)
-    for baby in babies:
-        weight += baby.weight
-    mean = weight / num_births
+            actual_baby_weight.append(newborn.weight)
 
-    z_score = (mean) / (sd_newborn_herb / math.sqrt(no_animals))
+    actual_mean = statistics.mean(actual_baby_weight)
+    exp_mean = Herbivore._params.w_birth
+    exp_var = Herbivore._params.sigma_birth
+
+    exp_baby_weight = [_baby_weight(exp_mean, exp_var) for _ in actual_baby_weight]
+    z_score = (actual_mean - exp_mean) / math.sqrt(exp_var)
     phi = 2 * stats.norm.cdf(-abs(z_score))
-    assert phi > alpha
+    assert phi > ALPHA
 
-    random.seed(SEED)
-    # TODO no_trials = 100
 
-    # TODO herb = Herbivore()
-    # TODO herb.set_animal_parameters
+    plt.figure()
+    plt.hist(actual_baby_weight, label="Actual")
+    plt.hist(exp_baby_weight, color='red', alpha=0.5, label='Expected')
+    plt.legend()
+    plt.show()
 
+
+def _baby_weight(mean_birth, sd_birth):
+    """
+    Method that calculates the weight of the newborn from an animal of type
+    Herbivore or Carnivore.
+
+    Parameters
+    ----------
+    mean_birth: float
+    sd_birth: float
+    """
+
+    mu2 = mean_birth ** 2
+    sd2 = sd_birth ** 2
+    mean = math.log(mu2 / math.sqrt(mu2 + sd2))
+    sd = math.sqrt(math.log(1 + (sd2 / mu2)))
+    return random.lognormvariate(mean, sd)
