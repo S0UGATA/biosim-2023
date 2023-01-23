@@ -354,7 +354,7 @@ class Visuals:
         self._carn_heat_image.set_data(np.ma.masked_where(cc == -1, cc))
 
     def _refresh_histograms(self, animal_details):
-        for hist_type in self._hists.items():
+        for hist_type in self._hists:
             data_herb = animal_details[f"{hist_type}_herbivore"]
             hist_counts_herb, _ = np.histogram(data_herb, self._hist_bin_edges[hist_type])
             self._hist_herb[hist_type].set_data(hist_counts_herb)
