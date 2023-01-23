@@ -22,7 +22,6 @@ class Geography:
     _can_have_fodder: bool
 
     def __init__(self, fodder: float = 0.):
-
         self.initialize_fodder_max(fodder)
 
     def __str__(self):

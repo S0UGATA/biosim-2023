@@ -184,6 +184,11 @@ def test_weight_of_newborns_z_test():
     We set an alpha level of 0.05,
 
     """
+    # TODO mean_newborn_herb = 8.0  # mu
+    # TODO sd_newborn_herb = 1.5  # sigma
+    # TODO mean = 0.0
+    # TODO alpha = 0.05
+    # TODO N = 50  # sample size
     random.seed(SEED)
     mean_newborn_herb = 8.0  # mu
     sd_newborn_herb = 1.5  # sigma
@@ -211,5 +216,9 @@ def test_weight_of_newborns_z_test():
     phi = 2 * stats.norm.cdf(-abs(z_score))
     assert phi > alpha
 
+    random.seed(SEED)
+    # TODO no_trials = 100
 
+    # TODO herb = Herbivore()
+    # TODO herb.set_animal_parameters
 

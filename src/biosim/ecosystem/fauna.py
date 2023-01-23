@@ -43,7 +43,8 @@ class Fauna:
         b) For each animal there is a probability for producing offspring, which is
          min(1, (gamma * fitness * N)) where N is the number of animals of the same species in the
          cell at the start of the breeding season. The gamma value is set before the simulation,
-         either by user or by default, and the fitness is calculated by the method calculate_fitness(self).
+         either by user or by default, and the fitness is calculated by the method
+         calculate_fitness(self).
          c) Each animal can give birth to at most one offspring per year.
          d) At birth, the parent loses xi times the actual birth-weight of the baby.
          e) If the parent would lose more than their own weight, no baby is born and the weight of

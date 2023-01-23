@@ -13,7 +13,6 @@ import random
 
 import pytest
 
-from biosim.ecosystem.fauna import Herbivore
 from biosim.simulation import BioSim
 
 
@@ -124,24 +123,49 @@ def reusable_island():
 @pytest.mark.parametrize('geo_type', ['H', 'L', 'D'])
 def test_placement_of_population(geo_type):
     """Population of animals can be placed on all geo types except water"""
-    BioSim(island_map="WWWW\nWW{}W\nWWWW".format(geo_type),
-           ini_pop=[{'loc': (2, 3),
-                     'pop': [{'species': 'Herbivore', 'age': 3, 'weight': 5.},
-                             {'species': 'Carnivore', 'age': 3, 'weight': 12.}]},
-                    {'loc': (2, 3),
-                     'pop': [{'species': 'Herbivore', 'age': 2, 'weight': 20.},
-                             {'species': 'Carnivore', 'age': 2, 'weight': 14.}]}],
-           seed=1,
-           vis_years=0)
+    BioSim(
+        island_map=f"WWWW\nWW{geo_type}W\nWWWW",
+        ini_pop=[
+            {
+                'loc': (2, 3),
+                'pop': [
+                    {'species': 'Herbivore', 'age': 3, 'weight': 5.0},
+                    {'species': 'Carnivore', 'age': 3, 'weight': 12.0},
+                ],
+            },
+            {
+                'loc': (2, 3),
+                'pop': [
+                    {'species': 'Herbivore', 'age': 2, 'weight': 20.0},
+                    {'species': 'Carnivore', 'age': 2, 'weight': 14.0},
+                ],
+            },
+        ],
+        seed=1,
+        vis_years=0,
+    )
     with pytest.raises(ValueError):
-        BioSim(island_map="WWWW\nWWWW\nWWWW".format(geo_type),
-               ini_pop=[{'loc': (2, 3),
-                         'pop': [{'species': 'Herbivore', 'age': 3, 'weight': 5.},
-                                 {'species': 'Carnivore', 'age': 3, 'weight': 12.}]},
-                        {'loc': (2, 3),
-                         'pop': [{'species': 'Herbivore', 'age': 2, 'weight': 20.},
-                                 {'species': 'Carnivore', 'age': 2, 'weight': 14.}]}],
-               seed=1, vis_years=0)
+        BioSim(
+            island_map=f"{geo_type}WWW\nWWWW\nWWWW",
+            ini_pop=[
+                {
+                    'loc': (2, 3),
+                    'pop': [
+                        {'species': 'Herbivore', 'age': 3, 'weight': 5.0},
+                        {'species': 'Carnivore', 'age': 3, 'weight': 12.0},
+                    ],
+                },
+                {
+                    'loc': (2, 3),
+                    'pop': [
+                        {'species': 'Herbivore', 'age': 2, 'weight': 20.0},
+                        {'species': 'Carnivore', 'age': 2, 'weight': 14.0},
+                    ],
+                },
+            ],
+            seed=1,
+            vis_years=0,
+        )
 
 
 def test_multi_call_simulation(reusable_island):
@@ -204,7 +228,7 @@ def test_figure_saved(figfile_base):
                  img_fmt='png')
     sim.simulate(2)
 
-    assert os.path.isfile(figfile_base + '_00001.png')
-    assert os.path.isfile(figfile_base + '_00002.png')
+    assert os.path.isfile(f'{figfile_base}_00000.png')
+    assert os.path.isfile(f'{figfile_base}_00001.png')
 
 # TODO: Add tests for visualization and images when this is done

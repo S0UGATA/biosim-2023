@@ -617,3 +617,4 @@ $RECYCLE.BIN/
 pytest_results.xml
 /reference_examples/data/
 /examples/data/
+examples/results/
