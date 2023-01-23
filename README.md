@@ -1,5 +1,7 @@
 # Modelling the Ecosystem of Rossumøya
 
+---
+
 The project simulates life at the imaginary island of Rossumøya, given several initial parameters.
 As a user and initializer you have the possibility to create an island of your choice with pre-
 defined values for the different parameters. Another option is to run simulations with the default
@@ -60,33 +62,50 @@ sim.simulate(301)
 ```
 Where the chosen value is the number of years you want to simulate. For further documentation and 
 information about the different classes, parameters and possible restrictions is documented in each
-file and package in the folder
-```
-biosim
-```
+file and package in the folder ```biosim```.
 
+---
 
-### Examples of simulations
+## Examples of simulations
+The following examples are different types of simulation, where the initialized parameter vary. All
+can be found in the folder ```/examples``` and run from there. A short explanation is given for 
+each, to enable better understanding in creating your own simulation.
+
 #### 1. Simulation with a default set of parameters
 ```
 examples/simulation_migration_default_params.py
 ```
-In this simulation, the default set of parameters are used for both initializing Herbivores and 
-Carnivores. The weight and age is instantiated, and the number of each fauna type. 
+In this simulation, [found here](examples/simulation_migration_default_params.py), the default set of parameters are used for both initializing Herbivores and 
+Carnivores. The weight and age is instantiated, and the number of each fauna type. Here, 
+```console_output=True```, meaning that you get the map and distribution of animals in the console
+in addition to having the information presented in a separate window. 
+The simulation starts off with 50 Herbivores, and after 10 years 20 Carnivores are added. 
 
-#### 3. Simulation with changed parameters
+#### 2. Simulation with changed parameters
+```
+examples/simulation_hc_changed_params.py
+```
+In this simulation, [found here](examples/simulation_hc_changed_params.py), some of the parameters 
+have been changed.
 
-#### 2. Full simulation with visualization over 200 years
+#### 3. Full simulation with visualization over 200 years
 ```
 examples/simulation.visual.py
 ```
-In this simulation, 
+In this simulation, [found here](examples/simulation_visual.py), we simulate a period of 200 years. 
+The initialized animals in year 0 are 200 Herbivores and 50 Carnivores. The movie found 
+[here](result) is the changes visualized per year from this simulation. 
 
 
 
 
-### Running the project
-Running any of the Python files in the ```/examples``` folder will initiate the simulation. 
+### Extra additions
+In ```biosim/simulation.py```, an extra parameter has been added to the *BioSim*-class parameters: 
+**console_output_island**. Setting this to *True* enables print-out of island map in the console. 
+Running ```examples/simulation.py``` ([here](examples/simulation_migration.py)) gives us the following output in the console for year 3:
+![Output of island map in console.](console_map.png)
+The parameters in the mentioned file is set in a way so that we can observe that the migration 
+for each animal in each cell works properly (following the set restrictions).
 
 ### Credits:
  - Code optimization done with Sourcery: https://sourcery.ai/
