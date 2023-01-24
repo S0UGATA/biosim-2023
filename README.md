@@ -9,7 +9,7 @@ set of parameters. In the examples folder you are presented with some examples o
 of simulations. What varies is the size of the island, the distribution of landscape types, and 
 the distribution and initialization of animals. 
 
-###How the simulation works
+### How the simulation works
 Whether or not you want do define your own parameters for the island, one has to instantiate the 
 island itself, the distribution of the different geography types, and the animals you want to 
 populate the island with. An example of instantiating the island looks like this:

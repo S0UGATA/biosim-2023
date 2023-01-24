@@ -10,9 +10,11 @@ whereas the class functions are tested in their own files.
 import glob
 import os
 import random
+import textwrap
 
 import pytest
 
+from biosim.ecosystem.rossumoya import Rossumoya
 from biosim.simulation import BioSim
 
 
@@ -217,7 +219,6 @@ def figfile_base():
         os.remove(f)
 
 
-# TODO: Check this after image saving is done
 def test_saved_figure(figfile_base):
     """Test that the figures are being saved during the simulation."""
     sim = BioSim(island_map="WWWW\nWLHW\nWWWW",
@@ -231,4 +232,45 @@ def test_saved_figure(figfile_base):
     assert os.path.isfile(f'{figfile_base}_00000.png')
     assert os.path.isfile(f'{figfile_base}_00001.png')
 
-# TODO: Add tests for visualization and images when this is done
+
+@pytest.mark.parametrize('bad_animal_type', ['Shark', 'ÆØÅ', 111, None])
+def test_populate_island(reusable_island, bad_animal_type):
+    """The island can only be populated with species of type Herbivore or Carnivore."""
+    bad_pop = [{'loc': (2, 2),
+                'pop': [{'species': bad_animal_type}]}]
+    with pytest.raises(ValueError):
+        return BioSim(island_map="WWWW\nWHLW\nWWWW",
+                      ini_pop=bad_pop,
+                      seed=1,
+                      vis_years=0)
+
+
+def test_populate_island_none():
+    """An island can not be instantiated if population = None"""
+    bad_pop = None
+    with pytest.raises(ValueError):
+        return BioSim(island_map="WWWW\nWHLW\nWWWW",
+                      ini_pop=bad_pop,
+                      seed=1,
+                      vis_years=0)
+
+
+@pytest.mark.parametrize('landscape, fodder', [('D', 100), ('W', 100), ('L', -1), (None, None),
+                                               ('K', '**'), ('L', '--!'), ('L', None), ('Å', 100)])
+def test_set_bad_island_params(landscape, fodder):
+    """Setting landscape parameters should follow these restrictions:
+    - Water(W) and Desert(D) can only have 0 as max fodder value
+    - Highland(H) and Lowland(L) can not have negative values for fodder
+    - Fodder value has to be a valid number
+    - Specified landscape type has to be either L, D, W or H"""
+    with pytest.raises(ValueError):
+        Rossumoya.set_island_params(landscape, {'f_max': fodder})
+
+
+@pytest.mark.parametrize('landscape, fodder', [('H', 400), ('L', 600)])
+def test_set_valid_island_params(landscape, fodder):
+    Rossumoya.set_island_params(landscape, {'f_max': fodder})
+
+
+
+

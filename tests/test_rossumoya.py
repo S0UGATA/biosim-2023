@@ -42,3 +42,9 @@ def test_island(mocker, reusable_simulation):
     num_years = 10
     reusable_simulation.simulate(num_years)
     assert Rossumoya.go_through_annual_cycle.call_count == num_years
+
+
+def test_init_island():
+    """Test if Value Error is raised if no island is initialized"""
+    with pytest.raises(ValueError):
+        Rossumoya(None)
