@@ -8,8 +8,7 @@ Water, and Desert interface.
 """
 import pytest
 
-from biosim.ecosystem.geography import Highland, Lowland, Desert, Water, Geography
-from biosim.ecosystem.unit_area import UnitArea
+from biosim.ecosystem.geography import Highland, Lowland, Desert, Water
 
 
 @pytest.mark.parametrize('bad_fodder', [(-1), None])

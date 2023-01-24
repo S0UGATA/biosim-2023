@@ -10,7 +10,6 @@ whereas the class functions are tested in their own files.
 import glob
 import os
 import random
-import textwrap
 
 import pytest
 

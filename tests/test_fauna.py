@@ -14,7 +14,7 @@ import pytest
 from matplotlib import pyplot as plt
 from statsmodels.stats.weightstats import ztest
 
-from biosim.ecosystem.fauna import Herbivore, Carnivore, Fauna
+from biosim.ecosystem.fauna import Herbivore, Carnivore
 
 """Random seed for tests"""
 SEED = 123456
