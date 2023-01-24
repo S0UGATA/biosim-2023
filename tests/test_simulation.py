@@ -272,5 +272,13 @@ def test_set_valid_island_params(landscape, fodder):
     Rossumoya.set_island_params(landscape, {'f_max': fodder})
 
 
+@pytest.mark.parametrize('species, params', [('Shark', -1), ('ÆØÅ', '**'),
+                                             ('Herbivore', 'Carnoivore'), (None, 10)])
+def test_set_bad_animal_params(species, params):
+    with pytest.raises(ValueError):
+        Rossumoya.set_animal_params(species, {'zeta': params, 'gamma': params})
 
 
+@pytest.mark.parametrize('species, params', [('Herbivore', 3), ('Carnivore', 0.02)])
+def test_set_valid_animal_params(species, params):
+    Rossumoya.set_animal_params(species, {'beta': params, 'mu': params})

@@ -14,7 +14,7 @@ import pytest
 from matplotlib import pyplot as plt
 from statsmodels.stats.weightstats import ztest
 
-from biosim.ecosystem.fauna import Herbivore, Carnivore
+from biosim.ecosystem.fauna import Herbivore, Carnivore, Fauna
 
 """Random seed for tests"""
 SEED = 123456
@@ -153,7 +153,6 @@ def test_unfit_herbs_always_die():
         assert herb.maybe_die() is True
 
 
-# TODO: Currently working on making checks for negative values in parameter settings
 @pytest.mark.parametrize('bad_param', [({'a:half': -1}), ({'omega': -1}),
                                        ({'w.birth': -1}), ({'mu': -1})])
 def test_bad_parameters_herb(bad_param):
@@ -164,7 +163,6 @@ def test_bad_parameters_herb(bad_param):
         herb.set_animal_parameters(params=bad_param)
 
 
-# TODO: Currently working on making checks for negative values in parameter settings
 @pytest.mark.parametrize('bad_param', [({'DeltaPhiMax': 0}), ({'DeltaPhiMax': -1}),
                                        ({'w.birth': -1}), ({'w_half': -1})])
 def test_bad_param_carn(bad_param):
