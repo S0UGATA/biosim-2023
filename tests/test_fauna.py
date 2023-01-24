@@ -82,10 +82,12 @@ def test_init_weight():
     assert carn.weight != 0
 
     year = 10
-    weight = random.randint(1, 10)
     for age in range(1, year):
+        weight = random.randint(1, 20)
         herb = Herbivore(age, weight)
+        carn = Carnivore(age, weight)
         assert herb.weight != 0
+        assert carn.weight != 0
 
 
 def test_eat_and_gain_weight_herb():

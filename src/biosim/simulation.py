@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 
 from biosim.ecosystem.fauna import Herbivore, Carnivore
 from biosim.ecosystem.rossumoya import Rossumoya
-from biosim.visualization.visuals import Visuals
+from biosim.visuals import Visuals
 
 
 # The material in this file is licensed under the BSD 3-clause license

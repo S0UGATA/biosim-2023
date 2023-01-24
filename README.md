@@ -102,18 +102,41 @@ that is set to geography type *Water*, blue.
 The distribution is set by getting the details of the animals in each cell, and we then set the 
 length of the animals to be equal 1. While refreshing the heatmaps we set a mask on the cells where 
 the number of animals is equal to -1 (which is done where there is geo type water on the map). 
-In visuals.py, [here](src/biosim/visualization/visuals.py), the color of this mask is set to blue.
+In visuals.py, [here](src/biosim/visuals.py), the color of this mask is set to blue.
 This ensures that the water areas are masked, and therefore blue, making the visualization better.
 ![Output of island map in separate window](readme_imgs/stats_visual.png)
 
   
 #### 3. 
--- added str to make debugging easier --
--- take pictures of different types of debugging --
+We have added a string to the simulation, where information about each animal is easily registered
+and updated for each annual cycle. This can be observed during debugging, as shown in the image 
+below. 
+![Picture of console output](readme_imgs/str_info.png)
+The letters indicate the following:
+
+- **C** = Carnivore
+- **H** = Herbivore
+- **A** followed by number = Represents the age
+- **W** followed by number = Represents the weight
+- **F** followed by number = Represents the fitness
+- **M** followed by 0 or 1 = Boolean value, telling us if the animal has moved or not 
+
+
+
+### How to install and run
+While in root file, run the following command in the terminal:
+```
+python -m build
+```
+Then, all simulations in the```examples``` folder will be runnable. 
+
+### Results
+All results and videos can be found in ```examples/results```.
 
 ### Credits:
  - Code optimization done with Sourcery: https://sourcery.ai/
 
+### License
 
 ### Authors and contributors to the project
 - Sougata Bhattacharya, sougata.bhattacharya@nmbu.no
