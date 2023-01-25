@@ -244,9 +244,9 @@ def test_populate_island(reusable_island, bad_animal_type):
                       vis_years=0)
 
 
-def test_populate_island_none():
-    """An island can not be instantiated if population = None"""
-    bad_pop = None
+@pytest.mark.parametrize('bad_pop', [(None, [{}])])
+def test_populate_island_none(bad_pop):
+    """An island can not be instantiated if population = None or an empty dictionary."""
     with pytest.raises(ValueError):
         return BioSim(island_map="WWWW\nWHLW\nWWWW",
                       ini_pop=bad_pop,
