@@ -71,6 +71,8 @@ class Rossumoya:
         for cell_info in population:
             if cell_info is None:
                 raise ValueError("Empty input data cell info")
+            if cell_info.get("loc") is None:
+                raise ValueError("Wrong row/col values")
             row, col = cell_info.get("loc")
             if row is None or col is None:
                 raise ValueError("Wrong row/col values")
