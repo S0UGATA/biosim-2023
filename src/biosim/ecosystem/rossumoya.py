@@ -69,9 +69,15 @@ class Rossumoya:
             Carnivore.reset_count()
 
         for cell_info in population:
+            if cell_info is None:
+                raise ValueError("Empty input data cell info")
             row, col = cell_info.get("loc")
+            if row is None or col is None:
+                raise ValueError("Wrong row/col values")
             unit_area: UnitArea = self._cells[row - 1][col - 1]
             for pop in cell_info.get("pop"):
+                if pop is None:
+                    raise ValueError("Empty input population")
                 match pop.get("species"):
                     case "Herbivore":
                         unit_area.add_herb(Herbivore(pop.get("age"), pop.get("weight")))
