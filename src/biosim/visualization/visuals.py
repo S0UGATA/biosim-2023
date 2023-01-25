@@ -358,7 +358,7 @@ class Visuals:
         self._carn_count_line.set_ydata(cline)
 
         if self._ymax_animals is None:
-            self._animal_count.set_ylim(0, max(max(hline), max(cline)) * 1.10)
+            self._animal_count.set_ylim(0, max(max(hline), max(cline)) * 1.10 + 1)
 
     def _refresh_heatmaps(self, animal_details: {}):
         hc = animal_details["count_herbivore"]
@@ -378,7 +378,7 @@ class Visuals:
 
             self._hists[hist_type].set_ylim(
                 [0, max(hist_counts_herb.max(axis=0, initial=0),
-                        hist_counts_carn.max(axis=0, initial=0)) * 1.1])
+                        hist_counts_carn.max(axis=0, initial=0)) * 1.1 + 1])
 
     def _flush_it(self):
         self._subfigs[0].canvas.draw()
