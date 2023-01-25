@@ -23,7 +23,7 @@ ALPHA = 0.01
 
 
 def test_init_animal():
-    """ Test that the default age for an instance of an Herbivore or Carnivore is equal to 0, and
+    """ Test that the default age for an instance of a Herbivore or Carnivore is equal to 0, and
     the weight is greater than 0. """
     random.seed(20)
     cycles = 10
@@ -48,7 +48,7 @@ def test_set_init_animal():
 
 
 def test_get_older_carn_herb():
-    """ Test that the age of an animal increases by one when get_older() is used."""
+    """Test that the age of an animal increases by one when get_older() is used."""
     herb = Herbivore()  # Initialized without set values for weight and age
     carn = Carnivore()  # Initialized without set values for weight and age
     herb_set = Herbivore(5, 20)  # Herbivore with set values for weight and age
@@ -84,7 +84,7 @@ def test_init_weight():
 
 def test_eat_and_gain_weight_herb():
     """ Test that a Herbivore that has eaten an F amount of fodder gains weight according to the
-    formula beta*F, where beta = 0.9 for Herbivores."""
+    formula β(beta)*F, where the default value for β = 0.9 for Herbivores."""
     herb = Herbivore()
 
     amount_fodder = 10
@@ -100,7 +100,8 @@ def test_eat_and_gain_weight_herb():
 
 
 def test_eat_and_gain_weight_carn():
-    """Carnivore eating and gaining weight. Weight gain is Fodder*beta, where beta = 0.75"""
+    """Carnivore eating and gaining weight. Weight gain is Fodder*β(beta), where the
+    default value for beta = 0.75 for Carnivores. """
     herb = Herbivore()
     carn = Carnivore()
     herb_set = Herbivore(5, 20)
@@ -115,15 +116,15 @@ def test_eat_and_gain_weight_carn():
 
 @pytest.mark.parametrize('bad_age, bad_weight', [(-1, -1), (-1, 0), (-1, 1)])
 def test_grow_old_herb_carn(bad_age, bad_weight):
-    """It should not be possible to initialize a negative age and/or weight when instantiating a
-    new Herbivore and/or Carnivore."""
+    """Initialization of negative weight and/or age is not possible when initializing
+    a new animal."""
     with pytest.raises(ValueError):
         Herbivore(bad_age, bad_weight)
         Carnivore(bad_age, bad_weight)
 
 
 def test_animal_fitness():
-    """The calculated fitness of an animal should always be 0 < fitness_animal < 1"""
+    """The calculated fitness of an animal is always 0 < fitness_animal < 1."""
     random.seed(SEED)
     no_animals = 1000
     for _ in range(no_animals):
@@ -203,7 +204,7 @@ def test_weight_of_newborns_distribution():
 def _baby_weight(mean_birth, sd_birth):
     """
     Method that calculates the weight of the newborn from an animal of type
-    Herbivore or Carnivore. For use in other tests.
+    Herbivore or Carnivore. For use in other tests (test_weight_of_newborns_distribution()).
 
     Parameters
     ----------
