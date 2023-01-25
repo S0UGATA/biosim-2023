@@ -159,6 +159,15 @@ class Rossumoya:
         UnitArea.console_output_island = param
 
     def animal_details(self) -> {}:
+        """
+        This method returns animal details (count, age, weight, fitness)
+        per cell for  the whole island.
+
+        Returns
+        -------
+        animal details: dict
+            A dictionary containing count, age, weight, fitness as keys, and corresponding values.
+        """
         age_h, age_c = [], []
         weight_h, weight_c = [], []
         fit_h, fit_c = [], []
