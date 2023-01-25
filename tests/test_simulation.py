@@ -17,7 +17,6 @@ from biosim.ecosystem.rossumoya import Rossumoya
 from biosim.simulation import BioSim
 
 
-# TODO: Create tests similar to the ones in test_biosim_interface,
 def test_create_island():
     """All types of islands can be created, as long as the border is water"""
 
