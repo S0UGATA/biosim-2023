@@ -203,7 +203,7 @@ def test_weight_of_newborns_distribution():
     plt.hist(actual_baby_weight, label="Actual")
     plt.hist(exp_baby_weight, color='red', alpha=0.5, label='Expected')
     plt.legend()
-    plt.show()
+    plt.show(block=False)
 
 
 def _baby_weight(mean_birth, sd_birth):
