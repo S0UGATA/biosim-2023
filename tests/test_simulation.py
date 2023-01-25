@@ -33,13 +33,14 @@ def test_island_border(island_map):
 
 @pytest.mark.parametrize('bad_value', [-1, 100, "A", "P", "Å", "*"])
 def test_geo_input_param(bad_value):
-    """Input of invalid geo type should raise an error"""
+    """Input of invalid geo type raises an error."""
     with pytest.raises(ValueError):
         BioSim(island_map="WWW\nW{}W\nWWW", ini_pop=[], seed=1, vis_years=0)
 
 
 def test_size_of_island():
-    """The grid of the island should be a square"""
+    """The grid of the island can only be a rectangle (all the rows or all the columns have
+    the same length)."""
     with pytest.raises(ValueError):
         BioSim(island_map="WWW\nWW\nWWW", ini_pop=[], seed=1, vis_years=0)
         BioSim(island_map="WWW\nWW\nWWWWWW", ini_pop=[], seed=1, vis_years=0)
@@ -47,6 +48,7 @@ def test_size_of_island():
 
 @pytest.fixture
 def reset_fauna_params():
+    """Reset the fauna parameters. For use in other tests."""
     yield
     BioSim(island_map="W",
            ini_pop=[], seed=1, vis_years=0).set_animal_parameters('Herbivore',
@@ -88,7 +90,7 @@ def reset_fauna_params():
 @pytest.mark.parametrize('fauna_type, set_param', [('Herbivore', {'F': 5.0}),
                                                    ('Carnivore', {'DeltaPhiMax': 11.0})])
 def test_set_default_animal_params(reset_fauna_params, fauna_type, set_param):
-    """It should be possible to define and set parameters of your own choosing when instantiating
+    """It is possible to define and set parameters of your own choosing when instantiating
     an animal, either Herbivore or Carnivore."""
     animal_params = {"w_birth": 6,
                      "sigma_birth": 1,
@@ -122,7 +124,7 @@ def reusable_island():
 
 @pytest.mark.parametrize('geo_type', ['H', 'L', 'D'])
 def test_placement_of_population(geo_type):
-    """Population of animals can be placed on all geo types except water"""
+    """Population of animals can be placed on all geo types except water."""
     BioSim(
         island_map=f"WWWW\nWW{geo_type}W\nWWWW",
         ini_pop=[
@@ -169,7 +171,7 @@ def test_placement_of_population(geo_type):
 
 
 def test_multi_call_simulation(reusable_island):
-    """The simulation can be called repeatedly"""
+    """The simulation can be called repeatedly."""
     random.seed(1234)
     cycles = 20
     for _ in range(cycles):
@@ -178,7 +180,7 @@ def test_multi_call_simulation(reusable_island):
 
 
 def test_num_years_simulated(reusable_island):
-    """The number of years that has been simulated is available"""
+    """The number of years that has been simulated is available."""
     random.seed(1234)
     cycles = 20
     prev_years_sim = 0
@@ -202,11 +204,10 @@ def test_total_no_animals(reusable_island):
 
 
 def test_animal_count_per_species(reusable_island):
-    """The total amount of animals per species should be available."""
+    """The total amount of animals per species is available."""
     assert reusable_island.num_animals_per_species == {'Herbivore': 0, 'Carnivore': 0}
 
 
-# This is resused from test_biosim_interface
 @pytest.fixture
 def figfile_base():
     """Name for the figfile is provided and the figfiles can be deleted after the test is
@@ -267,16 +268,20 @@ def test_set_bad_island_params(landscape, fodder):
 
 @pytest.mark.parametrize('landscape, fodder', [('H', 400), ('L', 600)])
 def test_set_valid_island_params(landscape, fodder):
+    """Landscape types Highland and Lowland can be initialized with a set amount of fodder > 0."""
     Rossumoya.set_island_params(landscape, {'f_max': fodder})
 
 
 @pytest.mark.parametrize('species, params', [('Shark', -1), ('ÆØÅ', '**'),
                                              ('Herbivore', 'Carnoivore'), (None, 10)])
 def test_set_bad_animal_params(species, params):
+    """If an invalid animal type or invalid value for the pre-defined parameter is used for
+     initialization, a ValueError is raised. """
     with pytest.raises(ValueError):
         Rossumoya.set_animal_params(species, {'zeta': params, 'gamma': params})
 
 
 @pytest.mark.parametrize('species, params', [('Herbivore', 3), ('Carnivore', 0.02)])
 def test_set_valid_animal_params(species, params):
+    """Initialization of an animal and pre-defined parameters is possible."""
     Rossumoya.set_animal_params(species, {'beta': params, 'mu': params})
