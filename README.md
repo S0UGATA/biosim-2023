@@ -105,7 +105,7 @@ The initialized animals in year 0 are 200 Herbivores and 50 Carnivores. The movi
 In `biosim/simulation.py`, an extra parameter has been added to the `BioSim`-instance parameters: 
 `console_output_island`. Setting this to `True` enables print-out of island map in the console. 
 Running ```examples/simulation.py``` ([here](examples/simulation_migration.py)) gives us the following output in the console for year 3:
-![Output of island map in console.](readme_imgs/console_map.png){width=50 height=50px}  
+![Output of island map in console.](readme_imgs/console_map.png){width=500 height=500px}  
 The parameters in the mentioned file is set in a way so that we can observe that the migration 
 for each animal in each cell works properly (following the set restrictions).
 
@@ -118,14 +118,14 @@ count of the animals = -1 where its water. While refreshing the heatmaps we set 
 the number of animals is equal to -1 (which is done where there is geo type water on the map). 
 In visuals.py, [here](src/biosim/visualization/visuals.py), the color of this mask is set to blue.
 This ensures that the water areas are masked, and therefore blue, making the visualization better.
-![Output of island map in separate window](readme_imgs/stats_visual.png){width=50 height=50px}  
+![Output of island map in separate window](readme_imgs/stats_visual.png){width=500 height=500px}  
 
   
 #### 3. Easier debugging:
 We have added a string to the simulation, where information about each animal is easily registered
 and updated for each annual cycle. This can be observed during debugging, as shown in the image 
 below.   
-![Picture of console output](readme_imgs/str_info.png){width=30 height=10}   
+![Picture of console output](readme_imgs/str_info.png){width=100 height=20}   
 The letters indicate the following:
 
 - **C** = Carnivore
