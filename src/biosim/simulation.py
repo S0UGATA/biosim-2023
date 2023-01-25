@@ -174,7 +174,7 @@ class BioSim:
                 self._visuals.initialize_figure(num_years, self._island.animal_details())
                 self._visuals.set_island(self._island_map)
             else:
-                self._visuals.extend_figure(self._current_year, num_years,)
+                self._visuals.extend_figure(self._current_year, num_years, )
         else:
             print("Graphics is disabled.")
 

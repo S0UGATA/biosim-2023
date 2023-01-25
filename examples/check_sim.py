@@ -9,6 +9,7 @@ __author__ = "Hans Ekkehard Plesser, NMBU"
 __email__ = "hans.ekkehard.plesser@nmbu.no"
 
 import textwrap
+
 import matplotlib.pyplot as plt
 
 from biosim.simulation import BioSim
