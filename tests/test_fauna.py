@@ -22,14 +22,6 @@ SEED = 123456
 ALPHA = 0.01
 
 
-# TODO: Unsure about this, may be removed.
-def reset_animal_params_():
-    """ Reset the animal parameters before running the tests."""
-    yield
-    Herbivore.set_animal_parameters(Herbivore.default_params)
-    Carnivore.set_animal_parameters(Herbivore.default_params)
-
-
 def test_init_animal():
     """ Test that the default age for an instance of an Herbivore or Carnivore is equal to 0, and
     the weight is greater than 0. """
