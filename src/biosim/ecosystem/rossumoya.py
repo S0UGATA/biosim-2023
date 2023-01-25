@@ -81,6 +81,11 @@ class Rossumoya:
                         raise ValueError("Unknown species.")
 
     def go_through_annual_cycle(self):
+        """
+        This method iterates through all cells of the island and works on all animals to go through
+        the annual steps to be taken for them.
+
+        """
         self.reset_animal_move_flag()
         for r, rows in enumerate(self._cells):
             for c, cell in enumerate(rows):
@@ -98,6 +103,7 @@ class Rossumoya:
                 cell.maybe_die()
 
     def reset_animal_move_flag(self):
+        """Resets animal migration flag to false for all animals at the start of a new year."""
         [[cell.reset_animal_move_flag() for cell in rows] for rows in self._cells]
 
     @staticmethod
