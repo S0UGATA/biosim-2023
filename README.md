@@ -54,7 +54,7 @@ for seed in range(100, 103):
 ```
 
 The different parameters and what type of values that can be used is documented
-[here](src/biosim/simulation.py) in ```biosim/simulation.py```.
+[here](src/biosim/simulation.py) in `biosim/simulation.py`.
 
 One can add animals and change parameters once a simulation is completed for a set of years.
 It is then possible to restart simulation for another set of years with the new parameters. e.g.
@@ -121,7 +121,7 @@ This ensures that the water areas are masked, and therefore blue, making the vis
 ![Output of island map in separate window](readme_imgs/stats_visual.png){width=50 height=50px}  
 
   
-#### 3. 
+#### 3. Easier debugging:
 We have added a string to the simulation, where information about each animal is easily registered
 and updated for each annual cycle. This can be observed during debugging, as shown in the image 
 below.   
