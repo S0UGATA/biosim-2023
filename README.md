@@ -82,21 +82,23 @@ If you want to analyze previously saved logs, this file can be used to get this 
 in a plot. 
 
 #### 2. `check_sim.py`
-[Python file here](examples/check)
+[Python file here](examples/check).  
 Same as the file in ```reference_examples```, but in this file we have added the ```make_movie()```-
 method.
 
 #### 3. `sample_sim.py`
+[Python file here](examples/sample_sim.py).  
 Sample simulation with bigger island.
 
 
 #### 4. `simulation_hc.py`
+[Python file here](examples/simulation_hc.py).  
 Simulation of island with Herbivores for 50 years, then adding Herbivores and simulation goes
 on for 250 years.
 
 
 #### 5. `simulation_hc_changed_params.py`
-[Python file here](examples/simulation_hc_changed_params.py)   
+[Python file here](examples/simulation_hc_changed_params.py).   
 Simulation of 10 years with only Herbivores, then Carnivores are added and the simulation goes on
 for 251 more years (260 years in total). 
 
@@ -114,7 +116,7 @@ distribution of animals is shown in console, and statistics are visualized in a 
 
 
 #### 8. `simulation_migration_default_params.py`
-[Python file here](examples/simulation_migration_default_params.py).
+[Python file here](examples/simulation_migration_default_params.py).  
 Simulation of 10 years with only Herbivores, then Carnivores are added and the simulation goes on
 for 50 more years. Weight and age of animals are initialized, and the number of each fauna type.
 Default parameters used. Map and distribution of animals is shown in console, and statistics are 
