@@ -11,6 +11,8 @@ import pytest
 from biosim.ecosystem.rossumoya import Rossumoya
 from biosim.simulation import BioSim
 
+"""Population to be used in tests."""
+
 ini_herbs = [{'loc': (2, 2),
               'pop': [{'species': 'Herbivore',
                        'age': 5,
@@ -31,13 +33,8 @@ def reusable_simulation():
                   vis_years=0)
 
 
-def test_annual_cycle(reusable_simulation):
-    """For each year of the simulation all the cycles are called."""
-    reusable_simulation.add_population(ini_carns)
-    reusable_simulation.simulate(num_years=50)
-
-
 def test_island(mocker, reusable_simulation):
+    """For each year of the simulation all the cycles are called."""
     mocker.spy(Rossumoya, 'go_through_annual_cycle')
     num_years = 10
     reusable_simulation.simulate(num_years)
@@ -45,6 +42,6 @@ def test_island(mocker, reusable_simulation):
 
 
 def test_init_island():
-    """Test if Value Error is raised if no island is initialized"""
+    """Test if ValueError is raised if no island is initialized"""
     with pytest.raises(ValueError):
         Rossumoya(None)
