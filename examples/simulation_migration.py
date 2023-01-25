@@ -38,6 +38,7 @@ if __name__ == '__main__':
     sim = BioSim(island_map=geogr,
                  ini_pop=ini_herbs,
                  seed=100,
+                 vis_years=0,
                  console_output_island=True)
 
     sim.add_population(ini_carns)
