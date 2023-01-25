@@ -72,7 +72,61 @@ file and package in the folder ```biosim```, [here](src/biosim).
 
 ---
 
-## Examples of simulations
+## Content of the`examples`-folder
+In this folder you have various python files, all containing code to run different types of 
+simulations.
+
+#### 1. `analyze_data.py`
+[Python file here](examples/analyze_data.py).  
+If you want to analyze previously saved logs, this file can be used to get this data visualized
+in a plot. 
+
+#### 2. `check_sim.py`
+[Python file here](examples/check)
+Same as the file in ```reference_examples```, but in this file we have added the ```make_movie()```-
+method.
+
+#### 3. `sample_sim.py`
+Sample simulation with bigger island.
+
+
+#### 4. `simulation_hc.py`
+Simulation of island with Herbivores for 50 years, then adding Herbivores and simulation goes
+on for 250 years.
+
+
+#### 5. `simulation_hc_changed_params.py`
+[Python file here](examples/simulation_hc_changed_params.py)   
+Simulation of 10 years with only Herbivores, then Carnivores are added and the simulation goes on
+for 251 more years (260 years in total). 
+
+#### 6. `simulation_ho.py`
+[Python file here](examples/simulation_ho.py).  
+Simulation of a small island with only Herbivores. Logs the population count and statistics are
+visualized in plots in a separate window.
+
+
+#### 7. `simulation_migration.py`
+[Python file here](examples/simulation_migration.py).   
+Simulation of 7 years with both Herbivores and Carnivores initialized from year 0. Parameters have
+been changed to ensure migration, so that we can verify that the migration works correctly.Map and
+distribution of animals is shown in console, and statistics are visualized in a separate window.
+
+
+#### 8. `simulation_migration_default_params.py`
+[Python file here](examples/simulation_migration_default_params.py).
+Simulation of 10 years with only Herbivores, then Carnivores are added and the simulation goes on
+for 50 more years. Weight and age of animals are initialized, and the number of each fauna type.
+Default parameters used. Map and distribution of animals is shown in console, and statistics are 
+visualized in a separate window. Showing 59 years in total.
+
+#### 9. `simulation_visual.py`
+[Python file here](examples/simulation_visual.py).  
+We simulate a period of 400 years. 
+The initialized animals in year 0 are 200 Herbivores and 50 Carnivores. The movie found 
+[here](Exam/simulation_visual.mp4) is the changes visualized per year from this simulation.
+
+
 
 #### 1. Simulation with a default set of parameters
 ```
@@ -83,22 +137,9 @@ Simulation of 10 years with only Herbivores, then Carnivores are added and the s
 for 50 more years. Weight and age of animals are initialized, and the number of each fauna type.
 Default parameters used. Map and distribution of animals is shown in console, and statistics are 
 visualized in a separate window. Showing 59 years in total.
-#### 2. Simulation with changed parameters
-```
-examples/simulation_hc_changed_params.py
-```
-[Python file here](examples/simulation_hc_changed_params.py)   
-Simulation of 10 years with only Herbivores, then Carnivores are added and the simulation goes on
-for 251 more years (260 years in total). Some parameters have been changed.
 
-#### 3. Full simulation with visualization over 200 years
-```
-examples/simulation.visual.py
-```
-[Python file here](examples/simulation_visual.py).  
-We simulate a period of 400 years. 
-The initialized animals in year 0 are 200 Herbivores and 50 Carnivores. The movie found 
-[here](Exam/simulation_visual.mp4) is the changes visualized per year from this simulation. 
+---
+
 
 ### Extra additions
 #### 1. Colorful console output:
