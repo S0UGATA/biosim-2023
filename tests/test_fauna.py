@@ -22,14 +22,6 @@ SEED = 123456
 ALPHA = 0.01
 
 
-# TODO: Unsure about this, may be removed.
-def reset_animal_params_():
-    """ Reset the animal parameters before running the tests."""
-    yield
-    Herbivore.set_animal_parameters(Herbivore.default_params)
-    Carnivore.set_animal_parameters(Herbivore.default_params)
-
-
 def test_init_animal():
     """ Test that the default age for an instance of an Herbivore or Carnivore is equal to 0, and
     the weight is greater than 0. """
@@ -174,10 +166,12 @@ def test_bad_param_carn(bad_param):
 
 
 def test_weight_of_newborns_distribution():
-    # TODO: Add more to this documentation
-    """This test checks the distribution of the weight of the newborns. The test compares two
-    lists: one with the actual mean and one with the hypothesized mean with a value obtained from
-    the default parameters.
+    """
+    This test checks the distribution of the weight of the newborns.
+    It uses `statsmodels.stats.weightstats.ztest()` to verify that the expected list and the actual
+    list are both lognormally distributed.
+    To do this, we check that the pvalue returned by the ztest() is not less than the arbitrarily
+    selected value of APLHA (here, its 0.01)
     """
 
     random.seed(SEED)
