@@ -88,7 +88,9 @@ method.
 
 #### 3. `sample_sim.py`
 [Python file here](examples/sample_sim.py).  
-Sample simulation with bigger island.
+Sample simulation with bigger island.  
+**Note: make two inner folders inside `examples` called `data`
+and `results`. This is where the logs and results will be saved.**
 
 
 #### 4. `simulation_hc.py`
@@ -128,18 +130,6 @@ We simulate a period of 400 years.
 The initialized animals in year 0 are 200 Herbivores and 50 Carnivores. The movie found 
 [here](Exam/simulation_visual.mp4) is the changes visualized per year from this simulation.
 
-
-
-#### 1. Simulation with a default set of parameters
-```
-examples/simulation_migration_default_params.py
-``` 
-[Python file here](examples/simulation_migration_default_params.py).   
-Simulation of 10 years with only Herbivores, then Carnivores are added and the simulation goes on
-for 50 more years. Weight and age of animals are initialized, and the number of each fauna type.
-Default parameters used. Map and distribution of animals is shown in console, and statistics are 
-visualized in a separate window. Showing 59 years in total.
-
 ---
 
 
@@ -166,9 +156,8 @@ This ensures that the water areas are masked, and therefore blue, making the vis
 
   
 #### 3. Easier debugging:
-We have added a string to the simulation, where information about each animal is easily registered
-and updated for each annual cycle. This can be observed during debugging, as shown in the image 
-below.   
+We have added `__str__` to all of our objects. This can be observed during debugging, 
+as shown in the image below.   
 ![Picture of console output](readme_imgs/str_info.png){width=300 height=50}   
 The letters indicate the following:
 
@@ -190,7 +179,9 @@ pip install .
 Then, all simulations in the `examples` folder will be runnable. 
 
 ### Results
-All results and videos can be found in `examples/results`.
+The saved videos from `examples/check_sim.py` and `examples/simulation_visual.py` can be found and
+viewed from folder `Exam`. In the same folder you can view saved images of plots that were made
+during the process of the project (folder `Exam/pics`).
 
 ### Credits:
  - Code optimization done with Sourcery: https://sourcery.ai/
