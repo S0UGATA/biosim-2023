@@ -1,5 +1,6 @@
 
-[![Pylint](https://github.com/S0UGATA/biosim-2023/actions/workflows/pylint.yml/badge.svg)](https://github.com/S0UGATA/biosim-2023/actions/workflows/pylint.yml)
+[![Pylint](https://github.com/S0UGATA/biosim-2023/actions/workflows/lint.yml/badge.svg)](https://github.com/S0UGATA/biosim-2023/actions/workflows/lint.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Flake8 badge](https://img.shields.io/badge/linting-flake8-blue)](https://flake8.pycqa.org/en/latest/)
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
@@ -184,9 +185,6 @@ during the process of the project (folder `Exam/pics`).
 
 ### Credits:
  - Code optimization done with Sourcery: https://sourcery.ai/
-
-### License
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ### Authors and contributors to the project
 - Sougata Bhattacharya, sougata.bhattacharya@nmbu.no
