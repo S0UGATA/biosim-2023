@@ -1,6 +1,6 @@
 on: [push]
 
-name: Python Flake8 tox
+name: pylint Flake8 tox
 jobs:
   tox:
     runs-on: ubuntu-latest
