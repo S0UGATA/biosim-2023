@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Tox Action Step
         id: tox
-        uses: paolorechia/pox@v1.0
+        uses: paolorechia/pox@v1.0.1
         with:
           tox_env: 'py310'
       - name: Get the output success flag
