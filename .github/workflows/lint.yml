@@ -1,0 +1,42 @@
+on: [push]
+
+name: Python Flake8 tox
+jobs:
+  tox:
+    runs-on: ubuntu-latest
+    name: tox test
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Tox Action Step
+        id: tox
+        uses: paolorechia/pox@v1.0.1
+        with:
+          tox_env: 'py310'
+      - name: Get the output success flag
+        run: |
+          echo "Tests have passed: ${{ steps.tox.outputs.success_flag }}"
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint
+        pip install matplotlib
+        pip install numpy
+    - name: Analysing the code with pylint
+      run: |
+        pylint --fail-under=8 src
