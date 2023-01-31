@@ -1,7 +1,4 @@
-on:
-  push:
-    paths:
-      - '*.py'
+on: [push]
 
 name: Python Flake8 tox
 jobs:
