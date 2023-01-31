@@ -1,0 +1,36 @@
+on: [ push ]
+name: Python Flake8 Check
+jobs:
+  flake8:
+    name: flake8
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.10" ]
+    steps:
+      - uses: actions/checkout@master
+      - name: flake8
+        uses: konciergeMD/github-action-flake8@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #PRECOMMAND_MESSAGE: You have style errors. See them below.
+          FLAKE8_OPTS: "--config=.flake8 -v"  # additional flake8 options
+          FLAKE8_CODE_DIR: "src tests examples"  # what directory to check, defaults to "."
+
+  tox:
+    runs-on: ubuntu-latest
+    name: tox test
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Tox Action Step
+        id: tox
+        uses: paolorechia/pox@v1.0
+        with:
+          tox_env: 'py310'
+      - name: Get the output success flag
+        run: |
+          echo "Tests have passed: ${{ steps.tox.outputs.success_flag }}"
