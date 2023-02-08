@@ -7,9 +7,8 @@ import sys
 from copy import copy
 from typing import Tuple
 
-from numba import jit
-
 from biosim.ecosystem.parameters import FaunaParam
+from numba import jit
 
 
 class Fauna:
@@ -214,25 +213,11 @@ class Fauna:
         """
         Decides where an animal may move.
 
-        A random number is generated, and checked against quartile ranges from 0 to 1:
-            * 1st quartile -> Up
-            * 2nd quartile -> Right
-            * 3rd quartile -> Down
-            * 4th quartile -> Left
-
         Returns
         -------
         A tuple with relative (row,col) values to where the animal is supposed to move.
         """
-        where = random.random()
-        if 0 <= where < 0.25:
-            return -1, 0
-        if 0.25 <= where < 0.5:
-            return 0, 1
-        if 0.5 <= where < 0.75:
-            return 1, 0
-        if 0.75 <= where < 1:
-            return 0, -1
+        return random.choice([(1, 0), (0, 1), (-1, 0), (0, -1)])
 
     @staticmethod
     @jit
