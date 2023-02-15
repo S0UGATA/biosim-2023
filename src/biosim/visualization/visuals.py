@@ -5,7 +5,7 @@ import subprocess
 
 import matplotlib
 import numpy as np
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, gridspec
 from matplotlib.axes import Axes
 from matplotlib.figure import SubFigure, Figure
 from matplotlib.image import AxesImage
@@ -31,6 +31,11 @@ class Visuals:
                    'L': (0.0, 0.4, 0.0, 0.8),  # dark green
                    'H': (0.5, 1.0, 0.5, 0.8),  # light green
                    'D': (1.0, 1.0, 0.5, 0.8)}  # light yellow
+
+    _height_value = {'W': 0,
+                     'L': 2,
+                     'H': 3,
+                     'D': 1}
 
     _ylgn = matplotlib.cm.YlGn
     _ylgn.set_bad(color=(0.0, 0.7, 1.0, 1.0))
@@ -142,22 +147,23 @@ class Visuals:
         self._subfigs[2].set_facecolor("floralwhite")
 
         # 1st row has Island, year, and animal count graph:
-        row1 = self._subfigs[0].subplots(1, 4, width_ratios=[3, 1, 2, 3])
+        spec = gridspec.GridSpec(ncols=4, nrows=1, width_ratios=[3, 1, 2, 3])
+        self._island = self._subfigs[0].add_subplot(spec[0], projection='3d')
+        self._island_legend = self._subfigs[0].add_subplot(spec[1])
+        self._year = self._subfigs[0].add_subplot(spec[2])
+        self._animal_count = self._subfigs[0].add_subplot(spec[3])
 
         # Island
-        self._island = row1[0]
         self._island.set_title("Island")
 
-        self._island_legend = row1[1]
         self._island_legend.axis("off")
 
         # Year
-        row1[2].axis("off")
-        self._year = row1[2].annotate("Year: 0", (0.2, 0.5),
-                                      color='darkslategrey', weight='bold',
-                                      ha='center', va='center', size=14)
+        self._year.axis("off")
+        self._year = self._year.annotate("Year: 0", (0.2, 0.5),
+                                         color='darkslategrey', weight='bold',
+                                         ha='center', va='center', size=14)
         # Animal count graph
-        self._animal_count = row1[3]
         self._animal_count.set_title("Animal Count")
         self._animal_count.set_xlim(0, number_of_years + 1)
         self._animal_count.set_facecolor("antiquewhite")
@@ -259,10 +265,18 @@ class Visuals:
         island_map
         """
 
+        rows = island_map.splitlines()
+        x, y = np.meshgrid(list(range(len(rows[0]))), list(range(len(rows))))
+
+        map_height = np.array([[self._height_value[column] for column in row] for row in rows])
         map_rgba = [[self._rgba_value[column] for column in row]
                     for row in island_map.splitlines()]
-
-        self._island.imshow(map_rgba)
+        self._island.plot_surface(x, y, map_height,
+                                  alpha=0.8,
+                                  rstride=1, cstride=1,
+                                  facecolors=map_rgba)
+        self._island.axis("off")
+        self._island.set_zlim(-1.01, 10)
 
         for ix, name in enumerate(('W', 'L', 'H', 'D')):
             self._island_legend.add_patch(plt.Rectangle((0., ix * 0.2), 0.3, 0.1,
