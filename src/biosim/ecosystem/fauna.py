@@ -208,7 +208,6 @@ class Fauna:
         self._weight = max(self._weight + by_amount, 0)
 
     @staticmethod
-    @jit
     def where_will_you_move() -> Tuple:
         """
         Decides where an animal may move.
