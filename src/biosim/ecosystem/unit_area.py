@@ -247,10 +247,10 @@ class UnitArea:
         Specifying the type of the UnitArea.
         """
         _geo_map = {
-            "H": Highland,
-            "L": Lowland,
-            "D": Desert,
-            "W": Water}
+            "H": Highland(),
+            "L": Lowland(),
+            "D": Desert(),
+            "W": Water()}
 
         geo_type = _geo_map.get(geo)
         if geo_type is not None:
