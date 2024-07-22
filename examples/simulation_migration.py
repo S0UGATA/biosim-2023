@@ -38,8 +38,7 @@ if __name__ == '__main__':
     sim = BioSim(island_map=geogr,
                  ini_pop=ini_herbs,
                  seed=100,
-                 vis_years=0,
-                 console_output_island=True)
+                 vis_years=1)
 
     sim.add_population(ini_carns)
 
@@ -50,4 +49,4 @@ if __name__ == '__main__':
                               {'mu': 1, 'omega': 0, 'gamma': 0, 'eta': 0,
                                'F': 0, 'a_half': 50})
 
-    sim.simulate(num_years=7)
+    sim.simulate(num_years=50)

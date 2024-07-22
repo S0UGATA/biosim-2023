@@ -52,10 +52,6 @@ if __name__ == '__main__':
                  hist_specs={'fitness': {'max': 1.0, 'delta': 0.05},
                              'age': {'max': 60.0, 'delta': 2},
                              'weight': {'max': 60, 'delta': 2}},
-                 cmax_animals={'Herbivore': 150, 'Carnivore': 150},
-                 img_dir='results',
-                 img_base='sample',
-                 img_years=1,
-                 vis_years=1)
+                 cmax_animals={'Herbivore': 150, 'Carnivore': 150})
     sim.simulate(401)
     sim.make_movie()

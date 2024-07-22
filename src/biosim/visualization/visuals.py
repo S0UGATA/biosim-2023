@@ -277,6 +277,8 @@ class Visuals:
                                   facecolors=map_rgba)
         self._island.axis("off")
         self._island.set_zlim(-1.01, 10)
+        self._island.view_init(45, 30)
+        self._island.dist = 8
 
         for ix, name in enumerate(('W', 'L', 'H', 'D')):
             self._island_legend.add_patch(plt.Rectangle((0., ix * 0.2), 0.3, 0.1,
