@@ -30,7 +30,7 @@ ini_herbs = [{'loc': (2, 2),
 
 for seed in range(100, 150):
     sim = BioSim(geogr, ini_herbs, seed=seed,
-                 log_file=f'data/simulation_ho_{seed:05d}',
+                 # log_file=f'data/simulation_ho_{seed:05d}',
                  img_dir='results',
                  img_base=f'mono_ho_{seed:05d}',
                  img_years=300)

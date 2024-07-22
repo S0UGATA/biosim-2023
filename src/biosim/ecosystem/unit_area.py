@@ -4,10 +4,9 @@
 import random
 from typing import Tuple
 
-from numba import jit
-
 from biosim.ecosystem.fauna import Herbivore, Carnivore, Fauna
-from biosim.ecosystem.geography import Geography, Highland, Lowland, Water, Desert
+from biosim.ecosystem.geography import Geography, Highland, Lowland, Desert, Water
+from numba import jit
 
 
 class UnitArea:
@@ -247,17 +246,17 @@ class UnitArea:
         geo
         Specifying the type of the UnitArea.
         """
-        match geo:
-            case "H":
-                return Highland()
-            case "L":
-                return Lowland()
-            case "W":
-                return Water()
-            case "D":
-                return Desert()
-            case _:
-                raise ValueError(f"Geography {geo} is not a valid value.")
+        _geo_map = {
+            "H": Highland(),
+            "L": Lowland(),
+            "D": Desert(),
+            "W": Water()}
+
+        geo_type = _geo_map.get(geo)
+        if geo_type is not None:
+            return type(geo_type)()
+        else:
+            raise ValueError(f"Geography {geo} is not a valid value.")
 
     @staticmethod
     def _make_babies_of(animals):
