@@ -217,3 +217,38 @@ def _baby_weight(mean_birth, sd_birth):
     mean = math.log(mu2 / math.sqrt(mu2 + sd2))
     sd = math.sqrt(math.log(1 + (sd2 / mu2)))
     return random.lognormvariate(mean, sd)
+
+
+def test_procreate():
+    """
+    Test the procreate method to ensure changes work.
+    """
+    random.seed(SEED)
+    sample_size = 2000
+    animals = []
+    for _ in range(sample_size):
+        weight = random.randint(1000, 5010)
+        age = random.randint(1, 10)
+        herb = Herbivore(age, weight)
+        animals.append(herb)
+        newborn = herb.procreate(sample_size)
+        if newborn is not None:
+            assert newborn.weight > 0
+            assert newborn.age == 0
+
+
+def test_fitness_caching():
+    """
+    Test the caching mechanism for the fitness method to ensure changes work.
+    """
+    random.seed(SEED)
+    sample_size = 2000
+    animals = []
+    for _ in range(sample_size):
+        weight = random.randint(1000, 5010)
+        age = random.randint(1, 10)
+        herb = Herbivore(age, weight)
+        animals.append(herb)
+        fitness_before = herb.fitness
+        fitness_after = herb.fitness
+        assert fitness_before == fitness_after

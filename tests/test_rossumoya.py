@@ -45,3 +45,24 @@ def test_init_island():
     """Test if ValueError is raised if no island is initialized"""
     with pytest.raises(ValueError):
         Rossumoya(None)
+
+
+def test_go_through_annual_cycle(mocker, reusable_simulation):
+    """Test the go_through_annual_cycle method to ensure changes work."""
+    mocker.spy(Rossumoya, 'go_through_annual_cycle')
+    num_years = 10
+    reusable_simulation.simulate(num_years)
+    assert Rossumoya.go_through_annual_cycle.call_count == num_years
+
+
+def test_animal_details(reusable_simulation):
+    """Test the animal_details method to ensure changes work."""
+    details = reusable_simulation._island.animal_details()
+    assert 'count_herbivore' in details
+    assert 'age_herbivore' in details
+    assert 'weight_herbivore' in details
+    assert 'fitness_herbivore' in details
+    assert 'count_carnivore' in details
+    assert 'age_carnivore' in details
+    assert 'weight_carnivore' in details
+    assert 'fitness_carnivore' in details

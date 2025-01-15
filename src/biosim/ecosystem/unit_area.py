@@ -1,10 +1,11 @@
 # The material in this file is licensed under the BSD 3-clause license
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
-import random
+import numpy as np
 from typing import Tuple
 
-from numba import jit
+from numba import jit, prange
+from functools import lru_cache
 
 from biosim.ecosystem.fauna import Herbivore, Carnivore, Fauna
 from biosim.ecosystem.geography import Geography, Highland, Lowland, Water, Desert
@@ -204,6 +205,7 @@ class UnitArea:
         for carn in self.carns:
             carn.has_moved = False
 
+    @lru_cache(maxsize=None)
     def _herbivores_eat(self):
         """
         Decides which herbs get to eat. The amount of fodder is determined by the parameter f_max,
@@ -214,7 +216,7 @@ class UnitArea:
 
         remaining_fodder = self._geo.params.f_max
         herb_indices = list(range(len(self._herbs)))
-        random.shuffle(herb_indices)
+        np.random.shuffle(herb_indices)
         for index in herb_indices:
             if remaining_fodder <= 0:
                 break
@@ -260,11 +262,12 @@ class UnitArea:
                 raise ValueError(f"Geography {geo} is not a valid value.")
 
     @staticmethod
+    @jit
     def _make_babies_of(animals):
         no_animals = len(animals)
         babies = []
-        for animal in animals:
-            baby = animal.procreate(no_animals)
+        for i in prange(no_animals):
+            baby = animals[i].procreate(no_animals)
             if baby is not None:
                 babies.append(baby)
         return babies

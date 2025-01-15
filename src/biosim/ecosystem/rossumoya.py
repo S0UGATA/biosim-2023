@@ -3,6 +3,8 @@
 # (C) Copyright 2023 Tonje, Sougata / NMBU
 import numpy as np
 from prettytable import PrettyTable, ALL
+from numba import prange
+from functools import lru_cache
 
 from biosim.ecosystem.fauna import Herbivore, Carnivore
 from biosim.ecosystem.geography import Highland, Lowland
@@ -95,8 +97,9 @@ class Rossumoya:
 
         """
         self.reset_animal_move_flag()
-        for r, rows in enumerate(self._cells):
-            for c, cell in enumerate(rows):
+        for r in prange(len(self._cells)):
+            for c in prange(len(self._cells[r])):
+                cell = self._cells[r][c]
                 if not cell.can_animals_move_here():
                     continue
                 cell.make_babies()
@@ -172,6 +175,7 @@ class Rossumoya:
     def console_output_island(param):
         UnitArea.console_output_island = param
 
+    @lru_cache(maxsize=None)
     def animal_details(self) -> {}:
         """
         This method returns animal details (count, age, weight, fitness)

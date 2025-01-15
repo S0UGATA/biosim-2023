@@ -2,12 +2,11 @@
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
 import math
-import random
-import sys
+import numpy as np
 from copy import copy
 from typing import Tuple
-
-from numba import jit
+from numba import jit, prange
+from functools import lru_cache
 
 from biosim.ecosystem.parameters import FaunaParam
 
@@ -55,6 +54,7 @@ class Fauna:
         return self._weight
 
     @property
+    @lru_cache(maxsize=None)
     def fitness(self):
         """
         Method that calculates the fitness for each animal, which describes the overall condition of
@@ -144,7 +144,7 @@ class Fauna:
 
         if self._weight < self._params.zeta * (self._params.w_birth + self._params.sigma_birth):
             return None
-        if random.random() >= min(1, self._params.gamma * self.fitness * number_of_animals):
+        if np.random.random() >= min(1, self._params.gamma * self.fitness * number_of_animals):
             return None
         w_baby = Fauna._baby_weight(self._params.w_birth, self._params.sigma_birth)
         xi_w_baby = self._params.xi * w_baby
@@ -173,7 +173,7 @@ class Fauna:
         if self._weight <= 0:
             die = True
         else:
-            die = random.random() < self._params.omega * (1 - self.fitness)
+            die = np.random.random() < self._params.omega * (1 - self.fitness)
         if die:
             self.decrease_count()
         return die
@@ -183,7 +183,7 @@ class Fauna:
         Returns the probability of an animal moving, depending on fitness and mu, and that the
         animal has not already moved once the current year.
         """
-        return (not self.has_moved) and random.random() < self.fitness * self._params.mu
+        return (not self.has_moved) and np.random.random() < self.fitness * self._params.mu
 
     def _new_animal(self, age, weight):
         """
@@ -224,7 +224,7 @@ class Fauna:
         -------
         A tuple with relative (row,col) values to where the animal is supposed to move.
         """
-        where = random.random()
+        where = np.random.random()
         if 0 <= where < 0.25:
             return -1, 0
         if 0.25 <= where < 0.5:
@@ -251,10 +251,11 @@ class Fauna:
         sd2 = sd_birth ** 2
         mean = math.log(mu2 / math.sqrt(mu2 + sd2))
         sd = math.sqrt(math.log(1 + (sd2 / mu2)))
-        return random.lognormvariate(mean, sd)
+        return np.random.lognormal(mean, sd)
 
     @staticmethod
     @jit
+    @lru_cache(maxsize=None)
     def _fitness(w, phi_weight, w_half, a, phi_age, a_half):
         if w <= 0:
             return 0
@@ -398,7 +399,7 @@ class Carnivore(Fauna):
                 prob = ((c_fitness - h_fitness) / self._params.DeltaPhiMax)
             else:
                 prob = 1
-            rand = random.random()
+            rand = np.random.random()
             will_kill = rand < prob
             if remaining_meat > 0 and will_kill:
                 amount_to_eat = min(remaining_meat, herb.weight)
