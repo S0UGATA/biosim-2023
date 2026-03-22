@@ -212,13 +212,15 @@ The initialized animals in year 0 are 200 Herbivores and 50 Carnivores. The movi
 
 ### Extra additions
 #### 1. Colorful console output:
-In `biosim/simulation.py`, an extra parameter has been added to the `BioSim`-instance parameters: 
-`console_output_island`. Setting this to `True` enables print-out of island map in the console. 
-Running ```examples/simulation_migration.py``` ([here](examples/simulation_migration.py)) gives us the 
-following output in the console for year 3:  
-![Output of island map in console.](readme_imgs/console_map.png){width=600 height=500px}  
-The parameters in the mentioned file is set in a way so that we can observe that the migration 
-for each animal in each cell works properly (following the set restrictions).
+In `biosim/simulation.py`, an extra parameter has been added to the `BioSim`-instance parameters:
+`console_output_island`. Setting this to `True` enables print-out of island map in the console.
+Running `examples/simulation_migration.py` ([here](examples/simulation_migration.py)) gives us the
+following animated output showing migration over 7 years:
+
+![Console output animation](readme_imgs/console_output.gif)
+
+The parameters in the mentioned file are set so that only migration happens, allowing us to verify
+that animals spread correctly across the island (following the set restrictions).
 
 #### 2. Heatmap has water highlighted in blue:
 The image below presents how the statistics from the simulation are visualized. In the two windows
