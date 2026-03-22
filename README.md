@@ -20,20 +20,20 @@ and the distribution and initialization of animals.
 
 ```mermaid
 graph TD
-    subgraph "User Interface"
+    subgraph ui ["User Interface"]
         BioSim["BioSim<br/><i>simulation.py</i><br/>Top-level API"]
     end
 
-    subgraph "Visualization"
+    subgraph vis ["Visualization"]
         Visuals["Visuals<br/><i>visuals.py</i><br/>Matplotlib plots, heatmaps,<br/>histograms, movie export"]
     end
 
-    subgraph "Ecosystem Core"
+    subgraph core ["Ecosystem Core"]
         Rossumoya["Rossumoya<br/><i>rossumoya.py</i><br/>Island grid, annual cycle"]
         UnitArea["UnitArea<br/><i>unit_area.py</i><br/>Single cell: feeding,<br/>breeding, migration, death"]
     end
 
-    subgraph "Geography"
+    subgraph geo ["Geography"]
         Geography["Geography<br/><i>geography.py</i>"]
         Highland["Highland<br/>f_max=300"]
         Lowland["Lowland<br/>f_max=800"]
@@ -41,13 +41,13 @@ graph TD
         Water["Water<br/>Impassable"]
     end
 
-    subgraph "Fauna"
+    subgraph fauna_group ["Fauna"]
         Fauna["Fauna<br/><i>fauna.py</i><br/>Fitness, aging, weight,<br/>procreation, death"]
         Herbivore["Herbivore<br/>Eats fodder"]
         Carnivore["Carnivore<br/>Hunts herbivores"]
     end
 
-    subgraph "Parameters"
+    subgraph params ["Parameters"]
         FaunaParam["FaunaParam<br/><i>parameters.py</i>"]
         GeoParam["GeoParam<br/><i>parameters.py</i>"]
     end
