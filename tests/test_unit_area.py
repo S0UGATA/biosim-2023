@@ -23,11 +23,12 @@ def unit_area():
 def test_make_babies(unit_area):
     """
     Test the make_babies method to ensure changes work.
+    Uses a large population to make birth statistically certain.
     """
-    herb = Herbivore(5, 20)
-    carn = Carnivore(5, 20)
-    unit_area.add_herb(herb)
-    unit_area.add_carn(carn)
+    np.random.seed(12345)
+    for _ in range(100):
+        unit_area.add_herb(Herbivore(5, 40))
+        unit_area.add_carn(Carnivore(5, 40))
     initial_herb_count = len(unit_area.herbs)
     initial_carn_count = len(unit_area.carns)
     unit_area.make_babies()

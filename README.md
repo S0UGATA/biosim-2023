@@ -18,6 +18,63 @@ In the `examples` folder you are presented with some examples of different
 types of simulations. What varies is the size of the island, the distribution of landscape types, 
 and the distribution and initialization of animals. 
 
+### Architecture
+
+```
+                          ┌─────────────────────┐
+                          │       BioSim        │
+                          │   simulation.py     │
+                          │   (Top-level API)   │
+                          └────────┬──────┬─────┘
+                                   │      │
+                    ┌──────────────┘      └──────────────┐
+                    ▼                                    ▼
+        ┌───────────────────┐                ┌───────────────────┐
+        │     Rossumoya     │                │      Visuals      │
+        │   rossumoya.py    │                │    visuals.py     │
+        │  (Island grid,    │                │  (Plots, heatmaps,│
+        │   annual cycle)   │                │   movie export)   │
+        └────────┬──────────┘                └───────────────────┘
+                 │
+                 ▼
+        ┌───────────────────┐
+        │     UnitArea      │
+        │   unit_area.py    │
+        │ (Single cell:     │
+        │  feed, breed,     │
+        │  migrate, die)    │
+        └────┬─────────┬────┘
+             │         │
+             ▼         ▼
+   ┌─────────────┐  ┌──────────────────┐
+   │  Geography  │  │      Fauna       │
+   │ geography.py│  │    fauna.py      │
+   └──┬──┬──┬───┬┘  │ (Fitness, aging, │
+      │  │  │   │   │  weight, birth,  │
+      ▼  ▼  ▼   ▼   │  death)          │
+      H  L  D   W   └──┬──────────┬────┘
+                       │          │
+                       ▼          ▼
+                  Herbivore   Carnivore
+                 (Eats fodder) (Hunts herbs)
+
+   Geography types:          Parameters (parameters.py):
+     H = Highland (f_max=300)   FaunaParam — per-species constants
+     L = Lowland  (f_max=800)   GeoParam  — per-landscape constants
+     D = Desert   (f_max=0)
+     W = Water    (impassable)
+```
+
+**Annual Cycle** (executed per cell each year):
+1. **Procreation** -- Animals give birth based on fitness and population size
+2. **Feeding** -- Herbivores eat fodder; Carnivores hunt herbivores
+3. **Migration** -- Animals move to adjacent cells (not water)
+4. **Aging** -- All animals age by one year
+5. **Weight Loss** -- All animals lose weight
+6. **Death** -- Animals may die based on fitness and weight
+
+---
+
 ### How the simulation works
 Defining the geography of the island:
 ```python
