@@ -1,9 +1,7 @@
-
-[![Pipeline Status](https://gitlab.com/nmbu.no/emner/inf200/h2022/january-block-teams/a39_sougata_tonje/biosim-a39-sougata-tonje/badges/main/pipeline.svg)](https://gitlab.com/nmbu.no/emner/inf200/h2022/january-block-teams/a39_sougata_tonje/biosim-a39-sougata-tonje/-/pipelines?page=1&scope=branches&ref=main) 
 [![Flake8 badge](https://img.shields.io/badge/linting-flake8-blue)](https://flake8.pycqa.org/en/latest/)
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
-[![made-with-sphinx-doc](https://img.shields.io/badge/Made%20with-Sphinx-1f425f.svg)](https://www.sphinx-doc.org/) 
+[![made-with-sphinx-doc](https://img.shields.io/badge/Made%20with-Sphinx-1f425f.svg)](https://www.sphinx-doc.org/)
 [![Tox badge](https://img.shields.io/badge/Made%20with-tox-yellowgreen)](https://tox.wiki/en/latest/)
 
 # Modelling the Ecosystem of Rossumøya
@@ -20,49 +18,53 @@ and the distribution and initialization of animals.
 
 ### Architecture
 
-```
-                          ┌─────────────────────┐
-                          │       BioSim        │
-                          │   simulation.py     │
-                          │   (Top-level API)   │
-                          └────────┬──────┬─────┘
-                                   │      │
-                    ┌──────────────┘      └──────────────┐
-                    ▼                                    ▼
-        ┌───────────────────┐                ┌───────────────────┐
-        │     Rossumoya     │                │      Visuals      │
-        │   rossumoya.py    │                │    visuals.py     │
-        │  (Island grid,    │                │  (Plots, heatmaps,│
-        │   annual cycle)   │                │   movie export)   │
-        └────────┬──────────┘                └───────────────────┘
-                 │
-                 ▼
-        ┌───────────────────┐
-        │     UnitArea      │
-        │   unit_area.py    │
-        │ (Single cell:     │
-        │  feed, breed,     │
-        │  migrate, die)    │
-        └────┬─────────┬────┘
-             │         │
-             ▼         ▼
-   ┌─────────────┐  ┌──────────────────┐
-   │  Geography  │  │      Fauna       │
-   │ geography.py│  │    fauna.py      │
-   └──┬──┬──┬───┬┘  │ (Fitness, aging, │
-      │  │  │   │   │  weight, birth,  │
-      ▼  ▼  ▼   ▼   │  death)          │
-      H  L  D   W   └──┬──────────┬────┘
-                       │          │
-                       ▼          ▼
-                  Herbivore   Carnivore
-                 (Eats fodder) (Hunts herbs)
+```mermaid
+graph TD
+    subgraph "User Interface"
+        BioSim["BioSim<br/><i>simulation.py</i><br/>Top-level API"]
+    end
 
-   Geography types:          Parameters (parameters.py):
-     H = Highland (f_max=300)   FaunaParam — per-species constants
-     L = Lowland  (f_max=800)   GeoParam  — per-landscape constants
-     D = Desert   (f_max=0)
-     W = Water    (impassable)
+    subgraph "Visualization"
+        Visuals["Visuals<br/><i>visuals.py</i><br/>Matplotlib plots, heatmaps,<br/>histograms, movie export"]
+    end
+
+    subgraph "Ecosystem Core"
+        Rossumoya["Rossumoya<br/><i>rossumoya.py</i><br/>Island grid, annual cycle"]
+        UnitArea["UnitArea<br/><i>unit_area.py</i><br/>Single cell: feeding,<br/>breeding, migration, death"]
+    end
+
+    subgraph "Geography"
+        Geography["Geography<br/><i>geography.py</i>"]
+        Highland["Highland<br/>f_max=300"]
+        Lowland["Lowland<br/>f_max=800"]
+        Desert["Desert<br/>f_max=0"]
+        Water["Water<br/>Impassable"]
+    end
+
+    subgraph "Fauna"
+        Fauna["Fauna<br/><i>fauna.py</i><br/>Fitness, aging, weight,<br/>procreation, death"]
+        Herbivore["Herbivore<br/>Eats fodder"]
+        Carnivore["Carnivore<br/>Hunts herbivores"]
+    end
+
+    subgraph "Parameters"
+        FaunaParam["FaunaParam<br/><i>parameters.py</i>"]
+        GeoParam["GeoParam<br/><i>parameters.py</i>"]
+    end
+
+    BioSim --> Rossumoya
+    BioSim --> Visuals
+    Rossumoya --> UnitArea
+    UnitArea --> Fauna
+    UnitArea --> Geography
+    Geography --> Highland
+    Geography --> Lowland
+    Geography --> Desert
+    Geography --> Water
+    Fauna --> Herbivore
+    Fauna --> Carnivore
+    Fauna --> FaunaParam
+    Geography --> GeoParam
 ```
 
 **Annual Cycle** (executed per cell each year):
