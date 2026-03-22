@@ -4,6 +4,10 @@
 [![made-with-sphinx-doc](https://img.shields.io/badge/Made%20with-Sphinx-1f425f.svg)](https://www.sphinx-doc.org/)
 [![Tox badge](https://img.shields.io/badge/Made%20with-tox-yellowgreen)](https://tox.wiki/en/latest/)
 
+<p align="center">
+  <img src="readme_imgs/epap_seal.png" alt="Environmental Protection Agency of Pylandia" width="300"/>
+</p>
+
 # Modelling the Ecosystem of Rossumøya
 
 ---
@@ -65,6 +69,21 @@ graph TD
     Fauna --> Carnivore
     Fauna --> FaunaParam
     Geography --> GeoParam
+
+    style BioSim fill:#4a90d9,stroke:#2c5f8a,color:#fff
+    style Visuals fill:#9b59b6,stroke:#6c3483,color:#fff
+    style Rossumoya fill:#2c3e50,stroke:#1a252f,color:#fff
+    style UnitArea fill:#34495e,stroke:#1a252f,color:#fff
+    style Fauna fill:#e67e22,stroke:#b35e0f,color:#fff
+    style Herbivore fill:#27ae60,stroke:#1e8449,color:#fff
+    style Carnivore fill:#e74c3c,stroke:#a93226,color:#fff
+    style Geography fill:#8e7cc3,stroke:#5b4a8a,color:#fff
+    style Highland fill:#a8d08d,stroke:#6a9b4f,color:#000
+    style Lowland fill:#2d8a4e,stroke:#1b5e34,color:#fff
+    style Desert fill:#f0e68c,stroke:#bdb36b,color:#000
+    style Water fill:#3498db,stroke:#1a6fa0,color:#fff
+    style FaunaParam fill:#f5b041,stroke:#c68910,color:#000
+    style GeoParam fill:#f5b041,stroke:#c68910,color:#000
 ```
 
 **Annual Cycle** (executed per cell each year):
