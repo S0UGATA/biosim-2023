@@ -243,7 +243,7 @@ count of the animals = -1 where its water. While refreshing the heatmaps we set 
 where the number of animals is equal to -1 (which is done where there is geo type water on the map). 
 In visuals.py, [here](src/biosim/visualization/visuals.py), the color of this mask is set to blue.
 This ensures that the water areas are masked, and therefore blue, making the visualization better.  
-![Simulation statistics visualization](readme_imgs/sample.mp4)
+![Simulation statistics visualization](readme_imgs/sample.gif)
 
   
 #### 3. Easier debugging:
