@@ -2,7 +2,7 @@
 # https://opensource.org/licenses/BSD-3-Clause
 # (C) Copyright 2023 Tonje, Sougata / NMBU
 import numpy as np
-from prettytable import PrettyTable, ALL
+from prettytable import PrettyTable, HRuleStyle
 
 from biosim.ecosystem.fauna import Herbivore, Carnivore
 from biosim.ecosystem.geography import Highland, Lowland
@@ -49,8 +49,9 @@ class Rossumoya:
         self._clist = np.copy(self._hlist)
 
     def __str__(self):
-        island = PrettyTable(header=False, preserve_internal_border=True, hrules=ALL)
-        [island.add_row(row) for row in self._cells]
+        island = PrettyTable(header=False, preserve_internal_border=True, hrules=HRuleStyle.ALL)
+        for row in self._cells:
+            island.add_row(row)
         return str(island)
 
     def populate_island(self, population: [{}], initial=False):
@@ -95,8 +96,9 @@ class Rossumoya:
 
         """
         self.reset_animal_move_flag()
-        for r, rows in enumerate(self._cells):
-            for c, cell in enumerate(rows):
+        for r in range(len(self._cells)):
+            for c in range(len(self._cells[r])):
+                cell = self._cells[r][c]
                 if not cell.can_animals_move_here():
                     continue
                 cell.make_babies()
@@ -112,7 +114,9 @@ class Rossumoya:
 
     def reset_animal_move_flag(self):
         """Resets animal migration flag to false for all animals at the start of a new year."""
-        [[cell.reset_animal_move_flag() for cell in rows] for rows in self._cells]
+        for rows in self._cells:
+            for cell in rows:
+                cell.reset_animal_move_flag()
 
     @staticmethod
     def set_island_params(landscape, params):

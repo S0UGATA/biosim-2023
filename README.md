@@ -1,10 +1,12 @@
-
-[![Pipeline Status](https://gitlab.com/nmbu.no/emner/inf200/h2022/january-block-teams/a39_sougata_tonje/biosim-a39-sougata-tonje/badges/main/pipeline.svg)](https://gitlab.com/nmbu.no/emner/inf200/h2022/january-block-teams/a39_sougata_tonje/biosim-a39-sougata-tonje/-/pipelines?page=1&scope=branches&ref=main) 
 [![Flake8 badge](https://img.shields.io/badge/linting-flake8-blue)](https://flake8.pycqa.org/en/latest/)
 [![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
-[![made-with-sphinx-doc](https://img.shields.io/badge/Made%20with-Sphinx-1f425f.svg)](https://www.sphinx-doc.org/) 
+[![made-with-sphinx-doc](https://img.shields.io/badge/Made%20with-Sphinx-1f425f.svg)](https://www.sphinx-doc.org/)
 [![Tox badge](https://img.shields.io/badge/Made%20with-tox-yellowgreen)](https://tox.wiki/en/latest/)
+
+<p align="center">
+  <img src="readme_imgs/epap_seal.png" alt="Environmental Protection Agency of Pylandia" width="300"/>
+</p>
 
 # Modelling the Ecosystem of Rossumøya
 
@@ -17,6 +19,94 @@ default set of parameters.
 In the `examples` folder you are presented with some examples of different 
 types of simulations. What varies is the size of the island, the distribution of landscape types, 
 and the distribution and initialization of animals. 
+
+### Architecture
+
+```mermaid
+flowchart TD
+    subgraph ui [" User Interface "]
+        BioSim["<b>BioSim</b><br/><i>simulation.py</i><br/>Top-level API"]
+    end
+
+    subgraph core [" Ecosystem Core "]
+        Rossumoya["<b>Rossumoya</b><br/><i>rossumoya.py</i><br/>Island grid · annual cycle"]
+        UnitArea["<b>UnitArea</b><br/><i>unit_area.py</i><br/>Feeding · breeding<br/>migration · death"]
+    end
+
+    subgraph vis [" Visualization "]
+        Visuals["<b>Visuals</b><br/><i>visuals.py</i><br/>Matplotlib plots · heatmaps<br/>histograms · movie export"]
+    end
+
+    subgraph fauna_group [" Fauna "]
+        Fauna["<b>Fauna</b><br/><i>fauna.py</i><br/>Fitness · aging · weight<br/>procreation · death"]
+        Herbivore["<b>Herbivore</b><br/>Eats fodder"]
+        Carnivore["<b>Carnivore</b><br/>Hunts herbivores"]
+        FaunaParam["<b>FaunaParam</b><br/><i>parameters.py</i>"]
+    end
+
+    subgraph geo [" Geography "]
+        Geography["<b>Geography</b><br/><i>geography.py</i>"]
+        Highland["<b>Highland</b><br/>f_max = 300"]
+        Lowland["<b>Lowland</b><br/>f_max = 800"]
+        Desert["<b>Desert</b><br/>f_max = 0"]
+        Water["<b>Water</b><br/>Impassable"]
+        GeoParam["<b>GeoParam</b><br/><i>parameters.py</i>"]
+    end
+
+    BioSim --> Rossumoya
+    BioSim --> Visuals
+    Rossumoya --> UnitArea
+    UnitArea --> Fauna
+    UnitArea --> Geography
+    Fauna --> Herbivore & Carnivore
+    Fauna -.-> FaunaParam
+    Geography --> Highland & Lowland & Desert & Water
+    Geography -.-> GeoParam
+
+    classDef blue fill:#3B82F6,stroke:#2563EB,color:#fff,stroke-width:2px
+    classDef purple fill:#8B5CF6,stroke:#7C3AED,color:#fff,stroke-width:2px
+    classDef slate fill:#475569,stroke:#334155,color:#fff,stroke-width:2px
+    classDef slateLight fill:#64748B,stroke:#475569,color:#fff,stroke-width:2px
+    classDef orange fill:#F59E0B,stroke:#D97706,color:#fff,stroke-width:2px
+    classDef green fill:#22C55E,stroke:#16A34A,color:#fff,stroke-width:2px
+    classDef red fill:#EF4444,stroke:#DC2626,color:#fff,stroke-width:2px
+    classDef teal fill:#14B8A6,stroke:#0D9488,color:#fff,stroke-width:2px
+    classDef highlandGreen fill:#86EFAC,stroke:#4ADE80,color:#1a1a1a,stroke-width:2px
+    classDef lowlandGreen fill:#16A34A,stroke:#15803D,color:#fff,stroke-width:2px
+    classDef desert fill:#FDE68A,stroke:#FCD34D,color:#1a1a1a,stroke-width:2px
+    classDef water fill:#38BDF8,stroke:#0EA5E9,color:#fff,stroke-width:2px
+    classDef param fill:#CBD5E1,stroke:#94A3B8,color:#1a1a1a,stroke-width:2px
+
+    class BioSim blue
+    class Visuals purple
+    class Rossumoya slate
+    class UnitArea slateLight
+    class Fauna orange
+    class Herbivore green
+    class Carnivore red
+    class Geography teal
+    class Highland highlandGreen
+    class Lowland lowlandGreen
+    class Desert desert
+    class Water water
+    class FaunaParam,GeoParam param
+
+    style ui fill:transparent,stroke:#3B82F6,stroke-width:2px,color:#3B82F6
+    style core fill:transparent,stroke:#475569,stroke-width:2px,color:#64748B
+    style vis fill:transparent,stroke:#8B5CF6,stroke-width:2px,color:#8B5CF6
+    style fauna_group fill:transparent,stroke:#F59E0B,stroke-width:2px,color:#F59E0B
+    style geo fill:transparent,stroke:#14B8A6,stroke-width:2px,color:#14B8A6
+```
+
+**Annual Cycle** (executed per cell each year):
+1. **Procreation** -- Animals give birth based on fitness and population size
+2. **Feeding** -- Herbivores eat fodder; Carnivores hunt herbivores
+3. **Migration** -- Animals move to adjacent cells (not water)
+4. **Aging** -- All animals age by one year
+5. **Weight Loss** -- All animals lose weight
+6. **Death** -- Animals may die based on fitness and weight
+
+---
 
 ### How the simulation works
 Defining the geography of the island:
@@ -134,13 +224,15 @@ The initialized animals in year 0 are 200 Herbivores and 50 Carnivores. The movi
 
 ### Extra additions
 #### 1. Colorful console output:
-In `biosim/simulation.py`, an extra parameter has been added to the `BioSim`-instance parameters: 
-`console_output_island`. Setting this to `True` enables print-out of island map in the console. 
-Running ```examples/simulation_migration.py``` ([here](examples/simulation_migration.py)) gives us the 
-following output in the console for year 3:  
-![Output of island map in console.](readme_imgs/console_map.png){width=600 height=500px}  
-The parameters in the mentioned file is set in a way so that we can observe that the migration 
-for each animal in each cell works properly (following the set restrictions).
+In `biosim/simulation.py`, an extra parameter has been added to the `BioSim`-instance parameters:
+`console_output_island`. Setting this to `True` enables print-out of island map in the console.
+Running `examples/simulation_migration.py` ([here](examples/simulation_migration.py)) gives us the
+following animated output showing migration over 7 years:
+
+![Console output animation](readme_imgs/console_output.gif)
+
+The parameters in the mentioned file are set so that only migration happens, allowing us to verify
+that animals spread correctly across the island (following the set restrictions).
 
 #### 2. Heatmap has water highlighted in blue:
 The image below presents how the statistics from the simulation are visualized. In the two windows
@@ -151,13 +243,13 @@ count of the animals = -1 where its water. While refreshing the heatmaps we set 
 where the number of animals is equal to -1 (which is done where there is geo type water on the map). 
 In visuals.py, [here](src/biosim/visualization/visuals.py), the color of this mask is set to blue.
 This ensures that the water areas are masked, and therefore blue, making the visualization better.  
-![Output of island map in separate window](readme_imgs/stats_visual.png){width=600 height=500px}  
+![Simulation statistics visualization](readme_imgs/sample.gif)
 
   
 #### 3. Easier debugging:
 We have added `__str__` to all of our objects. This can be observed during debugging, 
 as shown in the image below.   
-![Picture of console output](readme_imgs/str_info.png){width=300 height=50}   
+<img src="readme_imgs/str_info.png" alt="Picture of console output" width="300"/>   
 The letters indicate the following:
 
 - **C** = Carnivore

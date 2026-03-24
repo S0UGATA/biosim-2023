@@ -37,6 +37,15 @@ class Visuals:
     _oranges = matplotlib.cm.Oranges
     _oranges.set_bad(color=(0.0, 0.7, 1.0, 1.0))
 
+    # Modern color palette
+    _COLOR_HERB = '#10B981'
+    _COLOR_CARN = '#EF4444'
+    _COLOR_BG = '#FAFBFC'
+    _COLOR_PLOT_BG = '#F8FAFC'
+    _COLOR_TEXT = '#1E293B'
+    _COLOR_GRID = '#E2E8F0'
+    _TITLE_STYLE = {'fontsize': 11, 'fontweight': 'semibold', 'color': '#1E293B', 'pad': 8}
+
     def __init__(self,
                  vis_years=1,
                  ymax_animals=None,
@@ -92,6 +101,7 @@ class Visuals:
         self._hist_carn: {str: StepPatch} = {}
         self._hist_herb: {str: StepPatch} = {}
         self._hist_bin_edges: {str: ndarray} = {}
+        self._total_years: int = 0
 
     @property
     def img_years(self):
@@ -132,47 +142,58 @@ class Visuals:
         # Main Figure
         if self._figure is None:
             self._figure = plt.figure(constrained_layout=True, figsize=(10, 10))
+            self._figure.set_facecolor('#FFFFFF')
+            self._figure.get_layout_engine().set(w_pad=8/72, h_pad=8/72)
 
         # Subfigs of 3 rows
         if self._subfigs is None:
-            self._subfigs = self._figure.subfigures(3, 1, height_ratios=[2, 2, 1])
+            self._subfigs = self._figure.subfigures(
+                3, 1, height_ratios=[2, 2, 1], hspace=0.05)
 
-        self._subfigs[0].set_facecolor("floralwhite")
-        self._subfigs[1].set_facecolor("floralwhite")
-        self._subfigs[2].set_facecolor("floralwhite")
+        for sf in self._subfigs:
+            sf.set_facecolor(self._COLOR_BG)
 
         # 1st row has Island, year, and animal count graph:
-        row1 = self._subfigs[0].subplots(1, 4, width_ratios=[3, 1, 2, 3])
+        row1 = self._subfigs[0].subplots(1, 4, width_ratios=[3, 0.7, 1.3, 3.5])
 
         # Island
         self._island = row1[0]
-        self._island.set_title("Island")
+        self._island.set_title("Island", **self._TITLE_STYLE)
 
         self._island_legend = row1[1]
         self._island_legend.axis("off")
 
         # Year
         row1[2].axis("off")
-        self._year = row1[2].annotate("Year: 0", (0.2, 0.5),
-                                      color='darkslategrey', weight='bold',
-                                      ha='center', va='center', size=14)
+        self._total_years = number_of_years
+        self._year = row1[2].annotate(f"Year 0 / {number_of_years}", (0.2, 0.5),
+                                      color=self._COLOR_TEXT, weight='bold',
+                                      ha='center', va='center', size=16,
+                                      fontfamily='monospace')
         # Animal count graph
         self._animal_count = row1[3]
-        self._animal_count.set_title("Animal Count")
+        self._animal_count.set_title("Animal Count", **self._TITLE_STYLE)
         self._animal_count.set_xlim(0, number_of_years + 1)
-        self._animal_count.set_facecolor("antiquewhite")
+        self._animal_count.set_facecolor(self._COLOR_PLOT_BG)
+        self._animal_count.grid(axis='y', color=self._COLOR_GRID, linewidth=0.5)
+        self._animal_count.spines['top'].set_visible(False)
+        self._animal_count.spines['right'].set_visible(False)
         if self._ymax_animals is not None:
             self._animal_count.set_ylim(0, self._ymax_animals)
         xdata = np.arange(0, number_of_years + 1, self._vis_years)
         ydata = np.full_like(xdata, np.nan, dtype=float)
         self._herb_count_line = self._animal_count_plot(self._herb_count_line,
                                                         self._animal_count,
-                                                        xdata, ydata)
+                                                        xdata, ydata,
+                                                        self._COLOR_HERB)
 
         self._carn_count_line = self._animal_count_plot(self._carn_count_line,
                                                         self._animal_count,
                                                         xdata, ydata,
-                                                        "red")
+                                                        self._COLOR_CARN)
+        self._animal_count.legend(['Herbivore', 'Carnivore'],
+                                  loc='upper left', framealpha=0.9,
+                                  edgecolor=self._COLOR_GRID)
 
         # 2nd row has heat maps for herbivores and carnivores.
         row2 = self._subfigs[1].subplots(1, 2)
@@ -184,7 +205,7 @@ class Visuals:
             cmax_c = self._cmax_animals["Carnivore"]
 
         self._herb_heat = row2[0]
-        self._herb_heat.set_title("Herbivore Distribution")
+        self._herb_heat.set_title("Herbivore Distribution", **self._TITLE_STYLE)
         self._herb_heat.axis("off")
 
         self._herb_heat_image = self._herb_heat.imshow(animal_details["count_herbivore"],
@@ -193,11 +214,13 @@ class Visuals:
         plt.colorbar(self._herb_heat_image,
                      ax=self._herb_heat,
                      orientation='vertical',
-                     location="right")
+                     location="right",
+                     fraction=0.08,
+                     shrink=0.85)
         self._herb_heat_image.set_clim(0, cmax_h)
 
         self._carn_heat = row2[1]
-        self._carn_heat.set_title("Carnivore Distribution")
+        self._carn_heat.set_title("Carnivore Distribution", **self._TITLE_STYLE)
         self._carn_heat.axis("off")
 
         self._carn_heat_image = self._carn_heat.imshow(animal_details["count_carnivore"],
@@ -206,26 +229,34 @@ class Visuals:
         plt.colorbar(self._carn_heat_image,
                      ax=self._carn_heat,
                      orientation='vertical',
-                     location="right")
+                     location="right",
+                     fraction=0.08,
+                     shrink=0.85)
         self._carn_heat_image.set_clim(0, cmax_c)
 
         # 3rd row has histograms for Fitness, Age and Weight.
         row3 = self._subfigs[2].subplots(1, len(self._hist_specs))
 
         for col, key in enumerate(self._hist_specs):
-            row3[col].set_title(key.capitalize())
-            row3[col].set_facecolor("antiquewhite")
+            row3[col].set_title(key.capitalize(), **self._TITLE_STYLE)
+            row3[col].set_facecolor(self._COLOR_PLOT_BG)
+            row3[col].grid(axis='y', color=self._COLOR_GRID, linewidth=0.5)
+            row3[col].spines['top'].set_visible(False)
+            row3[col].spines['right'].set_visible(False)
             bin_max = self._hist_specs[key]["max"]
             bin_width = self._hist_specs[key]["delta"]
             self._hist_bin_edges[key] = np.arange(0, bin_max + bin_width / 2, bin_width)
             hist_counts = np.zeros_like(self._hist_bin_edges[key][:-1], dtype=float)
             self._hist_carn[key] = row3[col].stairs(hist_counts,
                                                     self._hist_bin_edges[key],
-                                                    color='red',
-                                                    lw=2)
+                                                    color=self._COLOR_CARN,
+                                                    fill=True, alpha=0.35,
+                                                    lw=1.5)
             self._hist_herb[key] = row3[col].stairs(hist_counts,
                                                     self._hist_bin_edges[key],
-                                                    lw=2)
+                                                    color=self._COLOR_HERB,
+                                                    fill=True, alpha=0.35,
+                                                    lw=1.5)
             self._hists[key] = row3[col]
 
     def extend_figure(self, current_year, num_year):
@@ -238,17 +269,19 @@ class Visuals:
         current_year
         num_year
         """
+        self._total_years = current_year + num_year
         self._animal_count.set_xlim(0, current_year + num_year + 1)
         xdata = np.arange(current_year, current_year + num_year + 1, self._vis_years)
         ydata = np.full_like(xdata, np.nan, dtype=float)
         self._herb_count_line = self._animal_count_plot(self._herb_count_line,
                                                         self._animal_count,
-                                                        xdata, ydata)
+                                                        xdata, ydata,
+                                                        self._COLOR_HERB)
 
         self._carn_count_line = self._animal_count_plot(self._carn_count_line,
                                                         self._animal_count,
                                                         xdata, ydata,
-                                                        "red")
+                                                        self._COLOR_CARN)
 
     def set_island(self, island_map):
         """
@@ -345,7 +378,7 @@ class Visuals:
             raise RuntimeError(f'ERROR: ffmpeg failed with: {err}') from err
 
     def _refresh_year(self, year):
-        self._year.set_text(f"Year: {year}")
+        self._year.set_text(f"Year {year} / {self._total_years}")
 
     def _refresh_animal_count_graph(self, hcount, ccount, current_year):
         index = current_year // self._vis_years
@@ -397,6 +430,7 @@ class Visuals:
         else:
             count_line = animal_count.plot(xdata, ydata,
                                            linestyle='-',
+                                           linewidth=2,
                                            color=color)[0]
             ydata = count_line.get_ydata()
             ydata[0] = 0
