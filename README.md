@@ -249,7 +249,7 @@ This ensures that the water areas are masked, and therefore blue, making the vis
 #### 3. Easier debugging:
 We have added `__str__` to all of our objects. This can be observed during debugging, 
 as shown in the image below.   
-![Picture of console output](readme_imgs/str_info.png){width=300 height=50}   
+<img src="readme_imgs/str_info.png" alt="Picture of console output" width="300"/>   
 The letters indicate the following:
 
 - **C** = Carnivore
