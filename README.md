@@ -91,11 +91,11 @@ flowchart TD
     class Water water
     class FaunaParam,GeoParam param
 
-    style ui fill:#EFF6FF,stroke:#3B82F6,stroke-width:2px,color:#1E40AF
-    style core fill:#F8FAFC,stroke:#475569,stroke-width:2px,color:#1E293B
-    style vis fill:#F5F3FF,stroke:#8B5CF6,stroke-width:2px,color:#5B21B6
-    style fauna_group fill:#FFF7ED,stroke:#F59E0B,stroke-width:2px,color:#92400E
-    style geo fill:#F0FDFA,stroke:#14B8A6,stroke-width:2px,color:#134E4A
+    style ui fill:transparent,stroke:#3B82F6,stroke-width:2px,color:#3B82F6
+    style core fill:transparent,stroke:#475569,stroke-width:2px,color:#64748B
+    style vis fill:transparent,stroke:#8B5CF6,stroke-width:2px,color:#8B5CF6
+    style fauna_group fill:transparent,stroke:#F59E0B,stroke-width:2px,color:#F59E0B
+    style geo fill:transparent,stroke:#14B8A6,stroke-width:2px,color:#14B8A6
 ```
 
 **Annual Cycle** (executed per cell each year):
