@@ -174,7 +174,8 @@ class Fauna:
           2. Random check against probability min(1, gamma * fitness * N) -- stochastic birth
           3. Baby weight is drawn from a lognormal distribution
           4. Parent must weigh more than xi * baby_weight -- can't lose more than own weight
-          5. If all pass: parent loses xi * baby_weight, fitness cache is invalidated, baby is returned
+          5. If all pass: parent loses xi * baby_weight,
+             fitness cache is invalidated, baby is returned
 
         The probability check is optimized: if prob >= 1.0, we skip the random draw entirely.
         Weight change is inlined (avoiding _change_weight method call overhead) since
@@ -198,7 +199,8 @@ class Fauna:
         # Inline weight change and invalidate fitness cache since weight changed
         self._weight = max(self._weight - xi_w_baby, 0)
         self._cached_fit = None
-        return type(self)(0, w_baby)  # type(self) creates the correct subclass (Herbivore/Carnivore)
+        # type(self) creates the correct subclass (Herbivore/Carnivore)
+        return type(self)(0, w_baby)
 
     def get_older(self):
         # Increments age by 1 year. Invalidates the fitness cache since

@@ -12,7 +12,7 @@ import numpy as np
 
 from biosim.ecosystem.unit_area import UnitArea
 from biosim.ecosystem.fauna import Herbivore, Carnivore
-from biosim.ecosystem.geography import Highland, Lowland, Water, Desert
+from biosim.ecosystem.geography import Highland, Lowland, Water, Desert  # noqa: F401
 
 
 @pytest.fixture

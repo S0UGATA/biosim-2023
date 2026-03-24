@@ -10,8 +10,9 @@ from biosim.ecosystem.geography import Geography, Highland, Lowland, Water, Dese
 # attribute lookups in hot loops. Each attribute lookup in Python costs ~50ns,
 # which adds up significantly when called hundreds of thousands of times.
 _SHUFFLE = np.random.shuffle       # used to randomize herbivore feeding order
-_FITNESS_KEY = Fauna.fitness.fget   # direct reference to the fitness property getter function,
-                                    # used as sort key to avoid creating a lambda wrapper per sort call
+# direct reference to the fitness property getter function,
+# used as sort key to avoid creating a lambda wrapper per sort call
+_FITNESS_KEY = Fauna.fitness.fget
 
 
 class UnitArea:

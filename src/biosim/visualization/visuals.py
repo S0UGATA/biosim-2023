@@ -147,8 +147,8 @@ class Visuals:
 
         # Subfigs of 3 rows
         if self._subfigs is None:
-            self._subfigs = self._figure.subfigures(3, 1, height_ratios=[2, 2, 1],
-                                                       hspace=0.05)
+            self._subfigs = self._figure.subfigures(
+                3, 1, height_ratios=[2, 2, 1], hspace=0.05)
 
         for sf in self._subfigs:
             sf.set_facecolor(self._COLOR_BG)
