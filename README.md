@@ -23,37 +23,34 @@ and the distribution and initialization of animals.
 ### Architecture
 
 ```mermaid
-graph TD
-    subgraph ui ["User Interface"]
-        BioSim["BioSim<br/><i>simulation.py</i><br/>Top-level API"]
+flowchart TD
+    subgraph ui [" User Interface "]
+        BioSim["<b>BioSim</b><br/><i>simulation.py</i><br/>Top-level API"]
     end
 
-    subgraph vis ["Visualization"]
-        Visuals["Visuals<br/><i>visuals.py</i><br/>Matplotlib plots, heatmaps,<br/>histograms, movie export"]
+    subgraph core [" Ecosystem Core "]
+        Rossumoya["<b>Rossumoya</b><br/><i>rossumoya.py</i><br/>Island grid · annual cycle"]
+        UnitArea["<b>UnitArea</b><br/><i>unit_area.py</i><br/>Feeding · breeding<br/>migration · death"]
     end
 
-    subgraph core ["Ecosystem Core"]
-        Rossumoya["Rossumoya<br/><i>rossumoya.py</i><br/>Island grid, annual cycle"]
-        UnitArea["UnitArea<br/><i>unit_area.py</i><br/>Single cell: feeding,<br/>breeding, migration, death"]
+    subgraph vis [" Visualization "]
+        Visuals["<b>Visuals</b><br/><i>visuals.py</i><br/>Matplotlib plots · heatmaps<br/>histograms · movie export"]
     end
 
-    subgraph geo ["Geography"]
-        Geography["Geography<br/><i>geography.py</i>"]
-        Highland["Highland<br/>f_max=300"]
-        Lowland["Lowland<br/>f_max=800"]
-        Desert["Desert<br/>f_max=0"]
-        Water["Water<br/>Impassable"]
+    subgraph fauna_group [" Fauna "]
+        Fauna["<b>Fauna</b><br/><i>fauna.py</i><br/>Fitness · aging · weight<br/>procreation · death"]
+        Herbivore["<b>Herbivore</b><br/>Eats fodder"]
+        Carnivore["<b>Carnivore</b><br/>Hunts herbivores"]
+        FaunaParam["<b>FaunaParam</b><br/><i>parameters.py</i>"]
     end
 
-    subgraph fauna_group ["Fauna"]
-        Fauna["Fauna<br/><i>fauna.py</i><br/>Fitness, aging, weight,<br/>procreation, death"]
-        Herbivore["Herbivore<br/>Eats fodder"]
-        Carnivore["Carnivore<br/>Hunts herbivores"]
-    end
-
-    subgraph params ["Parameters"]
-        FaunaParam["FaunaParam<br/><i>parameters.py</i>"]
-        GeoParam["GeoParam<br/><i>parameters.py</i>"]
+    subgraph geo [" Geography "]
+        Geography["<b>Geography</b><br/><i>geography.py</i>"]
+        Highland["<b>Highland</b><br/>f_max = 300"]
+        Lowland["<b>Lowland</b><br/>f_max = 800"]
+        Desert["<b>Desert</b><br/>f_max = 0"]
+        Water["<b>Water</b><br/>Impassable"]
+        GeoParam["<b>GeoParam</b><br/><i>parameters.py</i>"]
     end
 
     BioSim --> Rossumoya
@@ -61,29 +58,44 @@ graph TD
     Rossumoya --> UnitArea
     UnitArea --> Fauna
     UnitArea --> Geography
-    Geography --> Highland
-    Geography --> Lowland
-    Geography --> Desert
-    Geography --> Water
-    Fauna --> Herbivore
-    Fauna --> Carnivore
-    Fauna --> FaunaParam
-    Geography --> GeoParam
+    Fauna --> Herbivore & Carnivore
+    Fauna -.-> FaunaParam
+    Geography --> Highland & Lowland & Desert & Water
+    Geography -.-> GeoParam
 
-    style BioSim fill:#4a90d9,stroke:#2c5f8a,color:#fff
-    style Visuals fill:#9b59b6,stroke:#6c3483,color:#fff
-    style Rossumoya fill:#2c3e50,stroke:#1a252f,color:#fff
-    style UnitArea fill:#34495e,stroke:#1a252f,color:#fff
-    style Fauna fill:#e67e22,stroke:#b35e0f,color:#fff
-    style Herbivore fill:#27ae60,stroke:#1e8449,color:#fff
-    style Carnivore fill:#e74c3c,stroke:#a93226,color:#fff
-    style Geography fill:#8e7cc3,stroke:#5b4a8a,color:#fff
-    style Highland fill:#a8d08d,stroke:#6a9b4f,color:#000
-    style Lowland fill:#2d8a4e,stroke:#1b5e34,color:#fff
-    style Desert fill:#f0e68c,stroke:#bdb36b,color:#000
-    style Water fill:#3498db,stroke:#1a6fa0,color:#fff
-    style FaunaParam fill:#f5b041,stroke:#c68910,color:#000
-    style GeoParam fill:#f5b041,stroke:#c68910,color:#000
+    classDef blue fill:#3B82F6,stroke:#2563EB,color:#fff,stroke-width:2px
+    classDef purple fill:#8B5CF6,stroke:#7C3AED,color:#fff,stroke-width:2px
+    classDef slate fill:#475569,stroke:#334155,color:#fff,stroke-width:2px
+    classDef slateLight fill:#64748B,stroke:#475569,color:#fff,stroke-width:2px
+    classDef orange fill:#F59E0B,stroke:#D97706,color:#fff,stroke-width:2px
+    classDef green fill:#22C55E,stroke:#16A34A,color:#fff,stroke-width:2px
+    classDef red fill:#EF4444,stroke:#DC2626,color:#fff,stroke-width:2px
+    classDef teal fill:#14B8A6,stroke:#0D9488,color:#fff,stroke-width:2px
+    classDef highlandGreen fill:#86EFAC,stroke:#4ADE80,color:#1a1a1a,stroke-width:2px
+    classDef lowlandGreen fill:#16A34A,stroke:#15803D,color:#fff,stroke-width:2px
+    classDef desert fill:#FDE68A,stroke:#FCD34D,color:#1a1a1a,stroke-width:2px
+    classDef water fill:#38BDF8,stroke:#0EA5E9,color:#fff,stroke-width:2px
+    classDef param fill:#CBD5E1,stroke:#94A3B8,color:#1a1a1a,stroke-width:2px
+
+    class BioSim blue
+    class Visuals purple
+    class Rossumoya slate
+    class UnitArea slateLight
+    class Fauna orange
+    class Herbivore green
+    class Carnivore red
+    class Geography teal
+    class Highland highlandGreen
+    class Lowland lowlandGreen
+    class Desert desert
+    class Water water
+    class FaunaParam,GeoParam param
+
+    style ui fill:#EFF6FF,stroke:#3B82F6,stroke-width:2px,color:#1E40AF
+    style core fill:#F8FAFC,stroke:#475569,stroke-width:2px,color:#1E293B
+    style vis fill:#F5F3FF,stroke:#8B5CF6,stroke-width:2px,color:#5B21B6
+    style fauna_group fill:#FFF7ED,stroke:#F59E0B,stroke-width:2px,color:#92400E
+    style geo fill:#F0FDFA,stroke:#14B8A6,stroke-width:2px,color:#134E4A
 ```
 
 **Annual Cycle** (executed per cell each year):
@@ -231,7 +243,7 @@ count of the animals = -1 where its water. While refreshing the heatmaps we set 
 where the number of animals is equal to -1 (which is done where there is geo type water on the map). 
 In visuals.py, [here](src/biosim/visualization/visuals.py), the color of this mask is set to blue.
 This ensures that the water areas are masked, and therefore blue, making the visualization better.  
-![Output of island map in separate window](readme_imgs/stats_visual.png){width=600 height=500px}  
+<video src="readme_imgs/sample.mp4" width="600" controls></video>
 
   
 #### 3. Easier debugging:
